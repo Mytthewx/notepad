@@ -6,6 +6,11 @@ import java.util.Scanner;
 
 public class LoginSystem {
 	List<User> users = new ArrayList<>();
+	User loggedUser;
+
+	public User getLoggedUser() {
+		return loggedUser;
+	}
 
 	public boolean login() {
 		Scanner scanner = new Scanner(System.in);
@@ -19,6 +24,7 @@ public class LoginSystem {
 				password = scanner.next();
 				if (user.getPassword().equals(password)) {
 					System.out.println("Logged in.");
+					loggedUser = user;
 					return true;
 				} else {
 					System.out.println("Wrong password.");

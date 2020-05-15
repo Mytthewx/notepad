@@ -3,8 +3,9 @@ package eu.mytthew;
 import java.util.Scanner;
 
 public class Menu {
-	Notes notes = new Notes();
+	Notebook notebook = new Notebook();
 	LoginSystem loginSystem = new LoginSystem();
+	User loggedUser = loginSystem.getLoggedUser();
 
 	public void loginMenu() {
 		System.out.println("1. Log in");
@@ -41,11 +42,11 @@ public class Menu {
 		int selection = scanner.nextInt();
 		switch (selection) {
 			case 1:
-				notes.addNote();
+				notebook.addNote(loggedUser);
 				display();
 				break;
 			case 2:
-				notes.displayNote();
+				System.out.println(notebook.displayNotes(loggedUser));
 				break;
 			default:
 				break;

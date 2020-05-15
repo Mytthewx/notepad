@@ -1,12 +1,24 @@
 package eu.mytthew;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
+	List<Note> notes = new ArrayList<>();
 	private String nickname;
 	private String password;
 
 	public User(String nickname, String password) {
 		this.nickname = nickname;
 		this.password = password;
+	}
+
+	public void addNote(Note note) {
+		notes.add(note);
+	}
+
+	public String getNotes() {
+		return notes.toString();
 	}
 
 	public String getNickname() {
