@@ -21,12 +21,13 @@ public class Notebook {
 		}
 	}
 
-	public String displayNotes(User user) {
+	public void displayNotes(User user) {
 		for (User searchedUser : users) {
 			if (searchedUser.equals(user)) {
-				return user.getNotes();
+				System.out.println(user.getNotes());
+			} else {
+				System.out.println("No notes here.");
 			}
 		}
-		return "No notes here.";
 	}
 }

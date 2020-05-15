@@ -46,7 +46,7 @@ public class Menu {
 				display();
 				break;
 			case 2:
-				System.out.println(notebook.displayNotes(loggedUser));
+				notebook.displayNotes(loggedUser);
 				break;
 			default:
 				break;
