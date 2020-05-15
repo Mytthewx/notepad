@@ -3,30 +3,52 @@ package eu.mytthew;
 import java.util.Scanner;
 
 public class Menu {
-	Notes notes;
-	private static int selection;
+	Notes notes = new Notes();
+	LoginSystem loginSystem = new LoginSystem();
 
-	public static void display() {
-		System.out.println("Menu:");
-		System.out.println("1. Dodaj notatke");
-		System.out.println("2. Przejrzyj notatki");
-		System.out.println("3. Usun notatke");
-		System.out.println("4. Dodaj uzytkownika");
-		System.out.println("5. Usun uzytkownika");
-	}
-
-	public static void makeChoice() {
-		Scanner choice = new Scanner(System.in);
-		selection = choice.nextInt();
-		System.out.println("Your selection: " + selection);
-	}
-
-	public static void action() {
+	public void loginMenu() {
+		System.out.println("1. Log in");
+		System.out.println("2. Add user");
+		System.out.println("0. Exit");
+		Scanner scanner = new Scanner(System.in);
+		int selection = scanner.nextInt();
 		switch (selection) {
 			case 1:
-				Notes.addNote();
+				if (loginSystem.login()) {
+					display();
+				} else {
+					loginMenu();
+				}
+				break;
+			case 2:
+				loginSystem.addUser();
+				loginMenu();
+				break;
+			case 4:
+				return;
+			default:
 				break;
 		}
-		Notes.displayNote();
+	}
+
+	public void display() {
+		System.out.println("Menu:");
+		System.out.println("1. Add note");
+		System.out.println("2. Review note");
+		System.out.println("3. Remove note");
+		System.out.println("0. Exit");
+		Scanner scanner = new Scanner(System.in);
+		int selection = scanner.nextInt();
+		switch (selection) {
+			case 1:
+				notes.addNote();
+				display();
+				break;
+			case 2:
+				notes.displayNote();
+				break;
+			default:
+				break;
+		}
 	}
 }

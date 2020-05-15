@@ -1,24 +1,46 @@
 package eu.mytthew;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class LoginSystem {
-	public void login() throws FileNotFoundException {
-		Scanner content = new Scanner(new File("content.txt"));
-		Scanner keyboard = new Scanner(System.in);
-		String user = content.nextLine();
-		String password = content.nextLine();
+	List<User> users = new ArrayList<>();
 
-		String inputUser = keyboard.nextLine();
-		String inputPassword = keyboard.nextLine();
-
-		if (inputUser.equals(user) && inputPassword.equals(password)) {
-			System.out.println("Logged successfully.");
-		} else {
-			System.out.println("Error.");
+	public boolean login() {
+		Scanner scanner = new Scanner(System.in);
+		String nickname;
+		String password;
+		System.out.print("Enter nickname: ");
+		nickname = scanner.next();
+		for (User user : users) {
+			if (user.getNickname().equals(nickname)) {
+				System.out.print("Enter password: ");
+				password = scanner.next();
+				if (user.getPassword().equals(password)) {
+					System.out.println("Logged in.");
+					return true;
+				} else {
+					System.out.println("Wrong password.");
+					return false;
+				}
+			} else {
+				System.out.println("I can't find user with this nickname.");
+			}
 		}
+		return false;
+	}
+
+	public void addUser() {
+		Scanner scanner = new Scanner(System.in);
+		String nickname;
+		String password;
+		System.out.print("Enter nickname: ");
+		nickname = scanner.next();
+		System.out.print("Enter password: ");
+		password = scanner.next();
+		users.add(new User(nickname, password));
+		System.out.println("User added successfully!");
 	}
 
 }
