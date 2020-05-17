@@ -8,7 +8,8 @@ public class Main {
 	public static void main(String[] args) {
 		Notebook notebook = new Notebook();
 		LoginSystem loginSystem = new LoginSystem();
-		User loggedUser;
+		User loggedUser = null;
+		boolean isUserLogged = false;
 		boolean repeat = true;
 		boolean repeatInside = true;
 		while (repeat) {
@@ -21,9 +22,8 @@ public class Main {
 				case 1:
 					loginSystem.login();
 					loggedUser = loginSystem.getLoggedUser();
-					while (repeatInside) {
-						display(notebook, loggedUser);
-					}
+					isUserLogged = true;
+					repeat = false;
 					break;
 				case 2:
 					loginSystem.addUser();
@@ -32,7 +32,12 @@ public class Main {
 					repeat = false;
 					return;
 				default:
+					repeat = false;
 					break;
+
+			}
+			while (isUserLogged) {
+				display(notebook, loggedUser);
 			}
 		}
 	}

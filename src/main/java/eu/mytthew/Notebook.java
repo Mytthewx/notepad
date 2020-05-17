@@ -15,6 +15,6 @@ public class Notebook {
 	}
 
 	public void displayNotes(User user) {
-		System.out.println(user.getNotes());
+		user.getNotes();
 	}
 }

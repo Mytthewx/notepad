@@ -17,8 +17,8 @@ public class User {
 		notes.add(note);
 	}
 
-	public String getNotes() {
-		return "Notes for this user:\n" + notes.toString();
+	public void getNotes() {
+		notes.stream().map(Note::toString).forEach(System.out::println);
 	}
 
 	public String getNickname() {
