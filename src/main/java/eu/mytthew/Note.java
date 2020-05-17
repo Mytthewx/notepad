@@ -11,7 +11,7 @@ public class Note {
 
 	@Override
 	public String toString() {
-		return "Title: '" + title + '\'' +
-				"\nContent:\n" + content;
+		return "Title: " + title +
+				"\nContent:\n" + content + "\n";
 	}
 }

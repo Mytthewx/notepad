@@ -3,12 +3,15 @@ package eu.mytthew;
 import java.util.Scanner;
 
 public class Main {
-	static final Notebook notebook = new Notebook();
-	static final LoginSystem loginSystem = new LoginSystem();
-	static User loggedUser;
+
 
 	public static void main(String[] args) {
-		while (true) {
+		Notebook notebook = new Notebook();
+		LoginSystem loginSystem = new LoginSystem();
+		User loggedUser;
+		boolean repeat = true;
+		boolean repeatInside = true;
+		while (repeat) {
 			System.out.println("1. Log in");
 			System.out.println("2. Add user");
 			System.out.println("0. Exit");
@@ -18,13 +21,15 @@ public class Main {
 				case 1:
 					loginSystem.login();
 					loggedUser = loginSystem.getLoggedUser();
-					while (true) {
-						display();
+					while (repeatInside) {
+						display(notebook, loggedUser);
 					}
+					break;
 				case 2:
 					loginSystem.addUser();
 					break;
 				case 0:
+					repeat = false;
 					return;
 				default:
 					break;
@@ -32,7 +37,7 @@ public class Main {
 		}
 	}
 
-	public static void display() {
+	public static void display(Notebook notebook, User loggedUser) {
 		System.out.println("Menu:");
 		System.out.println("1. Add note");
 		System.out.println("2. Review note");
@@ -46,6 +51,8 @@ public class Main {
 				break;
 			case 2:
 				notebook.displayNotes(loggedUser);
+				break;
+			case 0:
 				break;
 			default:
 				break;
