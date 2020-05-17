@@ -1,8 +1,11 @@
 package eu.mytthew;
 
+
 public class Note {
+	static int globalID = 0;
 	private final String title;
 	private final String content;
+	private int ID = globalID++;
 
 	public Note(String title, String content) {
 		this.title = title;
@@ -11,7 +14,9 @@ public class Note {
 
 	@Override
 	public String toString() {
-		return "Title: " + title +
-				"\nContent: '" + content + '\'' + "\n";
+		return
+				"ID: " + ID +
+						"\nTitle: " + title +
+						"\nContent: '" + content + '\'' + "\n";
 	}
 }

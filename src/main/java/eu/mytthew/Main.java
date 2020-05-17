@@ -11,7 +11,6 @@ public class Main {
 		User loggedUser = null;
 		boolean isUserLogged = false;
 		boolean repeat = true;
-		boolean repeatInside = true;
 		while (repeat) {
 			System.out.println("1. Log in");
 			System.out.println("2. Add user");
@@ -29,8 +28,6 @@ public class Main {
 					loginSystem.addUser();
 					break;
 				case 0:
-					repeat = false;
-					return;
 				default:
 					repeat = false;
 					break;
@@ -58,7 +55,6 @@ public class Main {
 				notebook.displayNotes(loggedUser);
 				break;
 			case 0:
-				break;
 			default:
 				break;
 		}
