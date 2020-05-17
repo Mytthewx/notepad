@@ -21,6 +21,10 @@ public class User {
 		notes.stream().map(Note::toString).forEach(System.out::println);
 	}
 
+	public void removeNotes(int ID) {
+		notes.remove(ID);
+	}
+
 	public String getNickname() {
 		return nickname;
 	}

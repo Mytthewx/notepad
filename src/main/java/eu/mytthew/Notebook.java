@@ -18,7 +18,7 @@ public class Notebook {
 		user.getNotes();
 	}
 
-	public void removeNote() {
-
+	public void removeNote(User user, int ID) {
+		user.removeNotes(ID);
 	}
 }

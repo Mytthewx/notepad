@@ -2,10 +2,10 @@ package eu.mytthew;
 
 
 public class Note {
-	static int globalID = 0;
+	private static int globalID = 0;
 	private final String title;
 	private final String content;
-	private int ID = globalID++;
+	private final int ID = globalID++;
 
 	public Note(String title, String content) {
 		this.title = title;

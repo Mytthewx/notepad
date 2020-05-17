@@ -54,6 +54,11 @@ public class Main {
 			case 2:
 				notebook.displayNotes(loggedUser);
 				break;
+			case 3:
+				System.out.println("Select note: ");
+				int ID = scanner.nextInt();
+				notebook.removeNote(loggedUser, ID);
+				break;
 			case 0:
 			default:
 				break;
