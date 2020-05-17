@@ -28,10 +28,10 @@ public class Main {
 					loginSystem.addUser();
 					break;
 				case 0:
-				default:
 					repeat = false;
 					break;
-
+				default:
+					System.out.println("Wrong choice. Choose 1, 2 or 3.");
 			}
 			while (isUserLogged) {
 				display(notebook, loggedUser);

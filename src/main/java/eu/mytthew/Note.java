@@ -14,9 +14,8 @@ public class Note {
 
 	@Override
 	public String toString() {
-		return
-				"ID: " + ID +
-						"\nTitle: " + title +
-						"\nContent: '" + content + '\'' + "\n";
+		return "ID: " + ID +
+				"\nTitle: " + title +
+				"\nContent: '" + content + '\'' + "\n";
 	}
 }
