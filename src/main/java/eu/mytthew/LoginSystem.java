@@ -12,7 +12,8 @@ public class LoginSystem {
 		return loggedUser;
 	}
 
-	public boolean login() {
+
+	public void login() {
 		Scanner scanner = new Scanner(System.in);
 		String nickname;
 		String password;
@@ -25,16 +26,14 @@ public class LoginSystem {
 				if (user.getPassword().equals(password)) {
 					System.out.println("Logged in.");
 					loggedUser = user;
-					return true;
 				} else {
 					System.out.println("Wrong password.");
-					return false;
 				}
+				return;
 			} else {
 				System.out.println("I can't find user with this nickname.");
 			}
 		}
-		return false;
 	}
 
 	public void addUser() {

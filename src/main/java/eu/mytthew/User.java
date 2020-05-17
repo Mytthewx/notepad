@@ -18,7 +18,7 @@ public class User {
 	}
 
 	public String getNotes() {
-		return notes.toString();
+		return "Notes for this user:\n" + notes.toString();
 	}
 
 	public String getNickname() {
