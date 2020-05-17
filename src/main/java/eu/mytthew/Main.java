@@ -44,6 +44,7 @@ public class Main {
 		System.out.println("1. Add note");
 		System.out.println("2. Review note");
 		System.out.println("3. Remove note");
+		System.out.println("4. Change login");
 		System.out.println("0. Exit");
 		Scanner scanner = new Scanner(System.in);
 		int selection = scanner.nextInt();
@@ -59,7 +60,14 @@ public class Main {
 				int ID = scanner.nextInt();
 				notebook.removeNote(loggedUser, ID);
 				break;
+			case 4:
+				System.out.println("Type new login: ");
+				Scanner nicknameScanner = new Scanner(System.in);
+				String nickname = nicknameScanner.nextLine();
+				loggedUser.setNickname(nickname);
+				break;
 			case 0:
+				System.exit(0);
 			default:
 				break;
 		}
