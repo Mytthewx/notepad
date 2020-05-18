@@ -12,6 +12,10 @@ public class Note {
 		this.content = content;
 	}
 
+	public int getID() {
+		return ID;
+	}
+
 	@Override
 	public String toString() {
 		return "ID: " + ID +

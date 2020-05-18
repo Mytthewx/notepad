@@ -13,7 +13,7 @@ public class LoginSystem {
 	}
 
 
-	public void login() {
+	public boolean login() {
 		Scanner scanner = new Scanner(System.in);
 		String nickname;
 		String password;
@@ -26,14 +26,16 @@ public class LoginSystem {
 				if (user.getPassword().equals(password)) {
 					System.out.println("Logged in.");
 					loggedUser = user;
+					return true;
 				} else {
 					System.out.println("Wrong password.");
+					return false;
 				}
-				return;
 			} else {
 				System.out.println("I can't find user with this nickname.");
 			}
 		}
+		return false;
 	}
 
 	public void addUser() {
@@ -46,6 +48,22 @@ public class LoginSystem {
 		password = scanner.next();
 		users.add(new User(nickname, password));
 		System.out.println("User added successfully!");
+	}
+
+	public void changeNickname() {
+		String oldNickname = loggedUser.getNickname();
+		System.out.println("Type new login: ");
+		Scanner nicknameScanner = new Scanner(System.in);
+		String nickname = nicknameScanner.nextLine();
+		for (User user : users) {
+			if (user.getNickname().equals(nickname)) {
+				System.out.println("This nickname is already taken.");
+			} else {
+				loggedUser.setNickname(nickname);
+				System.out.println("Old nickname: " + oldNickname);
+				System.out.println("New nickname: " + loggedUser.getNickname());
+			}
+		}
 	}
 
 }

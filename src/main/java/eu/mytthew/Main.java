@@ -20,8 +20,8 @@ public class Main {
 			switch (selection) {
 				case 1:
 					loginSystem.login();
-					loggedUser = loginSystem.getLoggedUser();
 					isUserLogged = true;
+					loggedUser = loginSystem.getLoggedUser();
 					repeat = false;
 					break;
 				case 2:
@@ -34,12 +34,12 @@ public class Main {
 					System.out.println("Wrong choice. Choose 1, 2 or 3.");
 			}
 			while (isUserLogged) {
-				display(notebook, loggedUser);
+				display(loginSystem, notebook, loggedUser);
 			}
 		}
 	}
 
-	public static void display(Notebook notebook, User loggedUser) {
+	public static void display(LoginSystem loginSystem, Notebook notebook, User loggedUser) {
 		System.out.println("Menu:");
 		System.out.println("1. Add note");
 		System.out.println("2. Review note");
@@ -61,10 +61,7 @@ public class Main {
 				notebook.removeNote(loggedUser, ID);
 				break;
 			case 4:
-				System.out.println("Type new login: ");
-				Scanner nicknameScanner = new Scanner(System.in);
-				String nickname = nicknameScanner.nextLine();
-				loggedUser.setNickname(nickname);
+				loginSystem.changeNickname();
 				break;
 			case 0:
 				System.exit(0);

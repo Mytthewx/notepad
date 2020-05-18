@@ -18,11 +18,25 @@ public class User {
 	}
 
 	public void getNotes() {
-		notes.stream().map(Note::toString).forEach(System.out::println);
+		if (notes.isEmpty()) {
+			System.out.println("There is no notes.");
+		} else {
+			notes.stream().map(Note::toString).forEach(System.out::println);
+		}
 	}
 
 	public void removeNotes(int ID) {
-		notes.remove(ID);
+		if (notes.isEmpty()) {
+			System.out.println("There is no notes.");
+		} else {
+			for (int i = 0; i < notes.size(); i++) {
+				if (notes.get(i).getID() == ID) {
+					notes.remove(notes.get(i));
+				} else {
+					System.out.println("No note with this ID.");
+				}
+			}
+		}
 	}
 
 	public String getNickname() {
