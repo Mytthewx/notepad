@@ -67,4 +67,16 @@ public class LoginSystem {
 		}
 	}
 
+	public void changePassword() {
+		System.out.println("Type new password: ");
+		Scanner passwordScanner = new Scanner(System.in);
+		String password = passwordScanner.nextLine();
+		for (User user : users) {
+			if (user.getPassword().equals(password)) {
+				System.out.println("Password must be different from the previous password.");
+			} else {
+				loggedUser.setPassword(password);
+			}
+		}
+	}
 }

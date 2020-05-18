@@ -45,6 +45,7 @@ public class Main {
 		System.out.println("2. Review note");
 		System.out.println("3. Remove note");
 		System.out.println("4. Change login");
+		System.out.println("5. Change password");
 		System.out.println("0. Exit");
 		Scanner scanner = new Scanner(System.in);
 		int selection = scanner.nextInt();
@@ -62,6 +63,9 @@ public class Main {
 				break;
 			case 4:
 				loginSystem.changeNickname();
+				break;
+			case 5:
+				loginSystem.changePassword();
 				break;
 			case 0:
 				System.exit(0);
