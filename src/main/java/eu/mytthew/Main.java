@@ -18,10 +18,25 @@ public class Main {
 			int selection = scanner.nextInt();
 			switch (selection) {
 				case 1:
-					loginSystem.login();
-					isUserLogged = true;
-					loggedUser = loginSystem.getLoggedUser();
-					repeat = false;
+					Scanner loginScanner = new Scanner(System.in);
+					System.out.println("Enter nickname: ");
+					String login = loginScanner.next();
+					if (loginSystem.contains(login)) {
+						while (!isUserLogged) {
+							System.out.println("Enter password: ");
+							String password = loginScanner.next();
+							if (loginSystem.login(login, password)) {
+								isUserLogged = true;
+								loggedUser = loginSystem.getLoggedUser();
+								repeat = false;
+								System.out.println("Logged in!");
+							} else {
+								System.out.println("Wrong password!");
+							}
+						}
+					} else {
+						System.out.println("The user with the given name does not exist.");
+					}
 					break;
 				case 2:
 					loginSystem.addUser();
@@ -30,7 +45,7 @@ public class Main {
 					repeat = false;
 					break;
 				default:
-					System.out.println("Wrong choice. Choose 1, 2 or 3.");
+					System.out.println("Wrong choice. Choose 1, 2 or 0.");
 			}
 			while (isUserLogged) {
 				display(loginSystem, loggedUser);

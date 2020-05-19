@@ -5,38 +5,31 @@ import java.util.List;
 import java.util.Scanner;
 
 public class LoginSystem {
-	List<User> users = new ArrayList<>();
-	User loggedUser;
+	private List<User> users = new ArrayList<>();
+	private User loggedUser;
+
+	public List<User> getUsers() {
+		return users;
+	}
 
 	public User getLoggedUser() {
 		return loggedUser;
 	}
 
+	public boolean contains(String nickname) {
+		return users.stream().anyMatch(user -> user.getNickname().equals(nickname));
+	}
 
-	public void login() {
-		boolean correctPassword = false;
-		Scanner scanner = new Scanner(System.in);
-		String nickname;
-		String password;
-		System.out.print("Enter nickname: ");
-		nickname = scanner.next();
+	public boolean login(String nickname, String password) {
 		for (User user : users) {
 			if (user.getNickname().equals(nickname)) {
-				while (!correctPassword) {
-					System.out.print("Enter password: ");
-					password = scanner.next();
-					if (user.getPassword().equals(password)) {
-						System.out.println("Logged in.");
-						loggedUser = user;
-						correctPassword = true;
-					} else {
-						System.out.println("Wrong password.");
-					}
+				if (user.getPassword().equals(password)) {
+					loggedUser = user;
+					return true;
 				}
-			} else {
-				System.out.println("I can't find user with this nickname.");
 			}
 		}
+		return false;
 	}
 
 	public void addUser() {
