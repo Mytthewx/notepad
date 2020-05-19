@@ -15,13 +15,13 @@ public class Main {
 			System.out.println("2. Add user");
 			System.out.println("0. Exit");
 			Scanner scanner = new Scanner(System.in);
-			int selection = scanner.nextInt();
+			String selection = scanner.next();
 			switch (selection) {
-				case 1:
+				case "1":
 					Scanner loginScanner = new Scanner(System.in);
 					System.out.println("Enter nickname: ");
 					String login = loginScanner.next();
-					if (loginSystem.contains(login)) {
+					if (loginSystem.containsNickname(login)) {
 						while (!isUserLogged) {
 							System.out.println("Enter password: ");
 							String password = loginScanner.next();
@@ -38,14 +38,25 @@ public class Main {
 						System.out.println("The user with the given name does not exist.");
 					}
 					break;
-				case 2:
-					loginSystem.addUser();
+				case "2":
+					Scanner addUserScanner = new Scanner(System.in);
+					System.out.println("Enter nickname: ");
+					String nickname = addUserScanner.next();
+					if (!loginSystem.containsNickname(nickname)) {
+						System.out.println("Enter password: ");
+						String password = addUserScanner.next();
+						loginSystem.addUser(nickname, password);
+						System.out.println("User added successfully!");
+					} else {
+						System.out.println("This nickname is already taken.");
+					}
 					break;
-				case 0:
+				case "0":
 					repeat = false;
 					break;
 				default:
 					System.out.println("Wrong choice. Choose 1, 2 or 0.");
+					break;
 			}
 			while (isUserLogged) {
 				display(loginSystem, loggedUser);

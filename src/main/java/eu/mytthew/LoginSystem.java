@@ -16,7 +16,7 @@ public class LoginSystem {
 		return loggedUser;
 	}
 
-	public boolean contains(String nickname) {
+	public boolean containsNickname(String nickname) {
 		return users.stream().anyMatch(user -> user.getNickname().equals(nickname));
 	}
 
@@ -32,16 +32,8 @@ public class LoginSystem {
 		return false;
 	}
 
-	public void addUser() {
-		Scanner scanner = new Scanner(System.in);
-		String nickname;
-		String password;
-		System.out.print("Enter nickname: ");
-		nickname = scanner.next();
-		System.out.print("Enter password: ");
-		password = scanner.next();
+	public void addUser(String nickname, String password) {
 		users.add(new User(nickname, password));
-		System.out.println("User added successfully!");
 	}
 
 	public void changeNickname() {
