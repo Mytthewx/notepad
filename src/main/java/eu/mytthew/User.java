@@ -2,6 +2,7 @@ package eu.mytthew;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class User {
 	private List<Note> notes = new ArrayList<>();
@@ -22,11 +23,12 @@ public class User {
 	}
 
 	public boolean removeNote(int id) {
-		for (int i = 0; i < notes.size(); i++) {
-			if (notes.get(i).getId() == id) {
-				notes.remove(notes.get(i));
-				return true;
-			}
+		Optional<Note> optionalNote = notes.stream()
+				.filter(note -> note.getId() == id)
+				.findAny();
+		if (optionalNote.isPresent()) {
+			notes.remove(optionalNote.get());
+			return true;
 		}
 		return false;
 	}

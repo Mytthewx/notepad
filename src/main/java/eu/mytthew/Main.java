@@ -18,11 +18,11 @@ public class Main {
 				case "1":
 					Scanner loginScanner = new Scanner(System.in);
 					System.out.println("Enter nickname: ");
-					String login = loginScanner.next();
+					String login = loginScanner.nextLine();
 					if (loginSystem.containsNickname(login)) {
 						while (!isUserLogged) {
 							System.out.println("Enter password: ");
-							String password = loginScanner.next();
+							String password = loginScanner.nextLine();
 							if (loginSystem.login(login, password)) {
 								isUserLogged = true;
 								loggedUser = loginSystem.getLoggedUser();
@@ -39,10 +39,10 @@ public class Main {
 				case "2":
 					Scanner addUserScanner = new Scanner(System.in);
 					System.out.println("Enter nickname: ");
-					String nickname = addUserScanner.next();
+					String nickname = addUserScanner.nextLine();
 					if (!loginSystem.containsNickname(nickname)) {
 						System.out.println("Enter password: ");
-						String password = addUserScanner.next();
+						String password = addUserScanner.nextLine();
 						loginSystem.addUser(nickname, password);
 						System.out.println("User added successfully!");
 					} else {
@@ -78,7 +78,7 @@ public class Main {
 				Scanner addNoteScanner = new Scanner(System.in);
 				String title = addNoteScanner.nextLine();
 				System.out.println("Your note:");
-				String content = addNoteScanner.next();
+				String content = addNoteScanner.nextLine();
 				loggedUser.addNote(new Note(title, content));
 				System.out.println("Note added successfully!");
 				break;
@@ -105,7 +105,7 @@ public class Main {
 			case "4":
 				System.out.println("Type new login: ");
 				Scanner changeNicknameScanner = new Scanner(System.in);
-				String newNickname = changeNicknameScanner.next();
+				String newNickname = changeNicknameScanner.nextLine();
 				if (loginSystem.containsNickname(newNickname)) {
 					System.out.println("This nickname is already taken.");
 				} else {
@@ -120,7 +120,7 @@ public class Main {
 				String oldPassword = loggedUser.getPassword();
 				System.out.println("Type new password: ");
 				Scanner changePasswordScanner = new Scanner(System.in);
-				String newPassword = changePasswordScanner.next();
+				String newPassword = changePasswordScanner.nextLine();
 				if (oldPassword.equals(newPassword)) {
 					System.out.println("Password must be different from the previous password.");
 				} else {
