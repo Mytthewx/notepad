@@ -5,12 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class LoginSystem {
-	private List<User> users = new ArrayList<>();
+	private final List<User> users = new ArrayList<>();
 	private User loggedUser;
-
-	public List<User> getUsers() {
-		return users;
-	}
 
 	public User getLoggedUser() {
 		return loggedUser;
