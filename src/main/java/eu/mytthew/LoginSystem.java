@@ -36,20 +36,8 @@ public class LoginSystem {
 		users.add(new User(nickname, password));
 	}
 
-	public void changeNickname() {
-		String oldNickname = loggedUser.getNickname();
-		System.out.println("Type new login: ");
-		Scanner nicknameScanner = new Scanner(System.in);
-		String nickname = nicknameScanner.nextLine();
-		for (User user : users) {
-			if (user.getNickname().equals(nickname)) {
-				System.out.println("This nickname is already taken.");
-			} else {
-				loggedUser.setNickname(nickname);
-				System.out.println("Old nickname: " + oldNickname);
-				System.out.println("New nickname: " + loggedUser.getNickname());
-			}
-		}
+	public void changeNickname(String newNickname) {
+		loggedUser.setNickname(newNickname);
 	}
 
 	public void changePassword() {

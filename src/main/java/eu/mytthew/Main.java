@@ -99,7 +99,17 @@ public class Main {
 				}
 				break;
 			case 4:
-				loginSystem.changeNickname();
+				System.out.println("Type new login: ");
+				Scanner changeNicknameScanner = new Scanner(System.in);
+				String newNickname = changeNicknameScanner.next();
+				if (loginSystem.containsNickname(newNickname)) {
+					System.out.println("This nickname is already taken.");
+				} else {
+					String oldNickname = loggedUser.getNickname();
+					loginSystem.changeNickname(newNickname);
+					System.out.println("Old nickname: " + oldNickname);
+					System.out.println("New nickname: " + newNickname);
+				}
 				break;
 			case 5:
 				loginSystem.changePassword();
