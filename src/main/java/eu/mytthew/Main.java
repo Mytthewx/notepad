@@ -6,7 +6,6 @@ public class Main {
 
 
 	public static void main(String[] args) {
-		Notebook notebook = new Notebook();
 		LoginSystem loginSystem = new LoginSystem();
 		User loggedUser = null;
 		boolean isUserLogged = false;
@@ -34,15 +33,15 @@ public class Main {
 					System.out.println("Wrong choice. Choose 1, 2 or 3.");
 			}
 			while (isUserLogged) {
-				display(loginSystem, notebook, loggedUser);
+				display(loginSystem, loggedUser);
 			}
 		}
 	}
 
-	public static void display(LoginSystem loginSystem, Notebook notebook, User loggedUser) {
+	public static void display(LoginSystem loginSystem, User loggedUser) {
 		System.out.println("Menu:");
 		System.out.println("1. Add note");
-		System.out.println("2. Review note");
+		System.out.println("2. Review notes");
 		System.out.println("3. Remove note");
 		System.out.println("4. Change login");
 		System.out.println("5. Change password");
@@ -51,15 +50,27 @@ public class Main {
 		int selection = scanner.nextInt();
 		switch (selection) {
 			case 1:
-				notebook.addNote(loggedUser);
+				addNote(loggedUser);
 				break;
 			case 2:
-				notebook.displayNotes(loggedUser);
+				if (loggedUser.getNotes().isEmpty()) {
+					System.out.println("There is no notes.");
+				} else {
+					loggedUser.getNotes().stream().map(Note::toString).forEach(System.out::println);
+				}
 				break;
 			case 3:
-				System.out.println("Select note: ");
-				int ID = scanner.nextInt();
-				notebook.removeNote(loggedUser, ID);
+				if (loggedUser.getNotes().isEmpty()) {
+					System.out.println("There is no notes.");
+				} else {
+					System.out.println("Select note: ");
+					int id = scanner.nextInt();
+					if (loggedUser.removeNote(id)) {
+						System.out.println("Note removed.");
+					} else {
+						System.out.println("Can't find note with this id.");
+					}
+				}
 				break;
 			case 4:
 				loginSystem.changeNickname();
@@ -72,6 +83,17 @@ public class Main {
 			default:
 				break;
 		}
+	}
+
+	public static void addNote(User user) {
+		System.out.println("Note title: ");
+		Scanner scanner = new Scanner(System.in);
+		String title = scanner.nextLine();
+		System.out.println("Your note:");
+		String content = scanner.nextLine();
+		Note note = new Note(title, content);
+		user.addNote(note);
+		System.out.println("Note added successfully!");
 	}
 }
 
