@@ -73,19 +73,25 @@ public class Main {
 		System.out.println("5. Change password");
 		System.out.println("0. Exit");
 		Scanner scanner = new Scanner(System.in);
-		int selection = scanner.nextInt();
+		String selection = scanner.next();
 		switch (selection) {
-			case 1:
-				addNote(loggedUser);
+			case "1":
+				System.out.println("Note title: ");
+				Scanner addNoteScanner = new Scanner(System.in);
+				String title = addNoteScanner.nextLine();
+				System.out.println("Your note:");
+				String content = addNoteScanner.next();
+				loggedUser.addNote(new Note(title, content));
+				System.out.println("Note added successfully!");
 				break;
-			case 2:
+			case "2":
 				if (loggedUser.getNotes().isEmpty()) {
 					System.out.println("There is no notes.");
 				} else {
 					loggedUser.getNotes().stream().map(Note::toString).forEach(System.out::println);
 				}
 				break;
-			case 3:
+			case "3":
 				if (loggedUser.getNotes().isEmpty()) {
 					System.out.println("There is no notes.");
 				} else {
@@ -98,7 +104,7 @@ public class Main {
 					}
 				}
 				break;
-			case 4:
+			case "4":
 				System.out.println("Type new login: ");
 				Scanner changeNicknameScanner = new Scanner(System.in);
 				String newNickname = changeNicknameScanner.next();
@@ -106,30 +112,30 @@ public class Main {
 					System.out.println("This nickname is already taken.");
 				} else {
 					String oldNickname = loggedUser.getNickname();
-					loginSystem.changeNickname(newNickname);
+					loggedUser.setNickname(newNickname);
+					System.out.println("Nickname changed successfully!");
 					System.out.println("Old nickname: " + oldNickname);
 					System.out.println("New nickname: " + newNickname);
 				}
 				break;
-			case 5:
-				loginSystem.changePassword();
+			case "5":
+				String oldPassword = loggedUser.getPassword();
+				System.out.println("Type new password: ");
+				Scanner changePasswordScanner = new Scanner(System.in);
+				String newPassword = changePasswordScanner.next();
+				if (oldPassword.equals(newPassword)) {
+					System.out.println("Password must be different from the previous password.");
+				} else {
+					loggedUser.setPassword(newPassword);
+					System.out.println("Password changed successfully!");
+				}
 				break;
-			case 0:
+			case "0":
 				System.exit(0);
 			default:
+				System.out.println("Wrong choice.");
 				break;
 		}
-	}
-
-	public static void addNote(User user) {
-		System.out.println("Note title: ");
-		Scanner scanner = new Scanner(System.in);
-		String title = scanner.nextLine();
-		System.out.println("Your note:");
-		String content = scanner.nextLine();
-		Note note = new Note(title, content);
-		user.addNote(note);
-		System.out.println("Note added successfully!");
 	}
 }
 

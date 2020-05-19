@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User {
-	List<Note> notes = new ArrayList<>();
+	private List<Note> notes = new ArrayList<>();
 	private String nickname;
 	private String password;
 
@@ -21,9 +21,9 @@ public class User {
 		return notes;
 	}
 
-	public boolean removeNote(int ID) {
+	public boolean removeNote(int id) {
 		for (int i = 0; i < notes.size(); i++) {
-			if (notes.get(i).getId() == ID) {
+			if (notes.get(i).getId() == id) {
 				notes.remove(notes.get(i));
 				return true;
 			}
