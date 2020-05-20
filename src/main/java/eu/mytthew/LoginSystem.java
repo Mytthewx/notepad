@@ -1,5 +1,8 @@
 package eu.mytthew;
 
+import com.google.common.hash.Hashing;
+
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +26,7 @@ public class LoginSystem {
 				.stream()
 				.filter(user -> user.getNickname().equals(nickname))
 				.findAny()
-				.filter(user -> user.getPassword().equals(password));
+				.filter(user -> user.getPassword().equals(Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString()));
 		if (optional.isPresent()) {
 			loggedUser = optional.get();
 			return true;

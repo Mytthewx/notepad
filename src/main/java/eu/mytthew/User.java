@@ -1,5 +1,8 @@
 package eu.mytthew;
 
+import com.google.common.hash.Hashing;
+
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +14,7 @@ public class User {
 
 	public User(String nickname, String password) {
 		this.nickname = nickname;
-		this.password = password;
+		this.password = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
 	}
 
 	public void addNote(Note note) {
@@ -46,6 +49,6 @@ public class User {
 	}
 
 	public void setPassword(String password) {
-		this.password = password;
+		this.password = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
 	}
 }
