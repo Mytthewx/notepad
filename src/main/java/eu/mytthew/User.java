@@ -4,6 +4,7 @@ import com.google.common.hash.Hashing;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public class User {
 	}
 
 	public List<Note> getNotes() {
-		return notes;
+		return Collections.unmodifiableList(notes);
 	}
 
 	public boolean removeNote(int id) {

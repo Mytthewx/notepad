@@ -91,8 +91,8 @@ public class Main {
 					System.out.println("There is no notes.");
 				} else {
 					System.out.println("Select note: ");
-					int id = Main.scanner.nextInt();
-					if (loggedUser.removeNote(id)) {
+					String id = scanner.nextLine();
+					if (loggedUser.removeNote(Integer.parseInt(id))) {
 						System.out.println("Note removed.");
 					} else {
 						System.out.println("Can't find note with this id.");
@@ -139,6 +139,8 @@ public class Main {
 						"\nContent: '" + note.getContent() + '\'' + "\n")
 				.forEach(System.out::println);
 	}
+
+
 }
 
 
