@@ -1,8 +1,11 @@
 package eu.mytthew;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class Main {
+	private static final Scanner scanner = new Scanner(System.in);
+
 	public static void main(String[] args) {
 		LoginSystem loginSystem = new LoginSystem();
 		User loggedUser = loginSystem.getLoggedUser();
@@ -12,17 +15,15 @@ public class Main {
 			System.out.println("1. Log in");
 			System.out.println("2. Add user");
 			System.out.println("0. Exit");
-			Scanner scanner = new Scanner(System.in);
-			String selection = scanner.next();
+			String selection = scanner.nextLine();
 			switch (selection) {
 				case "1":
-					Scanner loginScanner = new Scanner(System.in);
 					System.out.println("Enter nickname: ");
-					String login = loginScanner.nextLine();
+					String login = scanner.nextLine();
 					if (loginSystem.containsNickname(login)) {
 						while (!isUserLogged) {
 							System.out.println("Enter password: ");
-							String password = loginScanner.nextLine();
+							String password = scanner.nextLine();
 							if (loginSystem.login(login, password)) {
 								isUserLogged = true;
 								loggedUser = loginSystem.getLoggedUser();
@@ -37,10 +38,10 @@ public class Main {
 					}
 					break;
 				case "2":
-					Scanner addUserScanner = new Scanner(System.in);
 					System.out.println("Enter nickname: ");
-					String nickname = addUserScanner.nextLine();
-					String password = addUserScanner.nextLine();
+					String nickname = scanner.nextLine();
+					System.out.println("Enter password: ");
+					String password = scanner.nextLine();
 					if (loginSystem.addUser(nickname, password)) {
 						System.out.println("User added successfully!");
 					} else {
@@ -68,15 +69,13 @@ public class Main {
 		System.out.println("4. Change login");
 		System.out.println("5. Change password");
 		System.out.println("0. Exit");
-		Scanner scanner = new Scanner(System.in);
-		String selection = scanner.next();
+		String selection = scanner.nextLine();
 		switch (selection) {
 			case "1":
 				System.out.println("Note title: ");
-				Scanner addNoteScanner = new Scanner(System.in);
-				String title = addNoteScanner.nextLine();
+				String title = scanner.nextLine();
 				System.out.println("Your note:");
-				String content = addNoteScanner.nextLine();
+				String content = scanner.nextLine();
 				loggedUser.addNote(new Note(title, content));
 				System.out.println("Note added successfully!");
 				break;
@@ -84,7 +83,7 @@ public class Main {
 				if (loggedUser.getNotes().isEmpty()) {
 					System.out.println("There is no notes.");
 				} else {
-					loggedUser.getNotes().stream().map(Note::toString).forEach(System.out::println);
+					displayNotes(loggedUser);
 				}
 				break;
 			case "3":
@@ -92,7 +91,7 @@ public class Main {
 					System.out.println("There is no notes.");
 				} else {
 					System.out.println("Select note: ");
-					int id = scanner.nextInt();
+					int id = Main.scanner.nextInt();
 					if (loggedUser.removeNote(id)) {
 						System.out.println("Note removed.");
 					} else {
@@ -102,8 +101,7 @@ public class Main {
 				break;
 			case "4":
 				System.out.println("Type new login: ");
-				Scanner changeNicknameScanner = new Scanner(System.in);
-				String newNickname = changeNicknameScanner.nextLine();
+				String newNickname = scanner.nextLine();
 				if (loginSystem.containsNickname(newNickname)) {
 					System.out.println("This nickname is already taken.");
 				} else {
@@ -117,8 +115,7 @@ public class Main {
 			case "5":
 				String oldPassword = loggedUser.getPassword();
 				System.out.println("Type new password: ");
-				Scanner changePasswordScanner = new Scanner(System.in);
-				String newPassword = changePasswordScanner.nextLine();
+				String newPassword = scanner.nextLine();
 				if (oldPassword.equals(newPassword)) {
 					System.out.println("Password must be different from the previous password.");
 				} else {
@@ -132,6 +129,15 @@ public class Main {
 				System.out.println("Wrong choice.");
 				break;
 		}
+	}
+
+	public static void displayNotes(User user) {
+		user.getNotes().stream().map(note ->
+				"ID: " + note.getId() +
+						"\nDate: " + note.getNoteTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) +
+						"\nTitle: " + note.getTitle() +
+						"\nContent: '" + note.getContent() + '\'' + "\n")
+				.forEach(System.out::println);
 	}
 }
 
