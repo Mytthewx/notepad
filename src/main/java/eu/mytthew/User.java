@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class User {
-	private List<Note> notes = new ArrayList<>();
+	private final List<Note> notes = new ArrayList<>();
 	private String nickname;
 	private String password;
 

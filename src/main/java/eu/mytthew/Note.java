@@ -1,8 +1,9 @@
 package eu.mytthew;
 
 
+import com.google.common.base.Objects;
+
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class Note {
 	private static int globalID = 0;
@@ -20,11 +21,45 @@ public class Note {
 		return id;
 	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public LocalDateTime getNoteTime() {
+		return noteTime;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		Note note = (Note) o;
+		return id == note.id &&
+				Objects.equal(title, note.title) &&
+				Objects.equal(content, note.content) &&
+				Objects.equal(noteTime, note.noteTime);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(title, content, id, noteTime);
+	}
+
 	@Override
 	public String toString() {
-		return "ID: " + id +
-				"\nDate: " + noteTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) +
-				"\nTitle: " + title +
-				"\nContent: '" + content + '\'' + "\n";
+		return "Note{" +
+				"title='" + title + '\'' +
+				", content='" + content + '\'' +
+				", id=" + id +
+				", noteTime=" + noteTime +
+				'}';
 	}
 }

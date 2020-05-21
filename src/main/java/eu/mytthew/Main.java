@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Main {
 	public static void main(String[] args) {
 		LoginSystem loginSystem = new LoginSystem();
-		User loggedUser = null;
+		User loggedUser = loginSystem.getLoggedUser();
 		boolean isUserLogged = false;
 		boolean repeat = true;
 		while (repeat) {
@@ -40,10 +40,8 @@ public class Main {
 					Scanner addUserScanner = new Scanner(System.in);
 					System.out.println("Enter nickname: ");
 					String nickname = addUserScanner.nextLine();
-					if (!loginSystem.containsNickname(nickname)) {
-						System.out.println("Enter password: ");
-						String password = addUserScanner.nextLine();
-						loginSystem.addUser(nickname, password);
+					String password = addUserScanner.nextLine();
+					if (loginSystem.addUser(nickname, password)) {
 						System.out.println("User added successfully!");
 					} else {
 						System.out.println("This nickname is already taken.");
