@@ -1,5 +1,8 @@
 package eu.mytthew;
 
+import com.google.common.hash.Hashing;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Main {
@@ -121,7 +124,7 @@ public class Main {
 				System.out.println("Type new password: ");
 				Scanner changePasswordScanner = new Scanner(System.in);
 				String newPassword = changePasswordScanner.nextLine();
-				if (oldPassword.equals(newPassword)) {
+				if (oldPassword.equals(Hashing.sha256().hashString(newPassword, StandardCharsets.UTF_8).toString())) {
 					System.out.println("Password must be different from the previous password.");
 				} else {
 					loggedUser.setPassword(newPassword);
