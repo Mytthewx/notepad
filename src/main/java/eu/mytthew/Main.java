@@ -10,7 +10,6 @@ public class Main {
 
 	public static void main(String[] args) {
 		LoginSystem loginSystem = new LoginSystem();
-		User loggedUser = loginSystem.getLoggedUser();
 		boolean isUserLogged = false;
 		boolean repeat = true;
 		while (repeat) {
@@ -28,7 +27,6 @@ public class Main {
 							String password = scanner.nextLine();
 							if (loginSystem.login(login, password)) {
 								isUserLogged = true;
-								loggedUser = loginSystem.getLoggedUser();
 								repeat = false;
 								System.out.println("Logged in!");
 							} else {
@@ -58,7 +56,7 @@ public class Main {
 					break;
 			}
 			while (isUserLogged) {
-				display(loginSystem, loggedUser);
+				display(loginSystem, loginSystem.getLoggedUser());
 			}
 		}
 	}
