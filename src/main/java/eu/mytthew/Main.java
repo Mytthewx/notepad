@@ -3,6 +3,8 @@ package eu.mytthew;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+import static eu.mytthew.HashPassword.hashPassword;
+
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
 
@@ -116,7 +118,7 @@ public class Main {
 				String oldPassword = loggedUser.getPassword();
 				System.out.println("Type new password: ");
 				String newPassword = scanner.nextLine();
-				if (oldPassword.equals(newPassword)) {
+				if (oldPassword.equals(hashPassword(newPassword))) {
 					System.out.println("Password must be different from the previous password.");
 				} else {
 					loggedUser.setPassword(newPassword);
@@ -139,8 +141,6 @@ public class Main {
 						"\nContent: '" + note.getContent() + '\'' + "\n")
 				.forEach(System.out::println);
 	}
-
-
 }
 
 
