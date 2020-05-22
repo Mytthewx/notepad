@@ -56,12 +56,12 @@ public class Main {
 					break;
 			}
 			while (isUserLogged) {
-				display(loginSystem, loginSystem.getLoggedUser());
+				display(loginSystem);
 			}
 		}
 	}
 
-	public static void display(LoginSystem loginSystem, User loggedUser) {
+	public static void display(LoginSystem loginSystem) {
 		System.out.println("Menu:");
 		System.out.println("1. Add note");
 		System.out.println("2. Review notes");
@@ -76,23 +76,23 @@ public class Main {
 				String title = scanner.nextLine();
 				System.out.println("Your note:");
 				String content = scanner.nextLine();
-				loggedUser.addNote(new Note(title, content));
+				loginSystem.getLoggedUser().addNote(new Note(title, content));
 				System.out.println("Note added successfully!");
 				break;
 			case "2":
-				if (loggedUser.getNotes().isEmpty()) {
+				if (loginSystem.getLoggedUser().getNotes().isEmpty()) {
 					System.out.println("There is no notes.");
 				} else {
-					displayNotes(loggedUser);
+					displayNotes(loginSystem.getLoggedUser());
 				}
 				break;
 			case "3":
-				if (loggedUser.getNotes().isEmpty()) {
+				if (loginSystem.getLoggedUser().getNotes().isEmpty()) {
 					System.out.println("There is no notes.");
 				} else {
 					System.out.println("Select note: ");
 					String id = scanner.nextLine();
-					if (loggedUser.removeNote(Integer.parseInt(id))) {
+					if (loginSystem.getLoggedUser().removeNote(Integer.parseInt(id))) {
 						System.out.println("Note removed.");
 					} else {
 						System.out.println("Can't find note with this id.");
@@ -105,21 +105,21 @@ public class Main {
 				if (loginSystem.containsNickname(newNickname)) {
 					System.out.println("This nickname is already taken.");
 				} else {
-					String oldNickname = loggedUser.getNickname();
-					loggedUser.setNickname(newNickname);
+					String oldNickname = loginSystem.getLoggedUser().getNickname();
+					loginSystem.getLoggedUser().setNickname(newNickname);
 					System.out.println("Nickname changed successfully!");
 					System.out.println("Old nickname: " + oldNickname);
 					System.out.println("New nickname: " + newNickname);
 				}
 				break;
 			case "5":
-				String oldPassword = loggedUser.getPassword();
+				String oldPassword = loginSystem.getLoggedUser().getPassword();
 				System.out.println("Type new password: ");
 				String newPassword = scanner.nextLine();
 				if (oldPassword.equals(hashPassword(newPassword))) {
 					System.out.println("Password must be different from the previous password.");
 				} else {
-					loggedUser.setPassword(newPassword);
+					loginSystem.getLoggedUser().setPassword(newPassword);
 					System.out.println("Password changed successfully!");
 				}
 				break;
