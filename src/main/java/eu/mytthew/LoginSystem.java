@@ -34,8 +34,12 @@ public class LoginSystem {
 		return false;
 	}
 
-	public void addUser(String nickname, String password) {
+	public boolean addUser(String nickname, String password) {
+		if (users.stream().anyMatch(user -> user.getNickname().equals(nickname))) {
+			return false;
+		}
 		users.add(new User(nickname, password));
+		return true;
 	}
 }
 

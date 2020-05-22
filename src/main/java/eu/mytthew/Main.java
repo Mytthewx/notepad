@@ -1,34 +1,32 @@
 package eu.mytthew;
 
-import com.google.common.hash.Hashing;
-
-import java.nio.charset.StandardCharsets;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+import static eu.mytthew.HashPassword.hashPassword;
+
 public class Main {
+	private static final Scanner scanner = new Scanner(System.in);
+
 	public static void main(String[] args) {
 		LoginSystem loginSystem = new LoginSystem();
-		User loggedUser = null;
 		boolean isUserLogged = false;
 		boolean repeat = true;
 		while (repeat) {
 			System.out.println("1. Log in");
 			System.out.println("2. Add user");
 			System.out.println("0. Exit");
-			Scanner scanner = new Scanner(System.in);
-			String selection = scanner.next();
+			String selection = scanner.nextLine();
 			switch (selection) {
 				case "1":
-					Scanner loginScanner = new Scanner(System.in);
 					System.out.println("Enter nickname: ");
-					String login = loginScanner.nextLine();
+					String login = scanner.nextLine();
 					if (loginSystem.containsNickname(login)) {
 						while (!isUserLogged) {
 							System.out.println("Enter password: ");
-							String password = loginScanner.nextLine();
+							String password = scanner.nextLine();
 							if (loginSystem.login(login, password)) {
 								isUserLogged = true;
-								loggedUser = loginSystem.getLoggedUser();
 								repeat = false;
 								System.out.println("Logged in!");
 							} else {
@@ -40,13 +38,11 @@ public class Main {
 					}
 					break;
 				case "2":
-					Scanner addUserScanner = new Scanner(System.in);
 					System.out.println("Enter nickname: ");
-					String nickname = addUserScanner.nextLine();
-					if (!loginSystem.containsNickname(nickname)) {
-						System.out.println("Enter password: ");
-						String password = addUserScanner.nextLine();
-						loginSystem.addUser(nickname, password);
+					String nickname = scanner.nextLine();
+					System.out.println("Enter password: ");
+					String password = scanner.nextLine();
+					if (loginSystem.addUser(nickname, password)) {
 						System.out.println("User added successfully!");
 					} else {
 						System.out.println("This nickname is already taken.");
@@ -60,12 +56,12 @@ public class Main {
 					break;
 			}
 			while (isUserLogged) {
-				display(loginSystem, loggedUser);
+				display(loginSystem);
 			}
 		}
 	}
 
-	public static void display(LoginSystem loginSystem, User loggedUser) {
+	public static void display(LoginSystem loginSystem) {
 		System.out.println("Menu:");
 		System.out.println("1. Add note");
 		System.out.println("2. Review notes");
@@ -73,32 +69,30 @@ public class Main {
 		System.out.println("4. Change login");
 		System.out.println("5. Change password");
 		System.out.println("0. Exit");
-		Scanner scanner = new Scanner(System.in);
-		String selection = scanner.next();
+		String selection = scanner.nextLine();
 		switch (selection) {
 			case "1":
 				System.out.println("Note title: ");
-				Scanner addNoteScanner = new Scanner(System.in);
-				String title = addNoteScanner.nextLine();
+				String title = scanner.nextLine();
 				System.out.println("Your note:");
-				String content = addNoteScanner.nextLine();
-				loggedUser.addNote(new Note(title, content));
+				String content = scanner.nextLine();
+				loginSystem.getLoggedUser().addNote(new Note(title, content));
 				System.out.println("Note added successfully!");
 				break;
 			case "2":
-				if (loggedUser.getNotes().isEmpty()) {
+				if (loginSystem.getLoggedUser().getNotes().isEmpty()) {
 					System.out.println("There is no notes.");
 				} else {
-					loggedUser.getNotes().stream().map(Note::toString).forEach(System.out::println);
+					displayNotes(loginSystem.getLoggedUser());
 				}
 				break;
 			case "3":
-				if (loggedUser.getNotes().isEmpty()) {
+				if (loginSystem.getLoggedUser().getNotes().isEmpty()) {
 					System.out.println("There is no notes.");
 				} else {
 					System.out.println("Select note: ");
-					int id = scanner.nextInt();
-					if (loggedUser.removeNote(id)) {
+					String id = scanner.nextLine();
+					if (loginSystem.getLoggedUser().removeNote(Integer.parseInt(id))) {
 						System.out.println("Note removed.");
 					} else {
 						System.out.println("Can't find note with this id.");
@@ -107,27 +101,25 @@ public class Main {
 				break;
 			case "4":
 				System.out.println("Type new login: ");
-				Scanner changeNicknameScanner = new Scanner(System.in);
-				String newNickname = changeNicknameScanner.nextLine();
+				String newNickname = scanner.nextLine();
 				if (loginSystem.containsNickname(newNickname)) {
 					System.out.println("This nickname is already taken.");
 				} else {
-					String oldNickname = loggedUser.getNickname();
-					loggedUser.setNickname(newNickname);
+					String oldNickname = loginSystem.getLoggedUser().getNickname();
+					loginSystem.getLoggedUser().setNickname(newNickname);
 					System.out.println("Nickname changed successfully!");
 					System.out.println("Old nickname: " + oldNickname);
 					System.out.println("New nickname: " + newNickname);
 				}
 				break;
 			case "5":
-				String oldPassword = loggedUser.getPassword();
+				String oldPassword = loginSystem.getLoggedUser().getPassword();
 				System.out.println("Type new password: ");
-				Scanner changePasswordScanner = new Scanner(System.in);
-				String newPassword = changePasswordScanner.nextLine();
-				if (oldPassword.equals(Hashing.sha256().hashString(newPassword, StandardCharsets.UTF_8).toString())) {
+				String newPassword = scanner.nextLine();
+				if (oldPassword.equals(hashPassword(newPassword))) {
 					System.out.println("Password must be different from the previous password.");
 				} else {
-					loggedUser.setPassword(newPassword);
+					loginSystem.getLoggedUser().setPassword(newPassword);
 					System.out.println("Password changed successfully!");
 				}
 				break;
@@ -137,6 +129,15 @@ public class Main {
 				System.out.println("Wrong choice.");
 				break;
 		}
+	}
+
+	public static void displayNotes(User user) {
+		user.getNotes().stream().map(note ->
+				"ID: " + note.getId() +
+						"\nDate: " + note.getNoteTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) +
+						"\nTitle: " + note.getTitle() +
+						"\nContent: '" + note.getContent() + '\'' + "\n")
+				.forEach(System.out::println);
 	}
 }
 
