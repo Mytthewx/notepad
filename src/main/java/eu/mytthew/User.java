@@ -1,5 +1,8 @@
 package eu.mytthew;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,9 +10,13 @@ import java.util.Optional;
 
 import static eu.mytthew.HashPassword.hashPassword;
 
+
 public class User {
 	private final List<Note> notes = new ArrayList<>();
+	@Getter
+	@Setter
 	private String nickname;
+	@Getter
 	private String password;
 
 	public User(String nickname, String password) {
@@ -34,18 +41,6 @@ public class User {
 			return true;
 		}
 		return false;
-	}
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
 	}
 
 	public void setPassword(String password) {

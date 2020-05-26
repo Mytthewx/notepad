@@ -1,6 +1,7 @@
 package eu.mytthew;
 
 import com.google.common.hash.Hashing;
+import lombok.Getter;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -9,11 +10,8 @@ import java.util.Optional;
 
 public class LoginSystem {
 	private final List<User> users = new ArrayList<>();
+	@Getter
 	private User loggedUser;
-
-	public User getLoggedUser() {
-		return loggedUser;
-	}
 
 	public boolean containsNickname(String nickname) {
 		return users
