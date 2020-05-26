@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Getter
 public class LoginSystem {
 	private final List<User> users = new ArrayList<>();
+	@Getter
 	private User loggedUser;
 
 	public boolean containsNickname(String nickname) {

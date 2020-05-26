@@ -1,8 +1,6 @@
 package eu.mytthew;
 
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -11,15 +9,14 @@ import java.util.List;
 import java.util.Optional;
 
 import static eu.mytthew.HashPassword.hashPassword;
-import static lombok.AccessLevel.NONE;
 
-@Data
-@NoArgsConstructor(access = NONE)
-@Getter
-@Setter
+
 public class User {
 	private final List<Note> notes = new ArrayList<>();
+	@Getter
+	@Setter
 	private String nickname;
+	@Getter
 	private String password;
 
 	public User(String nickname, String password) {

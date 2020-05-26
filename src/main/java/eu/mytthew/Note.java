@@ -1,18 +1,19 @@
 package eu.mytthew;
 
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 import static lombok.AccessLevel.NONE;
 
-@Data
-@NoArgsConstructor(access = NONE)
 @Getter
 @EqualsAndHashCode
 @ToString
 public class Note {
+	@Getter(NONE)
 	private static int globalID = 0;
 	private final String title;
 	private final String content;
