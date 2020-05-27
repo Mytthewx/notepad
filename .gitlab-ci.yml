@@ -6,7 +6,7 @@ stages:
 
 build:
   stage: build
-  script: gradle build
+  script: gradle build -x test
   allow_failure: false
 
 test:
