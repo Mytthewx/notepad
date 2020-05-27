@@ -1,0 +1,14 @@
+image: gradle:jdk11
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script: gradle build -x test
+  allow_failure: false
+
+test:
+  stage: test
+  script: gradle test
