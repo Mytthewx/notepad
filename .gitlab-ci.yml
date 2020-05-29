@@ -13,20 +13,7 @@ build:
 test:
   stage: test
   script:
-    - gradle
+    - gradle test
   artifacts:
     paths:
-      - build/reports/jacoco/
-
-pages:
-  stage: deploy
-  dependencies:
-    - test
-  script:
-    - mkdir public
-    - mv build/reports/jacoco/test/html/* public
-  artifacts:
-    paths:
-      - public
-  only:
-    - master
+      - build/reports/jacoco
