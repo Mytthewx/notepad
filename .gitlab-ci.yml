@@ -3,7 +3,6 @@ image: gradle:jdk11
 stages:
   - build
   - test
-  - deploy
 
 build:
   stage: build
@@ -13,13 +12,10 @@ build:
 test:
   stage: test
   script:
-    - gradle test printCoverage
-  when: on_success
+    - ./gradlew test
   artifacts:
     paths:
       - build/reports/jacoco/
-
-
 
 pages:
   stage: deploy
@@ -27,7 +23,7 @@ pages:
     - test
   script:
     - mkdir public
-    - mv build/reports/jacoco/test/html/index.html public
+    - mv build/reports/jacoco/test/html/* public
   artifacts:
     paths:
       - public
