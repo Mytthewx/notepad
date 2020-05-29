@@ -18,8 +18,7 @@ test:
   artifacts:
     paths:
       - build/reports/jacoco/
-    reports:
-      junit: build/test-results/test/**.xml
+
 
 
 pages:
