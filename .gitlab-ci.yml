@@ -3,6 +3,7 @@ image: gradle:jdk11
 stages:
   - build
   - test
+  - deploy
 
 build:
   stage: build
@@ -22,7 +23,9 @@ test:
 
 
 pages:
-  stage: test
+  stage: deploy
+  dependencies:
+    - test
   script:
     - mkdir public
     - mv build/reports/jacoco/test/html/index.html public
