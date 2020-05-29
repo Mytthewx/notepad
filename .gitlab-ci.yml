@@ -3,7 +3,6 @@ image: gradle:jdk11
 stages:
   - build
   - test
-  - junit
 
 build:
   stage: build
@@ -12,13 +11,8 @@ build:
 
 test:
   stage: test
-  script: gradle test
-
-junit:
-  stage: test
   script:
     - gradle test printCoverage
-  coverage: '/^Coverage:\s(\d+\.\d+%)/'
   when: on_success
   artifacts:
     paths:
@@ -26,10 +20,9 @@ junit:
     reports:
       junit: build/test-results/test/**.xml
 
+
 pages:
-  stage: junit
-  dependencies:
-    - junit
+  stage: test
   script:
     - mkdir public
     - mv build/reports/jacoco/test/html/index.html public
