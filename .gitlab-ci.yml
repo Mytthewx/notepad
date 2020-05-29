@@ -3,6 +3,7 @@ image: gradle:jdk11
 stages:
   - build
   - test
+  - deploy
 
 build:
   stage: build
