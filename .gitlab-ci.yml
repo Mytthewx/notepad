@@ -3,6 +3,7 @@ image: gradle:jdk11
 stages:
   - build
   - test
+  - junit
 
 build:
   stage: build
@@ -15,8 +16,6 @@ test:
 
 junit:
   stage: test
-  dependencies:
-    - compile
   script:
     - gradle test printCoverage
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
@@ -28,7 +27,7 @@ junit:
       junit: build/test-results/test/**.xml
 
 pages:
-  stage: deploy
+  stage: junit
   dependencies:
     - junit
   script:
