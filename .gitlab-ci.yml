@@ -12,3 +12,17 @@ build:
 test:
   stage: test
   script: gradle test
+
+junit:
+  stage: test
+  dependencies:
+    - compile
+  script:
+    - gradle test printCoverage
+  coverage: '/^Coverage:\s(\d+\.\d+%)/'
+  when: on_success
+  artifacts:
+    paths:
+      - build/reports/jacoco/
+    reports:
+      junit: build/test-results/test/**.xml
