@@ -19,7 +19,7 @@ junit:
     - compile
   script:
     - gradle test printCoverage
-  coverage: '/(\d+.\d+\%) covered/ '
+  coverage: '\(\d+.\d+\%\) covered'
   when: on_success
   artifacts:
     paths:
