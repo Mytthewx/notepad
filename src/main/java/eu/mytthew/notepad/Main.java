@@ -1,9 +1,9 @@
-package eu.mytthew;
+package eu.mytthew.notepad;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-import static eu.mytthew.HashPassword.hashPassword;
+import static eu.mytthew.notepad.HashPassword.hashPassword;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
