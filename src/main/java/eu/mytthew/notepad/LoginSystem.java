@@ -1,4 +1,4 @@
-package eu.mytthew;
+package eu.mytthew.notepad;
 
 import com.google.common.hash.Hashing;
 import lombok.Getter;
