@@ -1,6 +1,7 @@
 package eu.mytthew.notepad;
 
-import eu.mytthew.notepad.auth.AuthService;
+import eu.mytthew.notepad.auth.IAuthService;
+import eu.mytthew.notepad.auth.RuntimeAuthService;
 import eu.mytthew.notepad.entity.User;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +12,7 @@ public class NotepadTest {
 	@Test
 	public void isUserLoggedWithNullTest() {
 		// given
-		AuthService authService = new AuthService();
+		IAuthService authService = new RuntimeAuthService();
 
 		// when
 		User loggedUser = authService.getLoggedUser();

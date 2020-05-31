@@ -9,17 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class AuthService {
+public class RuntimeAuthService implements IAuthService {
 	private final List<User> users = new ArrayList<>();
 	@Getter
 	User loggedUser;
 
+	@Override
 	public boolean containsNickname(String nickname) {
 		return users
 				.stream()
 				.anyMatch(user -> user.getNickname().equals(nickname));
 	}
 
+	@Override
 	public boolean login(String nickname, String password) {
 		Optional<User> optional = users
 				.stream()
@@ -33,6 +35,7 @@ public class AuthService {
 		return false;
 	}
 
+	@Override
 	public boolean changePassword(String oldPassword, String newPassword) {
 		if (loggedUser.getPassword().equals(hashPassword(oldPassword))) {
 			loggedUser.setPassword(hashPassword(newPassword));
@@ -41,6 +44,7 @@ public class AuthService {
 		return false;
 	}
 
+	@Override
 	public boolean addUser(String nickname, String password) {
 		if (users.stream().anyMatch(user -> user.getNickname().equals(nickname))) {
 			return false;
