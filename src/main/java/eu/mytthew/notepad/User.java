@@ -19,7 +19,7 @@ public class User {
 
 	public User(String nickname, String password) {
 		this.nickname = nickname;
-		this.password = HashPassword.hashPassword(password);
+		this.password = password;
 	}
 
 	public void addNote(Note note) {
@@ -42,6 +42,6 @@ public class User {
 	}
 
 	public void setPassword(String password) {
-		this.password = HashPassword.hashPassword(password);
+		this.password = password;
 	}
 }

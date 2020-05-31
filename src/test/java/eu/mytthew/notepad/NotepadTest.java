@@ -1,5 +1,6 @@
 package eu.mytthew.notepad;
 
+import eu.mytthew.notepad.auth.AuthService;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,10 +10,10 @@ public class NotepadTest {
 	@Test
 	public void isUserLoggedWithNullTest() {
 		// given
-		LoginSystem loginSystem = new LoginSystem();
+		AuthService authService = new AuthService();
 
 		// when
-		User loggedUser = loginSystem.getLoggedUser();
+		User loggedUser = authService.getLoggedUser();
 
 		// then
 		assertNull(loggedUser);
