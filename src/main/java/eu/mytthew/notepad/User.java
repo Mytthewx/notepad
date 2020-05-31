@@ -8,8 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static eu.mytthew.notepad.auth.AuthService.hashPassword;
-
 
 public class User {
 	private final List<Note> notes = new ArrayList<>();
@@ -21,7 +19,7 @@ public class User {
 
 	public User(String nickname, String password) {
 		this.nickname = nickname;
-		this.password = hashPassword(password);
+		this.password = password;
 	}
 
 	public void addNote(Note note) {
@@ -44,6 +42,6 @@ public class User {
 	}
 
 	public void setPassword(String password) {
-		this.password = hashPassword(password);
+		this.password = password;
 	}
 }

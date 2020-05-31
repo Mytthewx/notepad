@@ -34,7 +34,7 @@ public class AuthService {
 	}
 
 	public void changePassword(String password) {
-		loggedUser.setPassword(password);
+		loggedUser.setPassword(hashPassword(password));
 	}
 
 	public boolean isCorrectPassword(String password) {
@@ -45,11 +45,11 @@ public class AuthService {
 		if (users.stream().anyMatch(user -> user.getNickname().equals(nickname))) {
 			return false;
 		}
-		users.add(new User(nickname, password));
+		users.add(new User(nickname, hashPassword(password)));
 		return true;
 	}
 
-	public static String hashPassword(String password) {
+	private String hashPassword(String password) {
 		return Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
 	}
 }
