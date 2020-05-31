@@ -7,7 +7,6 @@ import java.util.Scanner;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
-	static boolean isUserLogged = false;
 
 	public static void main(String[] args) {
 		AuthService authService = new AuthService();
@@ -49,6 +48,7 @@ public class Main {
 	}
 
 	public static void loginLoop(AuthService authService, String login) {
+		boolean isUserLogged = false;
 		while (!isUserLogged) {
 			System.out.println("Enter password: ");
 			String password = scanner.nextLine();
@@ -119,7 +119,7 @@ public class Main {
 				case "5":
 					System.out.println("Type new password: ");
 					String newPassword = scanner.nextLine();
-					if (authService.identicalPassword(newPassword)) {
+					if (authService.isCorrectPassword(newPassword)) {
 						System.out.println("Password must be different from the previous password.");
 					} else {
 						authService.changePassword(newPassword);

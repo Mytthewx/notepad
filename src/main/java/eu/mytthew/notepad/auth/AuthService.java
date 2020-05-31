@@ -1,13 +1,13 @@
 package eu.mytthew.notepad.auth;
 
+import com.google.common.hash.Hashing;
 import eu.mytthew.notepad.User;
 import lombok.Getter;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static eu.mytthew.notepad.HashPassword.hashPassword;
 
 public class AuthService {
 	private final List<User> users = new ArrayList<>();
@@ -37,7 +37,7 @@ public class AuthService {
 		loggedUser.setPassword(password);
 	}
 
-	public boolean identicalPassword(String password) {
+	public boolean isCorrectPassword(String password) {
 		return getLoggedUser().getPassword().equals(hashPassword(password));
 	}
 
@@ -47,5 +47,9 @@ public class AuthService {
 		}
 		users.add(new User(nickname, password));
 		return true;
+	}
+
+	public static String hashPassword(String password) {
+		return Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
 	}
 }
