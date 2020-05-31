@@ -1,7 +1,7 @@
 package eu.mytthew.notepad.auth;
 
 import com.google.common.hash.Hashing;
-import eu.mytthew.notepad.User;
+import eu.mytthew.notepad.entity.User;
 import lombok.Getter;
 
 import java.nio.charset.StandardCharsets;

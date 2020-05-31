@@ -1,4 +1,4 @@
-package eu.mytthew.notepad;
+package eu.mytthew.notepad.entity;
 
 import lombok.Getter;
 import lombok.Setter;

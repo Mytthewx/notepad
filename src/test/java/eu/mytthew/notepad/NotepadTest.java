@@ -1,6 +1,7 @@
 package eu.mytthew.notepad;
 
 import eu.mytthew.notepad.auth.AuthService;
+import eu.mytthew.notepad.entity.User;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

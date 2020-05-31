@@ -1,6 +1,8 @@
 package eu.mytthew.notepad;
 
 import eu.mytthew.notepad.auth.AuthService;
+import eu.mytthew.notepad.entity.Note;
+import eu.mytthew.notepad.entity.User;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
