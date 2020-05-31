@@ -33,12 +33,12 @@ public class AuthService {
 		return false;
 	}
 
-	public void changePassword(String password) {
-		loggedUser.setPassword(hashPassword(password));
-	}
-
-	public boolean isCorrectPassword(String password) {
-		return getLoggedUser().getPassword().equals(hashPassword(password));
+	public boolean changePassword(String oldPassword, String newPassword) {
+		if (loggedUser.getPassword().equals(hashPassword(oldPassword))) {
+			loggedUser.setPassword(hashPassword(newPassword));
+			return true;
+		}
+		return false;
 	}
 
 	public boolean addUser(String nickname, String password) {

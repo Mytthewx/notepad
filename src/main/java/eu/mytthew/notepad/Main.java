@@ -117,20 +117,21 @@ public class Main {
 					}
 					break;
 				case "5":
-					System.out.println("Type new password: ");
+					System.out.println("Type current password:");
+					String currentPassword = scanner.nextLine();
+					System.out.println("Type new password:");
 					String newPassword = scanner.nextLine();
-					if (authService.isCorrectPassword(newPassword)) {
-						System.out.println("Password must be different from the previous password.");
+					if (authService.changePassword(currentPassword, newPassword)) {
+						System.out.println("Password changed successfully.");
 					} else {
-						authService.changePassword(newPassword);
-						System.out.println("Password changed successfully!");
+						System.out.println("Wrong current password.");
 					}
 					break;
 				case "6":
 					System.out.println("Logged out.");
 					return;
 				case "0":
-					System.exit(0);
+					return;
 				default:
 					System.out.println("Wrong choice.");
 					break;
