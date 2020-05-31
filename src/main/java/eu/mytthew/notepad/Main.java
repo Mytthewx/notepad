@@ -1,16 +1,16 @@
 package eu.mytthew.notepad;
 
+import eu.mytthew.notepad.auth.AuthService;
+
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-import static eu.mytthew.notepad.HashPassword.hashPassword;
-
 public class Main {
+	static AuthService authService = new AuthService();
 	private static final Scanner scanner = new Scanner(System.in);
+	static boolean isUserLogged = false;
 
 	public static void main(String[] args) {
-		LoginSystem loginSystem = new LoginSystem();
-		boolean isUserLogged = false;
 		boolean repeat = true;
 		while (repeat) {
 			System.out.println("1. Log in");
@@ -21,18 +21,8 @@ public class Main {
 				case "1":
 					System.out.println("Enter nickname: ");
 					String login = scanner.nextLine();
-					if (loginSystem.containsNickname(login)) {
-						while (!isUserLogged) {
-							System.out.println("Enter password: ");
-							String password = scanner.nextLine();
-							if (loginSystem.login(login, password)) {
-								isUserLogged = true;
-								repeat = false;
-								System.out.println("Logged in!");
-							} else {
-								System.out.println("Wrong password!");
-							}
-						}
+					if (authService.containsNickname(login)) {
+						loginLoop(login);
 					} else {
 						System.out.println("The user with the given name does not exist.");
 					}
@@ -42,7 +32,7 @@ public class Main {
 					String nickname = scanner.nextLine();
 					System.out.println("Enter password: ");
 					String password = scanner.nextLine();
-					if (loginSystem.addUser(nickname, password)) {
+					if (authService.addUser(nickname, password)) {
 						System.out.println("User added successfully!");
 					} else {
 						System.out.println("This nickname is already taken.");
@@ -55,79 +45,96 @@ public class Main {
 					System.out.println("Wrong choice. Choose 1, 2 or 0.");
 					break;
 			}
-			while (isUserLogged) {
-				display(loginSystem);
+		}
+	}
+
+	public static void loginLoop(String login) {
+		while (!isUserLogged) {
+			System.out.println("Enter password: ");
+			String password = scanner.nextLine();
+			if (authService.login(login, password)) {
+				System.out.println("Logged in!");
+				isUserLogged = true;
+				display(authService);
+			} else {
+				System.out.println("Wrong password!");
 			}
 		}
 	}
 
-	public static void display(LoginSystem loginSystem) {
-		System.out.println("Menu:");
-		System.out.println("1. Add note");
-		System.out.println("2. Review notes");
-		System.out.println("3. Remove note");
-		System.out.println("4. Change login");
-		System.out.println("5. Change password");
-		System.out.println("0. Exit");
-		String selection = scanner.nextLine();
-		switch (selection) {
-			case "1":
-				System.out.println("Note title: ");
-				String title = scanner.nextLine();
-				System.out.println("Your note:");
-				String content = scanner.nextLine();
-				loginSystem.getLoggedUser().addNote(new Note(title, content));
-				System.out.println("Note added successfully!");
-				break;
-			case "2":
-				if (loginSystem.getLoggedUser().getNotes().isEmpty()) {
-					System.out.println("There is no notes.");
-				} else {
-					displayNotes(loginSystem.getLoggedUser());
-				}
-				break;
-			case "3":
-				if (loginSystem.getLoggedUser().getNotes().isEmpty()) {
-					System.out.println("There is no notes.");
-				} else {
-					System.out.println("Select note: ");
-					String id = scanner.nextLine();
-					if (loginSystem.getLoggedUser().removeNote(Integer.parseInt(id))) {
-						System.out.println("Note removed.");
+	public static void display(AuthService authService) {
+		boolean repeat = true;
+		while (repeat) {
+			System.out.println("Menu:");
+			System.out.println("1. Add note");
+			System.out.println("2. Review notes");
+			System.out.println("3. Remove note");
+			System.out.println("4. Change login");
+			System.out.println("5. Change password");
+			System.out.println("6. Logout");
+			System.out.println("0. Exit");
+			String selection = scanner.nextLine();
+			switch (selection) {
+				case "1":
+					System.out.println("Note title: ");
+					String title = scanner.nextLine();
+					System.out.println("Your note:");
+					String content = scanner.nextLine();
+					authService.getLoggedUser().addNote(new Note(title, content));
+					System.out.println("Note added successfully!");
+					break;
+				case "2":
+					if (authService.getLoggedUser().getNotes().isEmpty()) {
+						System.out.println("There is no notes.");
 					} else {
-						System.out.println("Can't find note with this id.");
+						displayNotes(authService.getLoggedUser());
 					}
-				}
-				break;
-			case "4":
-				System.out.println("Type new login: ");
-				String newNickname = scanner.nextLine();
-				if (loginSystem.containsNickname(newNickname)) {
-					System.out.println("This nickname is already taken.");
-				} else {
-					String oldNickname = loginSystem.getLoggedUser().getNickname();
-					loginSystem.getLoggedUser().setNickname(newNickname);
-					System.out.println("Nickname changed successfully!");
-					System.out.println("Old nickname: " + oldNickname);
-					System.out.println("New nickname: " + newNickname);
-				}
-				break;
-			case "5":
-				String oldPassword = loginSystem.getLoggedUser().getPassword();
-				System.out.println("Type new password: ");
-				String newPassword = scanner.nextLine();
-				if (oldPassword.equals(hashPassword(newPassword))) {
-					System.out.println("Password must be different from the previous password.");
-				} else {
-					loginSystem.getLoggedUser().setPassword(newPassword);
-					System.out.println("Password changed successfully!");
-				}
-				break;
-			case "0":
-				System.exit(0);
-			default:
-				System.out.println("Wrong choice.");
-				break;
+					break;
+				case "3":
+					if (authService.getLoggedUser().getNotes().isEmpty()) {
+						System.out.println("There is no notes.");
+					} else {
+						System.out.println("Select note: ");
+						String id = scanner.nextLine();
+						if (authService.getLoggedUser().removeNote(Integer.parseInt(id))) {
+							System.out.println("Note removed.");
+						} else {
+							System.out.println("Can't find note with this id.");
+						}
+					}
+					break;
+				case "4":
+					System.out.println("Type new login: ");
+					String newNickname = scanner.nextLine();
+					if (authService.containsNickname(newNickname)) {
+						System.out.println("This nickname is already taken.");
+					} else {
+						String oldNickname = authService.getLoggedUser().getNickname();
+						authService.getLoggedUser().setNickname(newNickname);
+						System.out.println("Nickname changed successfully!");
+						System.out.println("Old nickname: " + oldNickname);
+						System.out.println("New nickname: " + newNickname);
+					}
+					break;
+				case "5":
+					System.out.println("Type new password: ");
+					String newPassword = scanner.nextLine();
+					if (authService.identicalPassword(newPassword)) {
+						System.out.println("Password must be different from the previous password.");
+					} else {
+						authService.changePassword(newPassword);
+						System.out.println("Password changed successfully!");
+					}
+					break;
+				case "6":
+					System.out.println("Logged out.");
+					return;
+				case "0":
+					System.exit(0);
+				default:
+					System.out.println("Wrong choice.");
+					break;
+			}
 		}
 	}
 
