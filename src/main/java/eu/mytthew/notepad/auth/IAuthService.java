@@ -11,5 +11,5 @@ public interface IAuthService {
 
 	boolean addUser(String nickname, String password);
 
-	public User getLoggedUser();
+	User getLoggedUser();
 }

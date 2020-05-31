@@ -12,7 +12,7 @@ import java.util.Optional;
 public class RuntimeAuthService implements IAuthService {
 	private final List<User> users = new ArrayList<>();
 	@Getter
-	User loggedUser;
+	private User loggedUser;
 
 	@Override
 	public boolean containsNickname(String nickname) {
