@@ -1,17 +1,18 @@
-package eu.mytthew.notepad;
+package eu.mytthew.notepad.auth;
 
-import com.google.common.hash.Hashing;
+import eu.mytthew.notepad.User;
 import lombok.Getter;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class LoginSystem {
+import static eu.mytthew.notepad.HashPassword.hashPassword;
+
+public class AuthService {
 	private final List<User> users = new ArrayList<>();
 	@Getter
-	private User loggedUser;
+	User loggedUser;
 
 	public boolean containsNickname(String nickname) {
 		return users
@@ -24,12 +25,20 @@ public class LoginSystem {
 				.stream()
 				.filter(user -> user.getNickname().equals(nickname))
 				.findAny()
-				.filter(user -> user.getPassword().equals(Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString()));
+				.filter(user -> user.getPassword().equals(hashPassword(password)));
 		if (optional.isPresent()) {
 			loggedUser = optional.get();
 			return true;
 		}
 		return false;
+	}
+
+	public void changePassword(String password) {
+		loggedUser.setPassword(password);
+	}
+
+	public boolean identicalPassword(String password) {
+		return getLoggedUser().getPassword().equals(hashPassword(password));
 	}
 
 	public boolean addUser(String nickname, String password) {
@@ -40,4 +49,3 @@ public class LoginSystem {
 		return true;
 	}
 }
-

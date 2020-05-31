@@ -6,11 +6,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class Main {
-	static AuthService authService = new AuthService();
 	private static final Scanner scanner = new Scanner(System.in);
 	static boolean isUserLogged = false;
 
 	public static void main(String[] args) {
+		AuthService authService = new AuthService();
 		boolean repeat = true;
 		while (repeat) {
 			System.out.println("1. Log in");
@@ -22,7 +22,7 @@ public class Main {
 					System.out.println("Enter nickname: ");
 					String login = scanner.nextLine();
 					if (authService.containsNickname(login)) {
-						loginLoop(login);
+						loginLoop(authService, login);
 					} else {
 						System.out.println("The user with the given name does not exist.");
 					}
@@ -48,7 +48,7 @@ public class Main {
 		}
 	}
 
-	public static void loginLoop(String login) {
+	public static void loginLoop(AuthService authService, String login) {
 		while (!isUserLogged) {
 			System.out.println("Enter password: ");
 			String password = scanner.nextLine();
