@@ -1,6 +1,7 @@
 package eu.mytthew.notepad;
 
-import eu.mytthew.notepad.auth.AuthService;
+import eu.mytthew.notepad.auth.IAuthService;
+import eu.mytthew.notepad.auth.RuntimeAuthService;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 
@@ -11,7 +12,7 @@ public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
 
 	public static void main(String[] args) {
-		AuthService authService = new AuthService();
+		IAuthService authService = new RuntimeAuthService();
 		boolean repeat = true;
 		while (repeat) {
 			System.out.println("1. Log in");
@@ -49,7 +50,7 @@ public class Main {
 		}
 	}
 
-	public static void loginLoop(AuthService authService, String login) {
+	public static void loginLoop(IAuthService authService, String login) {
 		boolean isUserLogged = false;
 		while (!isUserLogged) {
 			System.out.println("Enter password: ");
@@ -64,7 +65,7 @@ public class Main {
 		}
 	}
 
-	public static void display(AuthService authService) {
+	public static void display(IAuthService authService) {
 		boolean repeat = true;
 		while (repeat) {
 			System.out.println("Menu:");
@@ -133,7 +134,7 @@ public class Main {
 					System.out.println("Logged out.");
 					return;
 				case "0":
-					return;
+					System.exit(0);
 				default:
 					System.out.println("Wrong choice.");
 					break;
