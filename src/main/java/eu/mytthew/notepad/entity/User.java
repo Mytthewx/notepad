@@ -3,10 +3,7 @@ package eu.mytthew.notepad.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 public class User {
@@ -39,29 +36,15 @@ public class User {
 	}
 
 	public boolean removeNote(UUID uuid) {
-		if (notes.isEmpty()) {
-			return false;
-		}
-		for (int i = 0; i < notes.size(); i++) {
-			if (notes.get(i).getUuid().equals(uuid)) {
-				notes.remove(notes.get(i));
-				return true;
-			}
+		Optional<Note> optional = notes.stream()
+				.filter(note -> note.getUuid().equals(uuid))
+				.findAny();
+		if (optional.isPresent()) {
+			notes.remove(optional.get());
+			return true;
 		}
 		return false;
 	}
-
-
-//	public boolean removeNote(int id) {
-//		Optional<Note> optionalNote = notes.stream()
-//				.filter(note -> note.getId())
-//				.findAny();
-//		if (optionalNote.isPresent()) {
-//			notes.remove(optionalNote.get());
-//			return true;
-//		}
-//		return false;
-//	}
 
 	public void setPassword(String password) {
 		this.password = password;
