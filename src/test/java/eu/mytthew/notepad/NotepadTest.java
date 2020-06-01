@@ -1,9 +1,13 @@
+package eu.mytthew.notepad;
+
 import eu.mytthew.notepad.auth.IAuthService;
 import eu.mytthew.notepad.auth.RuntimeAuthService;
 import eu.mytthew.notepad.entity.Note;
+import eu.mytthew.notepad.entity.User;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 
 public class NotepadTest {
 	@Test
@@ -28,10 +32,12 @@ public class NotepadTest {
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		authService.getLoggedUser().addNote(new Note("Title", "Content"));
+		User loggedUser = authService.getLoggedUser();
+		Note note = new Note("Title", "Content");
+		authService.getLoggedUser().addNote(note);
 
 		// when
-		boolean result = authService.getLoggedUser().removeNote(0);
+		boolean result = loggedUser.removeNote(note.getUuid());
 
 		// then
 		assertTrue(result);
@@ -44,10 +50,13 @@ public class NotepadTest {
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		authService.getLoggedUser().addNote(new Note("Title", "Content"));
+		User loggedUser = authService.getLoggedUser();
+		Note note = new Note("Title", "Content");
+		Note note2 = new Note("Title", "Content");
+		authService.getLoggedUser().addNote(note);
 
 		// when
-		boolean result = authService.getLoggedUser().removeNote(1);
+		boolean result = loggedUser.removeNote(note2.getUuid());
 
 		// then
 		assertFalse(result);
