@@ -72,9 +72,10 @@ public class Main {
 			System.out.println("1. Add note");
 			System.out.println("2. Review notes");
 			System.out.println("3. Remove note");
-			System.out.println("4. Change login");
-			System.out.println("5. Change password");
-			System.out.println("6. Logout");
+			System.out.println("4. Edit note");
+			System.out.println("5. Change login");
+			System.out.println("6. Change password");
+			System.out.println("7. Logout");
 			System.out.println("0. Exit");
 			String selection = scanner.nextLine();
 			switch (selection) {
@@ -103,11 +104,30 @@ public class Main {
 						if (user.removeNote(user.getNotes().get(Integer.parseInt(id)).getUuid())) {
 							System.out.println("Note removed.");
 						} else {
-							System.out.println("Can't find note with this id.");
+							System.out.println("Note with this id doesn't exist.");
 						}
 					}
 					break;
 				case "4":
+					if (authService.getLoggedUser().getNotes().isEmpty()) {
+						System.out.println("There is no notes.");
+					} else {
+						System.out.println("Select note to edit:");
+						String selectedNote = scanner.nextLine();
+						User user = authService.getLoggedUser();
+						if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
+							System.out.println("New title:");
+							String newTitle = scanner.nextLine();
+							System.out.println("New content:");
+							String newContent = scanner.nextLine();
+							editNote(user.getNotes().get(Integer.parseInt(selectedNote)), newTitle, newContent);
+							System.out.println("Note changed successfully.");
+						} else {
+							System.out.println("Note with this id doesn't exist.");
+						}
+					}
+					break;
+				case "5":
 					System.out.println("Type new login: ");
 					String newNickname = scanner.nextLine();
 					if (authService.containsNickname(newNickname)) {
@@ -120,7 +140,7 @@ public class Main {
 						System.out.println("New nickname: " + newNickname);
 					}
 					break;
-				case "5":
+				case "6":
 					System.out.println("Type current password:");
 					String currentPassword = scanner.nextLine();
 					System.out.println("Type new password:");
@@ -131,7 +151,7 @@ public class Main {
 						System.out.println("Wrong current password.");
 					}
 					break;
-				case "6":
+				case "7":
 					System.out.println("Logged out.");
 					return;
 				case "0":
@@ -150,6 +170,15 @@ public class Main {
 						"\nTitle: " + note.getTitle() +
 						"\nContent: '" + note.getContent() + '\'' + "\n")
 				.forEach(System.out::println);
+	}
+
+	public static void editNote(Note note, String newTitle, String newContent) {
+		if (!newTitle.equals("")) {
+			note.setTitle(newTitle);
+		}
+		if (!newContent.equals("")) {
+			note.setContent(newContent);
+		}
 	}
 }
 
