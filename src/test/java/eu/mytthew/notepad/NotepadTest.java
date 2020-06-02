@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class NotepadTest {
@@ -18,14 +20,14 @@ public class NotepadTest {
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
+		Note note = new Note("Title", "Content");
 
 		// when
-		authService.getLoggedUser().addNote(new Note("Title", "Content"));
+		authService.getLoggedUser().addNote(note);
 
 		// then
 		assertEquals(1, authService.getLoggedUser().getNotes().size());
-		assertEquals("Title", authService.getLoggedUser().getNotes().get(0).getTitle());
-		assertEquals("Content", authService.getLoggedUser().getNotes().get(0).getContent());
+		assertEquals(note, authService.getLoggedUser().getNotes().get(0));
 	}
 
 	@Test
