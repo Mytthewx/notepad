@@ -26,7 +26,7 @@ public class User {
 	public void addNote(Note note) {
 		notes.add(note);
 	}
-	
+
 	public List<Note> getNotes() {
 		return Collections.unmodifiableList(notes);
 	}
