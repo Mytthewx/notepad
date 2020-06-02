@@ -16,6 +16,7 @@ public class User {
 	@Setter
 	private String nickname;
 	@Getter
+	@Setter
 	private String password;
 
 	public User(String nickname, String password) {
@@ -48,9 +49,5 @@ public class User {
 			return true;
 		}
 		return false;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 }
