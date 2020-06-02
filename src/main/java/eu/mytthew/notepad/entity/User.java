@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 public class User {
@@ -30,9 +31,17 @@ public class User {
 		return Collections.unmodifiableList(notes);
 	}
 
-	public boolean removeNote(int id) {
+	public boolean removeNote(Note note) {
+		if (notes.isEmpty()) {
+			return false;
+		}
+		notes.remove(note);
+		return true;
+	}
+
+	public boolean removeNote(UUID uuid) {
 		Optional<Note> optionalNote = notes.stream()
-				.filter(note -> note.getId() == id)
+				.filter(note -> note.getUuid().equals(uuid))
 				.findAny();
 		if (optionalNote.isPresent()) {
 			notes.remove(optionalNote.get());

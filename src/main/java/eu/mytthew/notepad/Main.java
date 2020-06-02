@@ -99,7 +99,8 @@ public class Main {
 					} else {
 						System.out.println("Select note: ");
 						String id = scanner.nextLine();
-						if (authService.getLoggedUser().removeNote(Integer.parseInt(id))) {
+						User user = authService.getLoggedUser();
+						if (user.removeNote(user.getNotes().get(Integer.parseInt(id)).getUuid())) {
 							System.out.println("Note removed.");
 						} else {
 							System.out.println("Can't find note with this id.");
@@ -144,7 +145,7 @@ public class Main {
 
 	public static void displayNotes(User user) {
 		user.getNotes().stream().map(note ->
-				"ID: " + note.getId() +
+				"ID: " + user.getNotes().indexOf(note) +
 						"\nDate: " + note.getNoteTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) +
 						"\nTitle: " + note.getTitle() +
 						"\nContent: '" + note.getContent() + '\'' + "\n")
