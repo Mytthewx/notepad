@@ -1,0 +1,9 @@
+#folders
+/.gradle/
+/.idea/
+/build/
+/gradle/
+
+#files
+/gradlew
+/gradlew.bat
