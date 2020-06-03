@@ -86,12 +86,13 @@ public class Main {
 					String content = scanner.nextLine();
 					System.out.println("Set date and time [yyyy-MM-dd]:");
 					String date = scanner.nextLine();
+					User loggedUser = authService.getLoggedUser();
 					if (date.equals("")) {
 						date = String.valueOf(LocalDate.now());
-						authService.getLoggedUser().addNote(new Note(title, content, date));
+						loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
 						System.out.println("Note added successfully!");
 					} else if (date.matches("^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$")) {
-						authService.getLoggedUser().addNote(new Note(title, content, date));
+						loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
 						System.out.println("Note added successfully!");
 					} else {
 						System.out.println("Wrong date format.");
@@ -99,14 +100,14 @@ public class Main {
 					break;
 				case "2":
 					if (authService.getLoggedUser().getNotes().isEmpty()) {
-						System.out.println("There is no notes.");
+						System.out.println("No notes.");
 					} else {
 						displayNotes(authService.getLoggedUser());
 					}
 					break;
 				case "3":
 					if (authService.getLoggedUser().getNotes().isEmpty()) {
-						System.out.println("There is no notes.");
+						System.out.println("No notes.");
 					} else {
 						System.out.println("Select note: ");
 						String id = scanner.nextLine();
@@ -120,12 +121,14 @@ public class Main {
 					break;
 				case "4":
 					if (authService.getLoggedUser().getNotes().isEmpty()) {
-						System.out.println("There is no notes.");
+						System.out.println("No notes.");
 					} else {
 						System.out.println("Select note to edit:");
 						String selectedNote = scanner.nextLine();
 						User user = authService.getLoggedUser();
-						if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
+						if (selectedNote.equals("")) {
+							break;
+						} else if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
 							System.out.println("New title:");
 							String newTitle = scanner.nextLine();
 							System.out.println("New content:");

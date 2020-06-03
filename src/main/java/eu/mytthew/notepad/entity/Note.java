@@ -13,10 +13,4 @@ public class Note {
 	private String content;
 	private LocalDate noteDate;
 	private final UUID uuid = UUID.randomUUID();
-
-	public Note(String title, String content, String date) {
-		this.title = title;
-		this.content = content;
-		noteDate = LocalDate.parse(date);
-	}
 }
