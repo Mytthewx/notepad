@@ -5,7 +5,7 @@ import eu.mytthew.notepad.auth.RuntimeAuthService;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Main {
@@ -84,8 +84,18 @@ public class Main {
 					String title = scanner.nextLine();
 					System.out.println("Your note:");
 					String content = scanner.nextLine();
-					authService.getLoggedUser().addNote(new Note(title, content));
-					System.out.println("Note added successfully!");
+					System.out.println("Set date and time [yyyy-MM-dd]:");
+					String date = scanner.nextLine();
+					if (date.equals("")) {
+						date = String.valueOf(LocalDate.now());
+						authService.getLoggedUser().addNote(new Note(title, content, date));
+						System.out.println("Note added successfully!");
+					} else if (date.matches("^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$")) {
+						authService.getLoggedUser().addNote(new Note(title, content, date));
+						System.out.println("Note added successfully!");
+					} else {
+						System.out.println("Wrong date format.");
+					}
 					break;
 				case "2":
 					if (authService.getLoggedUser().getNotes().isEmpty()) {
@@ -161,12 +171,13 @@ public class Main {
 					break;
 			}
 		}
+
 	}
 
 	public static void displayNotes(User user) {
 		user.getNotes().stream().map(note ->
 				"ID: " + user.getNotes().indexOf(note) +
-						"\nDate: " + note.getNoteTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) +
+						"\nDate: " + note.getNoteDate() +
 						"\nTitle: " + note.getTitle() +
 						"\nContent: '" + note.getContent() + '\'' + "\n")
 				.forEach(System.out::println);
