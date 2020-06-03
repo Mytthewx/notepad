@@ -130,7 +130,9 @@ public class Main {
 							String newTitle = scanner.nextLine();
 							System.out.println("New content:");
 							String newContent = scanner.nextLine();
-							editNote(user.getNotes().get(Integer.parseInt(selectedNote)), newTitle, newContent);
+							System.out.println("New date:");
+							String newDate = scanner.nextLine();
+							editNote(user.getNotes().get(Integer.parseInt(selectedNote)), newTitle, newContent, newDate);
 							System.out.println("Note changed successfully.");
 						} else {
 							System.out.println("Note with this id doesn't exist.");
@@ -183,12 +185,15 @@ public class Main {
 				.forEach(System.out::println);
 	}
 
-	public static void editNote(Note note, String newTitle, String newContent) {
+	public static void editNote(Note note, String newTitle, String newContent, String newDate) {
 		if (!newTitle.equals("")) {
 			note.setTitle(newTitle);
 		}
 		if (!newContent.equals("")) {
 			note.setContent(newContent);
+		}
+		if (!newDate.equals("")) {
+			note.setNoteDate(LocalDate.parse(newDate));
 		}
 	}
 }
