@@ -84,7 +84,7 @@ public class Main {
 					String title = scanner.nextLine();
 					System.out.println("Your note:");
 					String content = scanner.nextLine();
-					System.out.println("Set date and time [yyyy-MM-dd]:");
+					System.out.println("Set date [yyyy-MM-dd]:");
 					String date = scanner.nextLine();
 					User loggedUser = authService.getLoggedUser();
 					if (date.equals("")) {
@@ -176,7 +176,6 @@ public class Main {
 					break;
 			}
 		}
-
 	}
 
 	public static void displayNotes(User user) {

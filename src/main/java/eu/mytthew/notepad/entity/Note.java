@@ -9,8 +9,8 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 public class Note {
+	private final UUID uuid = UUID.randomUUID();
 	private String title;
 	private String content;
 	private LocalDate noteDate;
-	private final UUID uuid = UUID.randomUUID();
 }
