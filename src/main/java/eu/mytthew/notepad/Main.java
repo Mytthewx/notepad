@@ -5,7 +5,7 @@ import eu.mytthew.notepad.auth.RuntimeAuthService;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Main {
@@ -84,19 +84,30 @@ public class Main {
 					String title = scanner.nextLine();
 					System.out.println("Your note:");
 					String content = scanner.nextLine();
-					authService.getLoggedUser().addNote(new Note(title, content));
-					System.out.println("Note added successfully!");
+					System.out.println("Set date [yyyy-MM-dd]:");
+					String date = scanner.nextLine();
+					User loggedUser = authService.getLoggedUser();
+					if (date.equals("")) {
+						date = String.valueOf(LocalDate.now());
+						loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
+						System.out.println("Note added successfully!");
+					} else if (date.matches("^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$")) {
+						loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
+						System.out.println("Note added successfully!");
+					} else {
+						System.out.println("Wrong date format.");
+					}
 					break;
 				case "2":
 					if (authService.getLoggedUser().getNotes().isEmpty()) {
-						System.out.println("There is no notes.");
+						System.out.println("No notes.");
 					} else {
 						displayNotes(authService.getLoggedUser());
 					}
 					break;
 				case "3":
 					if (authService.getLoggedUser().getNotes().isEmpty()) {
-						System.out.println("There is no notes.");
+						System.out.println("No notes.");
 					} else {
 						System.out.println("Select note: ");
 						String id = scanner.nextLine();
@@ -110,17 +121,21 @@ public class Main {
 					break;
 				case "4":
 					if (authService.getLoggedUser().getNotes().isEmpty()) {
-						System.out.println("There is no notes.");
+						System.out.println("No notes.");
 					} else {
 						System.out.println("Select note to edit:");
 						String selectedNote = scanner.nextLine();
 						User user = authService.getLoggedUser();
-						if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
+						if (selectedNote.equals("")) {
+							break;
+						} else if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
 							System.out.println("New title:");
 							String newTitle = scanner.nextLine();
 							System.out.println("New content:");
 							String newContent = scanner.nextLine();
-							editNote(user.getNotes().get(Integer.parseInt(selectedNote)), newTitle, newContent);
+							System.out.println("New date:");
+							String newDate = scanner.nextLine();
+							editNote(user.getNotes().get(Integer.parseInt(selectedNote)), newTitle, newContent, newDate);
 							System.out.println("Note changed successfully.");
 						} else {
 							System.out.println("Note with this id doesn't exist.");
@@ -166,18 +181,21 @@ public class Main {
 	public static void displayNotes(User user) {
 		user.getNotes().stream().map(note ->
 				"ID: " + user.getNotes().indexOf(note) +
-						"\nDate: " + note.getNoteTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) +
+						"\nDate: " + note.getNoteDate() +
 						"\nTitle: " + note.getTitle() +
 						"\nContent: '" + note.getContent() + '\'' + "\n")
 				.forEach(System.out::println);
 	}
 
-	public static void editNote(Note note, String newTitle, String newContent) {
+	public static void editNote(Note note, String newTitle, String newContent, String newDate) {
 		if (!newTitle.equals("")) {
 			note.setTitle(newTitle);
 		}
 		if (!newContent.equals("")) {
 			note.setContent(newContent);
+		}
+		if (!newDate.equals("")) {
+			note.setNoteDate(LocalDate.parse(newDate));
 		}
 	}
 }
