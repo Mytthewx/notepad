@@ -6,6 +6,7 @@ import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,7 +21,7 @@ public class NotepadTest {
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content");
+		Note note = new Note("Title", "Content", LocalDate.now());
 
 		// when
 		authService.getLoggedUser().addNote(note);
@@ -37,7 +38,7 @@ public class NotepadTest {
 		authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		User loggedUser = authService.getLoggedUser();
-		Note note = new Note("Title", "Content");
+		Note note = new Note("Title", "Content", LocalDate.now());
 		authService.getLoggedUser().addNote(note);
 
 		// when
@@ -55,8 +56,8 @@ public class NotepadTest {
 		authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		User loggedUser = authService.getLoggedUser();
-		Note note = new Note("Title", "Content");
-		Note note2 = new Note("Title", "Content");
+		Note note = new Note("Title", "Content", LocalDate.now());
+		Note note2 = new Note("Title", "Content", LocalDate.now());
 		loggedUser.addNote(note);
 
 		// when
@@ -74,9 +75,9 @@ public class NotepadTest {
 		authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		User loggedUser = authService.getLoggedUser();
-		Note note = new Note("Title1", "Content1");
-		Note note2 = new Note("Title2", "Content2");
-		Note note3 = new Note("Title1", "Content3");
+		Note note = new Note("Title1", "Content1", LocalDate.now());
+		Note note2 = new Note("Title2", "Content2", LocalDate.now());
+		Note note3 = new Note("Title1", "Content3", LocalDate.now());
 		loggedUser.addNote(note);
 		loggedUser.addNote(note2);
 
@@ -95,8 +96,8 @@ public class NotepadTest {
 		authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		User loggedUser = authService.getLoggedUser();
-		Note note = new Note("Title1", "Content1");
-		Note note2 = new Note("Title2", "Content2");
+		Note note = new Note("Title1", "Content1", LocalDate.now());
+		Note note2 = new Note("Title2", "Content2", LocalDate.now());
 		loggedUser.addNote(note);
 		loggedUser.addNote(note2);
 
@@ -115,7 +116,7 @@ public class NotepadTest {
 		authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		User loggedUser = authService.getLoggedUser();
-		Note note = new Note("Title1", "Content1");
+		Note note = new Note("Title1", "Content1", LocalDate.now());
 
 		// when
 		boolean result = loggedUser.removeNote(note);
