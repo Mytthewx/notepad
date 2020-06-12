@@ -5,7 +5,10 @@ import eu.mytthew.notepad.auth.RuntimeAuthService;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 
+import java.lang.reflect.Method;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
@@ -78,6 +81,9 @@ public class Main {
 			System.out.println("7. Logout");
 			System.out.println("0. Exit");
 			String selection = scanner.nextLine();
+			Map<Method, Method> choice = new HashMap<>();
+
+
 			switch (selection) {
 				case "1":
 					System.out.println("Note title: ");
