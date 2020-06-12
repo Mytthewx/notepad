@@ -6,7 +6,7 @@ import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -68,18 +68,9 @@ public class Main {
 	}
 
 	public static void display(IAuthService authService) {
-		System.out.println("Menu:");
-		System.out.println("1. Add note");
-		System.out.println("2. Review notes");
-		System.out.println("3. Remove note");
-		System.out.println("4. Edit note");
-		System.out.println("5. Change login");
-		System.out.println("6. Change password");
-		System.out.println("7. Logout");
-		System.out.println("0. Exit");
-		String selection = scanner.nextLine();
-		Map<String, Runnable> menu = new HashMap<>();
-		menu.put("1", () -> {
+		Map<String, Runnable> menu = new LinkedHashMap<>();
+		menu.put("0. Exit", () -> System.exit(0));
+		menu.put("1. Add note", () -> {
 			System.out.println("Note title: ");
 			String title = scanner.nextLine();
 			System.out.println("Your note:");
@@ -98,14 +89,14 @@ public class Main {
 				System.out.println("Wrong date format.");
 			}
 		});
-		menu.put("2", () -> {
+		menu.put("2. Review notes", () -> {
 			if (authService.getLoggedUser().getNotes().isEmpty()) {
 				System.out.println("No notes.");
 			} else {
 				displayNotes(authService.getLoggedUser());
 			}
 		});
-		menu.put("3", () -> {
+		menu.put("3. Remove note", () -> {
 			if (authService.getLoggedUser().getNotes().isEmpty()) {
 				System.out.println("No notes.");
 			} else {
@@ -119,7 +110,7 @@ public class Main {
 				}
 			}
 		});
-		menu.put("4", () -> {
+		menu.put("4. Edit note", () -> {
 			if (authService.getLoggedUser().getNotes().isEmpty()) {
 				System.out.println("No notes.");
 			} else {
@@ -142,7 +133,7 @@ public class Main {
 				}
 			}
 		});
-		menu.put("5", () -> {
+		menu.put("5. Change login", () -> {
 			System.out.println("Type new login: ");
 			String newNickname = scanner.nextLine();
 			if (authService.containsNickname(newNickname)) {
@@ -155,7 +146,7 @@ public class Main {
 				System.out.println("New nickname: " + newNickname);
 			}
 		});
-		menu.put("6", () -> {
+		menu.put("6. Change password", () -> {
 			System.out.println("Type current password:");
 			String currentPassword = scanner.nextLine();
 			System.out.println("Type new password:");
@@ -166,13 +157,11 @@ public class Main {
 				System.out.println("Wrong current password.");
 			}
 		});
-		menu.put("7", () -> {
+		menu.put("7. Logout", () -> {
 			System.out.println("Logged out.");
 			return;
 		});
-		menu.put("0", () -> {
-			System.exit(0);
-		});
+		menu.keySet().forEach(System.out::println);
 	}
 
 	public static void displayNotes(User user) {
