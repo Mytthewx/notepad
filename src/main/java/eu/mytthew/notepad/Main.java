@@ -60,7 +60,9 @@ public class Main {
 			if (authService.login(login, password)) {
 				System.out.println("Logged in!");
 				isUserLogged = true;
-				display(authService);
+				while (isUserLogged) {
+					display(authService);
+				}
 			} else {
 				System.out.println("Wrong password!");
 			}
@@ -162,6 +164,8 @@ public class Main {
 			return;
 		});
 		menu.keySet().forEach(System.out::println);
+		String selection = scanner.nextLine();
+		menu.get(selection).run();
 	}
 
 	public static void displayNotes(User user) {
