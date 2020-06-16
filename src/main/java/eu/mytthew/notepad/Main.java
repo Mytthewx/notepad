@@ -6,8 +6,8 @@ import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -70,9 +70,10 @@ public class Main {
 	}
 
 	public static void display(IAuthService authService) {
-		Map<String, Runnable> menu = new LinkedHashMap<>();
-		menu.put("0. Exit", () -> System.exit(0));
-		menu.put("1. Add note", () -> {
+//		Map<String, Runnable> menu = new LinkedHashMap<>();
+		List<MenuItem> menuItems = new ArrayList<>();
+		menuItems.add(new MenuItem(0, "0. Exit", () -> System.exit(0)));
+		menuItems.add(new MenuItem(1, "1. Add note", () -> {
 			System.out.println("Note title: ");
 			String title = scanner.nextLine();
 			System.out.println("Your note:");
@@ -90,15 +91,15 @@ public class Main {
 			} else {
 				System.out.println("Wrong date format.");
 			}
-		});
-		menu.put("2. Review notes", () -> {
+		}));
+		menuItems.add(new MenuItem(2, "2. Review notes", () -> {
 			if (authService.getLoggedUser().getNotes().isEmpty()) {
 				System.out.println("No notes.");
 			} else {
 				displayNotes(authService.getLoggedUser());
 			}
-		});
-		menu.put("3. Remove note", () -> {
+		}));
+		menuItems.add(new MenuItem(3, "3. Remove note", () -> {
 			if (authService.getLoggedUser().getNotes().isEmpty()) {
 				System.out.println("No notes.");
 			} else {
@@ -111,8 +112,8 @@ public class Main {
 					System.out.println("Note with this id doesn't exist.");
 				}
 			}
-		});
-		menu.put("4. Edit note", () -> {
+		}));
+		menuItems.add(new MenuItem(4, "4. Edit note", () -> {
 			if (authService.getLoggedUser().getNotes().isEmpty()) {
 				System.out.println("No notes.");
 			} else {
@@ -134,8 +135,8 @@ public class Main {
 					System.out.println("Note with this id doesn't exist.");
 				}
 			}
-		});
-		menu.put("5. Change login", () -> {
+		}));
+		menuItems.add(new MenuItem(5, "5. Change login", () -> {
 			System.out.println("Type new login: ");
 			String newNickname = scanner.nextLine();
 			if (authService.containsNickname(newNickname)) {
@@ -147,8 +148,8 @@ public class Main {
 				System.out.println("Old nickname: " + oldNickname);
 				System.out.println("New nickname: " + newNickname);
 			}
-		});
-		menu.put("6. Change password", () -> {
+		}));
+		menuItems.add(new MenuItem(6, "6. Change password", () -> {
 			System.out.println("Type current password:");
 			String currentPassword = scanner.nextLine();
 			System.out.println("Type new password:");
@@ -158,14 +159,14 @@ public class Main {
 			} else {
 				System.out.println("Wrong current password.");
 			}
-		});
-		menu.put("7. Logout", () -> {
+		}));
+		menuItems.add(new MenuItem(7, "7. Logout", () -> {
 			System.out.println("Logged out.");
 			return;
-		});
-		menu.keySet().forEach(System.out::println);
+		}));
+		menuItems.stream().map(MenuItem::getName).forEach(System.out::println);
 		String selection = scanner.nextLine();
-		menu.get(selection).run();
+		menuItems.get(Integer.parseInt(selection)).getBody().run();
 	}
 
 	public static void displayNotes(User user) {
