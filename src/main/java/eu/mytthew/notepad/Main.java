@@ -60,9 +60,7 @@ public class Main {
 			if (authService.login(login, password)) {
 				System.out.println("Logged in!");
 				isUserLogged = true;
-				while (isUserLogged) {
-					display(authService);
-				}
+				display(authService);
 			} else {
 				System.out.println("Wrong password!");
 			}
@@ -70,7 +68,7 @@ public class Main {
 	}
 
 	public static void display(IAuthService authService) {
-//		Map<String, Runnable> menu = new LinkedHashMap<>();
+		boolean repeat = true;
 		List<MenuItem> menuItems = new ArrayList<>();
 		menuItems.add(new MenuItem(0, "0. Exit", () -> System.exit(0)));
 		menuItems.add(new MenuItem(1, "1. Add note", () -> {
@@ -120,9 +118,7 @@ public class Main {
 				System.out.println("Select note to edit:");
 				String selectedNote = scanner.nextLine();
 				User user = authService.getLoggedUser();
-				if (selectedNote.equals("")) {
-
-				} else if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
+				if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
 					System.out.println("New title:");
 					String newTitle = scanner.nextLine();
 					System.out.println("New content:");
@@ -162,11 +158,12 @@ public class Main {
 		}));
 		menuItems.add(new MenuItem(7, "7. Logout", () -> {
 			System.out.println("Logged out.");
-			return;
 		}));
-		menuItems.stream().map(MenuItem::getName).forEach(System.out::println);
-		String selection = scanner.nextLine();
-		menuItems.get(Integer.parseInt(selection)).getBody().run();
+		while (repeat) {
+			menuItems.stream().map(MenuItem::getName).forEach(System.out::println);
+			String selection = scanner.nextLine();
+			menuItems.get(Integer.parseInt(selection)).getBody().run();
+		}
 	}
 
 	public static void displayNotes(User user) {
