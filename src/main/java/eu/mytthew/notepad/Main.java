@@ -68,11 +68,13 @@ public class Main {
 	}
 
 	public static void display(IAuthService authService) {
-		boolean repeat = true;
 		List<MenuItem> menuItems = new ArrayList<>();
-		menuItems.add(new MenuItem(0, "0. Exit", () -> System.exit(0)));
+		menuItems.add(new MenuItem(0, "0. Exit", () -> {
+			System.exit(0);
+			return false;
+		}));
 		menuItems.add(new MenuItem(1, "1. Add note", () -> {
-			System.out.println("Note title: ");
+			System.out.println("Note title:");
 			String title = scanner.nextLine();
 			System.out.println("Your note:");
 			String content = scanner.nextLine();
@@ -88,7 +90,9 @@ public class Main {
 				System.out.println("Note added successfully!");
 			} else {
 				System.out.println("Wrong date format.");
+				return false;
 			}
+			return true;
 		}));
 		menuItems.add(new MenuItem(2, "2. Review notes", () -> {
 			if (authService.getLoggedUser().getNotes().isEmpty()) {
@@ -96,6 +100,7 @@ public class Main {
 			} else {
 				displayNotes(authService.getLoggedUser());
 			}
+			return true;
 		}));
 		menuItems.add(new MenuItem(3, "3. Remove note", () -> {
 			if (authService.getLoggedUser().getNotes().isEmpty()) {
@@ -108,8 +113,10 @@ public class Main {
 					System.out.println("Note removed.");
 				} else {
 					System.out.println("Note with this id doesn't exist.");
+					return false;
 				}
 			}
+			return true;
 		}));
 		menuItems.add(new MenuItem(4, "4. Edit note", () -> {
 			if (authService.getLoggedUser().getNotes().isEmpty()) {
@@ -129,8 +136,10 @@ public class Main {
 					System.out.println("Note changed successfully.");
 				} else {
 					System.out.println("Note with this id doesn't exist.");
+					return false;
 				}
 			}
+			return true;
 		}));
 		menuItems.add(new MenuItem(5, "5. Change login", () -> {
 			System.out.println("Type new login: ");
@@ -144,6 +153,7 @@ public class Main {
 				System.out.println("Old nickname: " + oldNickname);
 				System.out.println("New nickname: " + newNickname);
 			}
+			return true;
 		}));
 		menuItems.add(new MenuItem(6, "6. Change password", () -> {
 			System.out.println("Type current password:");
@@ -155,14 +165,18 @@ public class Main {
 			} else {
 				System.out.println("Wrong current password.");
 			}
+			return true;
 		}));
 		menuItems.add(new MenuItem(7, "7. Logout", () -> {
 			System.out.println("Logged out.");
+			return false;
 		}));
+		boolean repeat = true;
 		while (repeat) {
 			menuItems.stream().map(MenuItem::getName).forEach(System.out::println);
-			String selection = scanner.nextLine();
-			menuItems.get(Integer.parseInt(selection)).getBody().run();
+			int selection = scanner.nextInt();
+			scanner.nextLine();
+			repeat = menuItems.get(selection).getBody().get();
 		}
 	}
 

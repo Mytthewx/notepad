@@ -2,9 +2,11 @@ package eu.mytthew.notepad;
 
 import lombok.Value;
 
+import java.util.function.Supplier;
+
 @Value
 public class MenuItem {
-	private int id;
-	private String name;
-	private Runnable body;
+	int id;
+	String name;
+	Supplier<Boolean> body;
 }
