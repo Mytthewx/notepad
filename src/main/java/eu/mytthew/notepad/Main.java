@@ -109,11 +109,12 @@ public class Main {
 				System.out.println("Select note: ");
 				String id = scanner.nextLine();
 				User user = authService.getLoggedUser();
-				if (user.removeNote(user.getNotes().get(Integer.parseInt(id)).getUuid())) {
-					System.out.println("Note removed.");
+				if (user.getNotes().size() > Integer.parseInt(id)) {
+					if (user.removeNote(user.getNotes().get(Integer.parseInt(id)).getUuid())) {
+						System.out.println("Note removed.");
+					}
 				} else {
 					System.out.println("Note with this id doesn't exist.");
-					return false;
 				}
 			}
 			return true;
