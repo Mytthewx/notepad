@@ -15,40 +15,36 @@ public class Main {
 
 	public static void main(String[] args) {
 		IAuthService authService = new RuntimeAuthService();
+		List<MenuItem> loginMenuItems = new ArrayList<>();
+		loginMenuItems.add(new MenuItem(0, "0. Exit", () -> false));
+		loginMenuItems.add(new MenuItem(1, "1. Log in", () -> {
+			System.out.println("Enter nickname: ");
+			String login = scanner.nextLine();
+			if (authService.containsNickname(login)) {
+				loginLoop(authService, login);
+			} else {
+				System.out.println("The user with the given name does not exist.");
+			}
+			return true;
+		}));
+		loginMenuItems.add(new MenuItem(2, "2. Add user", () -> {
+			System.out.println("Enter nickname: ");
+			String nickname = scanner.nextLine();
+			System.out.println("Enter password: ");
+			String password = scanner.nextLine();
+			if (authService.addUser(nickname, password)) {
+				System.out.println("User added successfully!");
+			} else {
+				System.out.println("This nickname is already taken.");
+			}
+			return true;
+		}));
 		boolean repeat = true;
 		while (repeat) {
-			System.out.println("1. Log in");
-			System.out.println("2. Add user");
-			System.out.println("0. Exit");
-			String selection = scanner.nextLine();
-			switch (selection) {
-				case "1":
-					System.out.println("Enter nickname: ");
-					String login = scanner.nextLine();
-					if (authService.containsNickname(login)) {
-						loginLoop(authService, login);
-					} else {
-						System.out.println("The user with the given name does not exist.");
-					}
-					break;
-				case "2":
-					System.out.println("Enter nickname: ");
-					String nickname = scanner.nextLine();
-					System.out.println("Enter password: ");
-					String password = scanner.nextLine();
-					if (authService.addUser(nickname, password)) {
-						System.out.println("User added successfully!");
-					} else {
-						System.out.println("This nickname is already taken.");
-					}
-					break;
-				case "0":
-					repeat = false;
-					break;
-				default:
-					System.out.println("Wrong choice. Choose 1, 2 or 0.");
-					break;
-			}
+			loginMenuItems.stream().map(MenuItem::getName).forEach(System.out::println);
+			int selection = scanner.nextInt();
+			scanner.nextLine();
+			repeat = loginMenuItems.get(selection).getBody().get();
 		}
 	}
 
