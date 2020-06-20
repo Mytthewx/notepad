@@ -39,12 +39,12 @@ public class Main {
 			}
 			return true;
 		}));
-		boolean repeat = true;
-		while (repeat) {
+		boolean repeatLoginMenu = true;
+		while (repeatLoginMenu) {
 			loginMenuItems.stream().map(MenuItem::getName).forEach(System.out::println);
 			int selection = scanner.nextInt();
 			scanner.nextLine();
-			repeat = loginMenuItems.get(selection).getBody().get();
+			repeatLoginMenu = loginMenuItems.get(selection).getBody().get();
 		}
 	}
 
@@ -168,12 +168,12 @@ public class Main {
 			System.out.println("Logged out.");
 			return false;
 		}));
-		boolean repeat = true;
-		while (repeat) {
+		boolean repeatMenu = true;
+		while (repeatMenu) {
 			menuItems.stream().map(MenuItem::getName).forEach(System.out::println);
 			int selection = scanner.nextInt();
 			scanner.nextLine();
-			repeat = menuItems.get(selection).getBody().get();
+			repeatMenu = menuItems.get(selection).getBody().get();
 		}
 	}
 
