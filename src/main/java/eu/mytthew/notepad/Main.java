@@ -136,7 +136,6 @@ public class Main {
 			System.out.println("Note added successfully!");
 		} else {
 			System.out.println("Wrong date format.");
-			return false;
 		}
 		return true;
 	}
@@ -219,7 +218,6 @@ public class Main {
 		}
 		return true;
 	}
-
 }
 
 
