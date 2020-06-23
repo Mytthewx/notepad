@@ -15,7 +15,7 @@ public class MenuItem {
 	public MenuItem(int id, String name, Runnable body) {
 		this(id, name, () -> {
 			body.run();
-			return false;
+			return true;
 		});
 	}
 }
