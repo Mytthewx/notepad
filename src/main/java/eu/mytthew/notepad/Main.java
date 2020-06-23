@@ -18,14 +18,11 @@ public class Main {
 		List<MenuItem> loginMenuItems = new ArrayList<>();
 		loginMenuItems.add(new MenuItem(0, "Exit", () -> false));
 		loginMenuItems.add(new MenuItem(1, "Log in", () -> {
-			System.out.println("Type" +
-					" nickname: ");
+			System.out.println("Type nickname: ");
 			String login = scanner.nextLine();
-			if (authService.containsNickname(login)) {
-				loginLoop(authService, login);
-			} else {
+			if (authService.containsNickname(login)) loginLoop(authService, login);
+			else
 				System.out.println("The user with the given name does not exist.");
-			}
 			return true;
 		}));
 		loginMenuItems.add(new MenuItem(2, "Add user", () -> {
@@ -33,11 +30,9 @@ public class Main {
 			String nickname = scanner.nextLine();
 			System.out.println("Type password: ");
 			String password = scanner.nextLine();
-			if (authService.addUser(nickname, password)) {
-				System.out.println("User added successfully!");
-			} else {
+			if (authService.addUser(nickname, password)) System.out.println("User added successfully!");
+			else
 				System.out.println("This nickname is already taken.");
-			}
 			return true;
 		}));
 		boolean repeatLoginMenu = true;
@@ -61,9 +56,7 @@ public class Main {
 				System.out.println("Logged in!");
 				isUserLogged = true;
 				display(authService);
-			} else {
-				System.out.println("Wrong password!");
-			}
+			} else System.out.println("Wrong password!");
 		}
 	}
 
@@ -108,15 +101,9 @@ public class Main {
 	}
 
 	public static void verifyEditNote(Note note, String newTitle, String newContent, String newDate) {
-		if (!newTitle.equals("")) {
-			note.setTitle(newTitle);
-		}
-		if (!newContent.equals("")) {
-			note.setContent(newContent);
-		}
-		if (!newDate.equals("")) {
-			note.setNoteDate(LocalDate.parse(newDate));
-		}
+		if (!newTitle.equals("")) note.setTitle(newTitle);
+		if (!newContent.equals("")) note.setContent(newContent);
+		if (!newDate.equals("")) note.setNoteDate(LocalDate.parse(newDate));
 	}
 
 	public static boolean addNote(IAuthService authService) {
@@ -134,43 +121,34 @@ public class Main {
 		} else if (date.matches("^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$")) {
 			loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
 			System.out.println("Note added successfully!");
-		} else {
-			System.out.println("Wrong date format.");
-		}
+		} else System.out.println("Wrong date format.");
 		return true;
 	}
 
 	public static boolean reviewNotes(IAuthService authService) {
-		if (authService.getLoggedUser().getNotes().isEmpty()) {
-			System.out.println("No notes.");
-		} else {
+		if (authService.getLoggedUser().getNotes().isEmpty()) System.out.println("No notes.");
+		else
 			displayNotes(authService.getLoggedUser());
-		}
 		return true;
 	}
 
 	public static boolean removeNotes(IAuthService authService) {
-		if (authService.getLoggedUser().getNotes().isEmpty()) {
-			System.out.println("No notes.");
-		} else {
+		if (authService.getLoggedUser().getNotes().isEmpty()) System.out.println("No notes.");
+		else {
 			System.out.println("Select note: ");
 			String id = scanner.nextLine();
 			User user = authService.getLoggedUser();
 			if (user.getNotes().size() > Integer.parseInt(id)) {
-				if (user.removeNote(user.getNotes().get(Integer.parseInt(id)).getUuid())) {
+				if (user.removeNote(user.getNotes().get(Integer.parseInt(id)).getUuid()))
 					System.out.println("Note removed.");
-				}
-			} else {
-				System.out.println("Note with this id doesn't exist.");
-			}
+			} else System.out.println("Note with this id doesn't exist.");
 		}
 		return true;
 	}
 
 	public static boolean editNote(IAuthService authService) {
-		if (authService.getLoggedUser().getNotes().isEmpty()) {
-			System.out.println("No notes.");
-		} else {
+		if (authService.getLoggedUser().getNotes().isEmpty()) System.out.println("No notes.");
+		else {
 			System.out.println("Select note to edit:");
 			String selectedNote = scanner.nextLine();
 			User user = authService.getLoggedUser();
@@ -194,9 +172,8 @@ public class Main {
 	public static boolean changeLogin(IAuthService authService) {
 		System.out.println("Type new login: ");
 		String newNickname = scanner.nextLine();
-		if (authService.containsNickname(newNickname)) {
-			System.out.println("This nickname is already taken.");
-		} else {
+		if (authService.containsNickname(newNickname)) System.out.println("This nickname is already taken.");
+		else {
 			String oldNickname = authService.getLoggedUser().getNickname();
 			authService.getLoggedUser().setNickname(newNickname);
 			System.out.println("Nickname changed successfully!");
@@ -211,11 +188,9 @@ public class Main {
 		String currentPassword = scanner.nextLine();
 		System.out.println("Type new password:");
 		String newPassword = scanner.nextLine();
-		if (authService.changePassword(currentPassword, newPassword)) {
+		if (authService.changePassword(currentPassword, newPassword))
 			System.out.println("Password changed successfully.");
-		} else {
-			System.out.println("Wrong current password.");
-		}
+		else System.out.println("Wrong current password.");
 		return true;
 	}
 }
