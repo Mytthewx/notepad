@@ -17,17 +17,17 @@ public class Main {
 		IAuthService authService = new RuntimeAuthService();
 		List<MenuItem> loginMenuItems = new ArrayList<>();
 		loginMenuItems.add(new MenuItem(0, "Exit", () -> false));
-		loginMenuItems.add(new MenuItem(1, "Log in", () -> logInMethod(authService)));
+		loginMenuItems.add(new MenuItem(1, "Log in", () -> logIn(authService)));
 		loginMenuItems.add(new MenuItem(2, "Add user", () -> addUser(authService)));
-		boolean repeatLoginMenu = true;
-		while (repeatLoginMenu) {
+		boolean repeat = true;
+		while (repeat) {
 			loginMenuItems
 					.stream()
 					.map(menu -> menu.getId() + ". " + menu.getName())
 					.forEach(System.out::println);
 			int selection = scanner.nextInt();
 			scanner.nextLine();
-			repeatLoginMenu = loginMenuItems.get(selection).getBody().get();
+			repeat = loginMenuItems.get(selection).getBody().get();
 		}
 	}
 
@@ -62,15 +62,15 @@ public class Main {
 			System.out.println("Logged out.");
 			return false;
 		}));
-		boolean repeatMenu = true;
-		while (repeatMenu) {
+		boolean repeat = true;
+		while (repeat) {
 			menuItems
 					.stream()
 					.map(menuItem -> menuItem.getId() + ". " + menuItem.getName())
 					.forEach(System.out::println);
 			int selection = scanner.nextInt();
 			scanner.nextLine();
-			repeatMenu = menuItems
+			repeat = menuItems
 					.get(selection)
 					.getBody()
 					.get();
@@ -98,7 +98,7 @@ public class Main {
 		}
 	}
 
-	public static void logInMethod(IAuthService authService) {
+	public static void logIn(IAuthService authService) {
 		System.out.println("Type nickname: ");
 		String login = scanner.nextLine();
 		if (authService.containsNickname(login)) {
