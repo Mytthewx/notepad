@@ -152,7 +152,7 @@ public class Main {
 
 	public static void displayTodayNotes(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (authService.getLoggedUser().getNotes().isEmpty() || user.getNotes().stream().noneMatch(note -> note.getNoteDate().equals(LocalDate.now()))) {
+		if (user.getNotes().isEmpty() || user.getNotes().stream().noneMatch(note -> note.getNoteDate().equals(LocalDate.now()))) {
 			System.out.println("No notes for today.");
 		} else {
 			Stream<Note> notesStream = user.getNotes().stream().filter(note -> note.getNoteDate().equals(LocalDate.now()));
