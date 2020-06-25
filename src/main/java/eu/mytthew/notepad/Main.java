@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Stream;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
@@ -79,13 +78,10 @@ public class Main {
 		}
 	}
 
-	public static void displayNotes(User user) {
-		user.getNotes().stream().map(note ->
-				"ID: " + user.getNotes().indexOf(note) +
-						"\nDate: " + note.getNoteDate() +
-						"\nTitle: " + note.getTitle() +
-						"\nContent: '" + note.getContent() + '\'' + "\n")
-				.forEach(System.out::println);
+	public static String formatNote(Note note) {
+		return "\nDate: " + note.getNoteDate() +
+				"\nTitle: " + note.getTitle() +
+				"\nContent: '" + note.getContent() + '\'' + "\n";
 	}
 
 	public static void verifyEditNote(Note note, String newTitle, String newContent, String newDate) {
@@ -143,24 +139,28 @@ public class Main {
 	}
 
 	public static void displayAllNotes(IAuthService authService) {
-		if (authService.getLoggedUser().getNotes().isEmpty()) {
+		User user = authService.getLoggedUser();
+		if (user.getNotes().isEmpty()) {
 			System.out.println("No notes.");
 		} else {
-			displayNotes(authService.getLoggedUser());
+			user.getNotes()
+					.stream()
+					.map(Main::formatNote)
+					.forEach(System.out::println);
 		}
 	}
 
 	public static void displayTodayNotes(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (user.getNotes().isEmpty() || user.getNotes().stream().noneMatch(note -> note.getNoteDate().equals(LocalDate.now()))) {
+		if (user.getNotes()
+				.stream()
+				.noneMatch(note -> note.getNoteDate().equals(LocalDate.now()))) {
 			System.out.println("No notes for today.");
 		} else {
-			Stream<Note> notesStream = user.getNotes().stream().filter(note -> note.getNoteDate().equals(LocalDate.now()));
-			notesStream.map(note ->
-					"ID: " + user.getNotes().indexOf(note) +
-							"\nDate: " + note.getNoteDate() +
-							"\nTitle: " + note.getTitle() +
-							"\nContent: '" + note.getContent() + '\'' + "\n")
+			user.getNotes()
+					.stream()
+					.filter(note -> note.getNoteDate().equals(LocalDate.now()))
+					.map(Main::formatNote)
 					.forEach(System.out::println);
 		}
 	}
