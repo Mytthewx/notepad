@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
@@ -53,12 +54,13 @@ public class Main {
 			return false;
 		}));
 		menuItems.add(new MenuItem(1, "Add note", () -> addNote(authService)));
-		menuItems.add(new MenuItem(2, "Review notes", () -> reviewNotes(authService)));
-		menuItems.add(new MenuItem(3, "Remove note", () -> removeNotes(authService)));
-		menuItems.add(new MenuItem(4, "Edit note", () -> editNote(authService)));
-		menuItems.add(new MenuItem(5, "Change login", () -> changeLogin(authService)));
-		menuItems.add(new MenuItem(6, "Change password", () -> changePassword(authService)));
-		menuItems.add(new MenuItem(7, "Logout", () -> {
+		menuItems.add(new MenuItem(2, "Review notes", () -> displayAllNotes(authService)));
+		menuItems.add(new MenuItem(3, "Display today notes", () -> displayTodayNotes(authService)));
+		menuItems.add(new MenuItem(4, "Remove note", () -> removeNotes(authService)));
+		menuItems.add(new MenuItem(5, "Edit note", () -> editNote(authService)));
+		menuItems.add(new MenuItem(6, "Change login", () -> changeLogin(authService)));
+		menuItems.add(new MenuItem(7, "Change password", () -> changePassword(authService)));
+		menuItems.add(new MenuItem(8, "Logout", () -> {
 			System.out.println("Logged out.");
 			return false;
 		}));
@@ -140,11 +142,26 @@ public class Main {
 		}
 	}
 
-	public static void reviewNotes(IAuthService authService) {
+	public static void displayAllNotes(IAuthService authService) {
 		if (authService.getLoggedUser().getNotes().isEmpty()) {
 			System.out.println("No notes.");
 		} else {
 			displayNotes(authService.getLoggedUser());
+		}
+	}
+
+	public static void displayTodayNotes(IAuthService authService) {
+		User user = authService.getLoggedUser();
+		if (authService.getLoggedUser().getNotes().isEmpty() || user.getNotes().stream().noneMatch(note -> note.getNoteDate().equals(LocalDate.now()))) {
+			System.out.println("No notes for today.");
+		} else {
+			Stream<Note> notesStream = user.getNotes().stream().filter(note -> note.getNoteDate().equals(LocalDate.now()));
+			notesStream.map(note ->
+					"ID: " + user.getNotes().indexOf(note) +
+							"\nDate: " + note.getNoteDate() +
+							"\nTitle: " + note.getTitle() +
+							"\nContent: '" + note.getContent() + '\'' + "\n")
+					.forEach(System.out::println);
 		}
 	}
 
