@@ -16,6 +16,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NotepadTest {
 	@Test
+	public void menuItemConstructorTest() {
+		// given
+		MenuItem menuItem;
+
+		// when
+		menuItem = new MenuItem(0, "Test", () -> {
+			System.out.println("Test");
+		});
+
+		// then
+		assertEquals(0, menuItem.getId());
+		assertEquals("Test", menuItem.getName());
+		assertTrue(menuItem.getBody().get());
+	}
+
+	@Test
 	public void addNoteWithTitleAndContent() {
 		// given
 		IAuthService authService = new RuntimeAuthService();
