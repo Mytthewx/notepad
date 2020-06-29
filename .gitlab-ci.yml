@@ -10,6 +10,14 @@ build:
   script: gradle build -x test
   allow_failure: false
 
+delombok:
+  stage: prepare
+  script:
+    - gradle delombok
+  artifacts:
+    paths:
+      - build/delombok/**
+
 test:
   stage: test
   script:
