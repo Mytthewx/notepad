@@ -2,6 +2,7 @@ image: gradle:jdk11
 
 stages:
   - build
+  - prepare
   - test
   - deploy
 
