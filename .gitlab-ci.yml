@@ -10,6 +10,14 @@ build:
   script: gradle build -x test
   allow_failure: false
 
+
+delombok:
+  stage: build
+  script: gradle delombok
+  artifacts:
+    paths:
+      - build/delombok/**
+
 test:
   stage: test
   script:
@@ -18,3 +26,12 @@ test:
   artifacts:
     paths:
       - build/reports/jacoco
+
+deploy:
+  stage: deploy
+  script:
+    - gradle jar
+  artifacts:
+    paths:
+      - build/libs/*.jar
+  when: manual
