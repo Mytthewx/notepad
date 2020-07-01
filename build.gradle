@@ -79,4 +79,8 @@ task delombok(type: DelombokTask, dependsOn: compileJava) {
 	}
 }
 
+test {
+	finalizedBy jacocoTestCoverageVerification
+}
+
 mainClassName = 'eu.mytthew.notepad.Main'
