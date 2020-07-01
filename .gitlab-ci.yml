@@ -8,8 +8,13 @@ stages:
 
 build:
   stage: build
-  script: gradle build -x test
+  script:
+    - gradle jar
   allow_failure: false
+  artifacts:
+    paths:
+      - build/libs/*.jar
+  when: manual
 
 delombok:
   stage: prepare
