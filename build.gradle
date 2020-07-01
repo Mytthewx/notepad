@@ -25,13 +25,13 @@ repositories {
 }
 
 dependencies {
-	compile group: 'com.google.guava', name: 'guava', version: '20.0'
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+	compile 'com.google.guava:guava:20.0'
 	compileOnly 'org.projectlombok:lombok:1.18.12'
 	annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
 	testCompileOnly 'org.projectlombok:lombok:1.18.12'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
 }
 
@@ -57,6 +57,16 @@ jacocoTestReport {
 	}
 }
 
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				minimum = 0.7
+			}
+		}
+	}
+}
+
 task delombok(type: DelombokTask, dependsOn: compileJava) {
 	ext.outputDir = file("$buildDir/delombok")
 	outputs.dir(outputDir)
@@ -70,4 +80,3 @@ task delombok(type: DelombokTask, dependsOn: compileJava) {
 }
 
 mainClassName = 'eu.mytthew.notepad.Main'
-
