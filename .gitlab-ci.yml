@@ -2,24 +2,18 @@ image: gradle:jdk11
 
 stages:
   - build
-  - prepare
   - test
   - deploy
 
 build:
   stage: build
-  script:
-    - gradle jar
+  script: gradle build -x test
   allow_failure: false
-  artifacts:
-    paths:
-      - build/libs/*.jar
-  when: manual
+
 
 delombok:
-  stage: prepare
-  script:
-    - gradle delombok
+  stage: build
+  script: gradle delombok
   artifacts:
     paths:
       - build/delombok/**
@@ -32,3 +26,12 @@ test:
   artifacts:
     paths:
       - build/reports/jacoco
+
+deploy:
+  stage: deploy
+  script:
+    - gradle jar
+  artifacts:
+    paths:
+      - build/libs/*.jar
+  when: manual
