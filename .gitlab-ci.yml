@@ -21,7 +21,7 @@ delombok:
 test:
   stage: test
   script:
-    - gradle test printCoverage
+    - gradle test
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
   artifacts:
     paths:
