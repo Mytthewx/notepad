@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
@@ -82,7 +83,11 @@ public class Main {
 	public static String formatNote(Note note) {
 		return "\nDate: " + note.getNoteDate() +
 				"\nTitle: " + note.getTitle() +
-				"\nContent: '" + note.getContent() + '\'' + "\n";
+				"\nContent: '" + note.getContent() + '\'' +
+				"\nReminder name: " + note.getReminders()
+				.stream()
+				.map(Reminder::getName)
+				.collect(Collectors.joining());
 	}
 
 	public static void verifyEditNote(Note note, String newTitle, String newContent, String newDate) {
