@@ -223,27 +223,26 @@ public class Main {
 	}
 
 	public static boolean editReminder(IAuthService authService) {
-		if (authService.getLoggedUser().getNotes().isEmpty()) {
+		User user = authService.getLoggedUser();
+		if (user.getNotes().isEmpty()) {
 			System.out.println("No notes.");
 		} else {
-			User user = authService.getLoggedUser();
 			System.out.println("Select note:");
 			String selectedNote = scanner.nextLine();
 			if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
-				if (authService.getLoggedUser().getNotes().get(Integer.parseInt(selectedNote)).getReminders().isEmpty()) {
+				Note note = user.getNotes().get(Integer.parseInt(selectedNote));
+				if (note.getReminders().isEmpty()) {
 					System.out.println("This note has no reminder.");
 				} else {
 					System.out.println("Select reminder:");
 					String selectedReminder = scanner.nextLine();
-					if (Integer.parseInt(selectedReminder) < user.getNotes().get(Integer.parseInt(selectedNote)).getReminders().size()) {
+					if (Integer.parseInt(selectedReminder) < note.getReminders().size()) {
+						Reminder reminder = note.getReminders().get(Integer.parseInt(selectedReminder));
 						System.out.println("New reminder name:");
 						String newReminderName = scanner.nextLine();
 						System.out.println("New reminder date:");
 						String newReminderDate = scanner.nextLine();
-						verifyEditReminder(user.getNotes()
-								.get(Integer.parseInt(selectedNote))
-								.getReminders()
-								.get(Integer.parseInt(selectedReminder)), newReminderName, newReminderDate);
+						verifyEditReminder(reminder, newReminderName, newReminderDate);
 						System.out.println("Reminder changed successfully.");
 					} else {
 						System.out.println("Reminder with this id doesn't exist.");
