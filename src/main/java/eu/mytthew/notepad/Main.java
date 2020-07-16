@@ -226,32 +226,32 @@ public class Main {
 		User user = authService.getLoggedUser();
 		if (user.getNotes().isEmpty()) {
 			System.out.println("No notes.");
-		} else {
-			System.out.println("Select note:");
-			String selectedNote = scanner.nextLine();
-			if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
-				Note note = user.getNotes().get(Integer.parseInt(selectedNote));
-				if (note.getReminders().isEmpty()) {
-					System.out.println("This note has no reminder.");
-				} else {
-					System.out.println("Select reminder:");
-					String selectedReminder = scanner.nextLine();
-					if (Integer.parseInt(selectedReminder) < note.getReminders().size()) {
-						Reminder reminder = note.getReminders().get(Integer.parseInt(selectedReminder));
-						System.out.println("New reminder name:");
-						String newReminderName = scanner.nextLine();
-						System.out.println("New reminder date:");
-						String newReminderDate = scanner.nextLine();
-						verifyEditReminder(reminder, newReminderName, newReminderDate);
-						System.out.println("Reminder changed successfully.");
-					} else {
-						System.out.println("Reminder with this id doesn't exist.");
-					}
-				}
-			} else {
-				System.out.println("Note with this id doesn't exist.");
-			}
+			return true;
 		}
+		System.out.println("Select note:");
+		String selectedNote = scanner.nextLine();
+		if (Integer.parseInt(selectedNote) >= user.getNotes().size()) {
+			System.out.println("Note with this id doesn't exist.");
+			return true;
+		}
+		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
+		if (note.getReminders().isEmpty()) {
+			System.out.println("This note has no reminder.");
+			return true;
+		}
+		System.out.println("Select reminder:");
+		String selectedReminder = scanner.nextLine();
+		if (Integer.parseInt(selectedReminder) >= note.getReminders().size()) {
+			System.out.println("Reminder with this id doesn't exist.");
+			return true;
+		}
+		Reminder reminder = note.getReminders().get(Integer.parseInt(selectedReminder));
+		System.out.println("New reminder name:");
+		String newReminderName = scanner.nextLine();
+		System.out.println("New reminder date [yyyy-MM-dd]:");
+		String newReminderDate = scanner.nextLine();
+		verifyEditReminder(reminder, newReminderName, newReminderDate);
+		System.out.println("Reminder changed successfully.");
 		return true;
 	}
 
@@ -262,7 +262,7 @@ public class Main {
 		if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
 			System.out.println("Reminder name:");
 			String reminderName = scanner.nextLine();
-			System.out.println("Reminder date[yyyy-MM-dd]:");
+			System.out.println("Reminder date [yyyy-MM-dd]:");
 			String reminderDate = scanner.nextLine();
 			user.getNotes().get(Integer.parseInt(selectedNote)).addReminder(new Reminder(reminderName, LocalDate.parse(reminderDate)));
 			System.out.println("Reminder added successfully.");
@@ -298,5 +298,3 @@ public class Main {
 		}
 	}
 }
-
-
