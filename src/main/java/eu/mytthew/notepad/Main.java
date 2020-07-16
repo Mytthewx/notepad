@@ -60,9 +60,10 @@ public class Main {
 		menuItems.add(new MenuItem(5, "Edit note", () -> editNote(authService)));
 		menuItems.add(new MenuItem(6, "Add reminder", () -> addReminder(authService)));
 		menuItems.add(new MenuItem(7, "Edit reminder", () -> editReminder(authService)));
-		menuItems.add(new MenuItem(8, "Change login", () -> changeLogin(authService)));
-		menuItems.add(new MenuItem(9, "Change password", () -> changePassword(authService)));
-		menuItems.add(new MenuItem(10, "Logout", () -> {
+		menuItems.add(new MenuItem(8, "Remove reminder", () -> removeReminder(authService)));
+		menuItems.add(new MenuItem(9, "Change login", () -> changeLogin(authService)));
+		menuItems.add(new MenuItem(10, "Change password", () -> changePassword(authService)));
+		menuItems.add(new MenuItem(11, "Logout", () -> {
 			System.out.println("Logged out.");
 			return false;
 		}));
@@ -222,6 +223,23 @@ public class Main {
 		return true;
 	}
 
+	public static boolean addReminder(IAuthService authService) {
+		System.out.println("Select note:");
+		String selectedNote = scanner.nextLine();
+		User user = authService.getLoggedUser();
+		if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
+			System.out.println("Reminder name:");
+			String reminderName = scanner.nextLine();
+			System.out.println("Reminder date [yyyy-MM-dd]:");
+			String reminderDate = scanner.nextLine();
+			user.getNotes().get(Integer.parseInt(selectedNote)).addReminder(new Reminder(reminderName, LocalDate.parse(reminderDate)));
+			System.out.println("Reminder added successfully.");
+		} else {
+			System.out.println("Note with this id doesn't exist.");
+		}
+		return true;
+	}
+
 	public static boolean editReminder(IAuthService authService) {
 		User user = authService.getLoggedUser();
 		if (user.getNotes().isEmpty()) {
@@ -255,20 +273,31 @@ public class Main {
 		return true;
 	}
 
-	public static boolean addReminder(IAuthService authService) {
+	public static boolean removeReminder(IAuthService authService) {
+		User user = authService.getLoggedUser();
+		if (user.getNotes().isEmpty()) {
+			System.out.println("No notes.");
+			return true;
+		}
 		System.out.println("Select note:");
 		String selectedNote = scanner.nextLine();
-		User user = authService.getLoggedUser();
-		if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
-			System.out.println("Reminder name:");
-			String reminderName = scanner.nextLine();
-			System.out.println("Reminder date [yyyy-MM-dd]:");
-			String reminderDate = scanner.nextLine();
-			user.getNotes().get(Integer.parseInt(selectedNote)).addReminder(new Reminder(reminderName, LocalDate.parse(reminderDate)));
-			System.out.println("Reminder added successfully.");
-		} else {
+		if (Integer.parseInt(selectedNote) >= user.getNotes().size()) {
 			System.out.println("Note with this id doesn't exist.");
+			return true;
 		}
+		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
+		if (note.getReminders().isEmpty()) {
+			System.out.println("This note has no reminder.");
+			return true;
+		}
+		System.out.println("Select reminder:");
+		String selectedReminder = scanner.nextLine();
+		if (Integer.parseInt(selectedReminder) >= note.getReminders().size()) {
+			System.out.println("Reminder with this id doesn't exist.");
+			return true;
+		}
+		note.getReminders().remove(Integer.parseInt(selectedReminder));
+		System.out.println("Reminder removed successfully.");
 		return true;
 	}
 
