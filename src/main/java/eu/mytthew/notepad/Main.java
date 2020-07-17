@@ -114,6 +114,22 @@ public class Main {
 		}
 	}
 
+	public static boolean userContainsAnyNotes(User user) {
+		return user.getNotes().isEmpty();
+	}
+
+	public static boolean noteContainsAnyReminder(Note note) {
+		return note.getReminders().isEmpty();
+	}
+
+	public static boolean noteIdExist(String id, User user) {
+		return Integer.parseInt(id) >= user.getNotes().size();
+	}
+
+	public static boolean reminderIdExist(String id, Note note) {
+		return Integer.parseInt(id) >= note.getReminders().size();
+	}
+
 	public static void logIn(IAuthService authService) {
 		System.out.println("Type nickname: ");
 		String login = scanner.nextLine();
@@ -158,7 +174,7 @@ public class Main {
 
 	public static void displayAllNotes(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (user.getNotes().isEmpty()) {
+		if (!userContainsAnyNotes(user)) {
 			System.out.println("No notes.");
 		} else {
 			user.getNotes()
@@ -242,24 +258,24 @@ public class Main {
 
 	public static boolean editReminder(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (user.getNotes().isEmpty()) {
+		if (!userContainsAnyNotes(user)) {
 			System.out.println("No notes.");
 			return true;
 		}
 		System.out.println("Select note:");
 		String selectedNote = scanner.nextLine();
-		if (Integer.parseInt(selectedNote) >= user.getNotes().size()) {
+		if (noteIdExist(selectedNote, user)) {
 			System.out.println("Note with this id doesn't exist.");
 			return true;
 		}
 		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
-		if (note.getReminders().isEmpty()) {
+		if (!noteContainsAnyReminder(note)) {
 			System.out.println("This note has no reminder.");
 			return true;
 		}
 		System.out.println("Select reminder:");
 		String selectedReminder = scanner.nextLine();
-		if (Integer.parseInt(selectedReminder) >= note.getReminders().size()) {
+		if (reminderIdExist(selectedReminder, note)) {
 			System.out.println("Reminder with this id doesn't exist.");
 			return true;
 		}
@@ -275,24 +291,24 @@ public class Main {
 
 	public static boolean removeReminder(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (user.getNotes().isEmpty()) {
+		if (!userContainsAnyNotes(user)) {
 			System.out.println("No notes.");
 			return true;
 		}
 		System.out.println("Select note:");
 		String selectedNote = scanner.nextLine();
-		if (Integer.parseInt(selectedNote) >= user.getNotes().size()) {
+		if (noteIdExist(selectedNote, user)) {
 			System.out.println("Note with this id doesn't exist.");
 			return true;
 		}
 		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
-		if (note.getReminders().isEmpty()) {
+		if (!noteContainsAnyReminder(note)) {
 			System.out.println("This note has no reminder.");
 			return true;
 		}
 		System.out.println("Select reminder:");
 		String selectedReminder = scanner.nextLine();
-		if (Integer.parseInt(selectedReminder) >= note.getReminders().size()) {
+		if (reminderIdExist(selectedReminder, note)) {
 			System.out.println("Reminder with this id doesn't exist.");
 			return true;
 		}
