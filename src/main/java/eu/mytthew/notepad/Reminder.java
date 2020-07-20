@@ -10,10 +10,4 @@ import java.time.LocalDate;
 public class Reminder {
 	private String name;
 	private LocalDate date;
-
-	@Override
-	public String toString() {
-		return "Reminder name: " + name +
-				"\nReminder date=" + date;
-	}
 }

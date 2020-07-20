@@ -248,7 +248,7 @@ public class Main {
 			String reminderName = scanner.nextLine();
 			System.out.println("Reminder date [yyyy-MM-dd]:");
 			String reminderDate = scanner.nextLine();
-			user.getNotes().get(Integer.parseInt(selectedNote)).addReminder(new Reminder(reminderName, LocalDate.parse(reminderDate)));
+			user.getNotes().get(Integer.parseInt(selectedNote)).getReminders().add(new Reminder(reminderName, LocalDate.parse(reminderDate)));
 			System.out.println("Reminder added successfully.");
 		} else {
 			System.out.println("Note with this id doesn't exist.");

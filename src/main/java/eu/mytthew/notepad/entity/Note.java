@@ -17,8 +17,4 @@ public class Note {
 	private String title;
 	private String content;
 	private LocalDate noteDate;
-
-	public void addReminder(Reminder reminder) {
-		reminders.add(reminder);
-	}
 }
