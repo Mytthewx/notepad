@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
@@ -57,9 +58,12 @@ public class Main {
 		menuItems.add(new MenuItem(3, "Display today notes", () -> displayTodayNotes(authService)));
 		menuItems.add(new MenuItem(4, "Remove note", () -> removeNotes(authService)));
 		menuItems.add(new MenuItem(5, "Edit note", () -> editNote(authService)));
-		menuItems.add(new MenuItem(6, "Change login", () -> changeLogin(authService)));
-		menuItems.add(new MenuItem(7, "Change password", () -> changePassword(authService)));
-		menuItems.add(new MenuItem(8, "Logout", () -> {
+		menuItems.add(new MenuItem(6, "Add reminder", () -> addReminder(authService)));
+		menuItems.add(new MenuItem(7, "Edit reminder", () -> editReminder(authService)));
+		menuItems.add(new MenuItem(8, "Remove reminder", () -> removeReminder(authService)));
+		menuItems.add(new MenuItem(9, "Change login", () -> changeLogin(authService)));
+		menuItems.add(new MenuItem(10, "Change password", () -> changePassword(authService)));
+		menuItems.add(new MenuItem(11, "Logout", () -> {
 			System.out.println("Logged out.");
 			return false;
 		}));
@@ -81,7 +85,12 @@ public class Main {
 	public static String formatNote(Note note) {
 		return "\nDate: " + note.getNoteDate() +
 				"\nTitle: " + note.getTitle() +
-				"\nContent: '" + note.getContent() + '\'' + "\n";
+				"\nContent: '" + note.getContent() + '\'' +
+				note.getReminders()
+						.stream()
+						.filter(reminder -> reminder.getDate().equals(LocalDate.now()))
+						.map(reminder -> "\nReminder name: " + reminder.getName())
+						.collect(Collectors.joining()) + "\n";
 	}
 
 	public static void verifyEditNote(Note note, String newTitle, String newContent, String newDate) {
@@ -94,6 +103,31 @@ public class Main {
 		if (!newDate.equals("")) {
 			note.setNoteDate(LocalDate.parse(newDate));
 		}
+	}
+
+	public static void verifyEditReminder(Reminder reminder, String newReminderName, String newReminderDate) {
+		if (!newReminderName.equals("")) {
+			reminder.setName(newReminderName);
+		}
+		if (!newReminderDate.equals("")) {
+			reminder.setDate(LocalDate.parse(newReminderDate));
+		}
+	}
+
+	public static boolean userContainsAnyNotes(User user) {
+		return user.getNotes().isEmpty();
+	}
+
+	public static boolean noteContainsAnyReminder(Note note) {
+		return note.getReminders().isEmpty();
+	}
+
+	public static boolean noteIdExist(String id, User user) {
+		return Integer.parseInt(id) >= user.getNotes().size();
+	}
+
+	public static boolean reminderIdExist(String id, Note note) {
+		return Integer.parseInt(id) >= note.getReminders().size();
 	}
 
 	public static void logIn(IAuthService authService) {
@@ -140,7 +174,7 @@ public class Main {
 
 	public static void displayAllNotes(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (user.getNotes().isEmpty()) {
+		if (!userContainsAnyNotes(user)) {
 			System.out.println("No notes.");
 		} else {
 			user.getNotes()
@@ -200,9 +234,86 @@ public class Main {
 				System.out.println("Note changed successfully.");
 			} else {
 				System.out.println("Note with this id doesn't exist.");
-				return false;
 			}
 		}
+		return true;
+	}
+
+	public static boolean addReminder(IAuthService authService) {
+		System.out.println("Select note:");
+		String selectedNote = scanner.nextLine();
+		User user = authService.getLoggedUser();
+		if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
+			System.out.println("Reminder name:");
+			String reminderName = scanner.nextLine();
+			System.out.println("Reminder date [yyyy-MM-dd]:");
+			String reminderDate = scanner.nextLine();
+			user.getNotes().get(Integer.parseInt(selectedNote)).getReminders().add(new Reminder(reminderName, LocalDate.parse(reminderDate)));
+			System.out.println("Reminder added successfully.");
+		} else {
+			System.out.println("Note with this id doesn't exist.");
+		}
+		return true;
+	}
+
+	public static boolean editReminder(IAuthService authService) {
+		User user = authService.getLoggedUser();
+		if (!userContainsAnyNotes(user)) {
+			System.out.println("No notes.");
+			return true;
+		}
+		System.out.println("Select note:");
+		String selectedNote = scanner.nextLine();
+		if (noteIdExist(selectedNote, user)) {
+			System.out.println("Note with this id doesn't exist.");
+			return true;
+		}
+		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
+		if (!noteContainsAnyReminder(note)) {
+			System.out.println("This note has no reminder.");
+			return true;
+		}
+		System.out.println("Select reminder:");
+		String selectedReminder = scanner.nextLine();
+		if (reminderIdExist(selectedReminder, note)) {
+			System.out.println("Reminder with this id doesn't exist.");
+			return true;
+		}
+		Reminder reminder = note.getReminders().get(Integer.parseInt(selectedReminder));
+		System.out.println("New reminder name:");
+		String newReminderName = scanner.nextLine();
+		System.out.println("New reminder date [yyyy-MM-dd]:");
+		String newReminderDate = scanner.nextLine();
+		verifyEditReminder(reminder, newReminderName, newReminderDate);
+		System.out.println("Reminder changed successfully.");
+		return true;
+	}
+
+	public static boolean removeReminder(IAuthService authService) {
+		User user = authService.getLoggedUser();
+		if (!userContainsAnyNotes(user)) {
+			System.out.println("No notes.");
+			return true;
+		}
+		System.out.println("Select note:");
+		String selectedNote = scanner.nextLine();
+		if (noteIdExist(selectedNote, user)) {
+			System.out.println("Note with this id doesn't exist.");
+			return true;
+		}
+		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
+		if (!noteContainsAnyReminder(note)) {
+			System.out.println("This note has no reminder.");
+			return true;
+		}
+		System.out.println("Select reminder:");
+		String selectedReminder = scanner.nextLine();
+		if (reminderIdExist(selectedReminder, note)) {
+			System.out.println("Reminder with this id doesn't exist.");
+			return true;
+		}
+		note.getReminders().remove(Integer.parseInt(selectedReminder));
+		System.out.println("Reminder removed successfully.");
 		return true;
 	}
 
@@ -232,5 +343,3 @@ public class Main {
 		}
 	}
 }
-
-
