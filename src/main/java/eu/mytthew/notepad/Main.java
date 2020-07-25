@@ -1,7 +1,7 @@
 package eu.mytthew.notepad;
 
+import eu.mytthew.notepad.auth.FileAuthService;
 import eu.mytthew.notepad.auth.IAuthService;
-import eu.mytthew.notepad.auth.RuntimeAuthService;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 
@@ -15,7 +15,7 @@ public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
 
 	public static void main(String[] args) {
-		IAuthService authService = new RuntimeAuthService();
+		IAuthService authService = new FileAuthService();
 		List<MenuItem> loginMenuItems = new ArrayList<>();
 		loginMenuItems.add(new MenuItem(0, "Exit", () -> false));
 		loginMenuItems.add(new MenuItem(1, "Log in", () -> logIn(authService)));
@@ -131,7 +131,7 @@ public class Main {
 	}
 
 	public static void logIn(IAuthService authService) {
-		System.out.println("Type nickname: ");
+		System.out.println("Type nickname:");
 		String login = scanner.nextLine();
 		if (authService.containsNickname(login)) {
 			loginLoop(authService, login);

@@ -1,13 +1,17 @@
 package eu.mytthew.notepad.auth;
 
 import eu.mytthew.notepad.entity.User;
+import lombok.Getter;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 
 public class FileAuthService implements IAuthService {
-	//@Getter
+	@Getter
 	private User loggedUser;
 
 	@Override
@@ -19,8 +23,16 @@ public class FileAuthService implements IAuthService {
 	@Override
 	public boolean login(String nickname, String password) {
 		File temp = new File("users/" + nickname + ".json");
-		JSONObject jsonObject = new JSONObject(temp);
-		if (jsonObject.getJSONObject(nickname).getString(password).equals(password)) {
+		JSONTokener tokener = null;
+		try {
+			tokener = new JSONTokener(new FileInputStream(temp));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		JSONObject obj = new JSONObject(tokener);
+		String p = obj.getString("pass");
+		if (p.equals(password)) {
+			loggedUser = new User(nickname, password);
 			return true;
 		}
 		return false;
@@ -47,10 +59,5 @@ public class FileAuthService implements IAuthService {
 			System.out.println(e);
 		}
 		return false;
-	}
-
-	@Override
-	public User getLoggedUser() {
-		return null;
 	}
 }
