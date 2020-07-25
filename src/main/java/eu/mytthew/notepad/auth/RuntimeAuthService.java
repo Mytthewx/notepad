@@ -53,6 +53,11 @@ public class RuntimeAuthService implements IAuthService {
 		return true;
 	}
 
+	@Override
+	public boolean logout() {
+		return false;
+	}
+
 	private String hashPassword(String password) {
 		return Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
 	}

@@ -2,6 +2,7 @@ package eu.mytthew.notepad.auth;
 
 import eu.mytthew.notepad.entity.User;
 import lombok.Getter;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -54,6 +55,31 @@ public class FileAuthService implements IAuthService {
 		jsonObject.put("pass", password);
 		try (FileWriter fileWriter = new FileWriter(temp)) {
 			fileWriter.write(jsonObject.toString(4));
+			return true;
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean logout() {
+		if (loggedUser == null) {
+			return false;
+		}
+		File temp = new File("users/" + loggedUser.getNickname() + ".json");
+		JSONObject jsonObject = new JSONObject(temp);
+		JSONArray jsonArray = new JSONArray();
+		for (int i = 0; i < loggedUser.getNotes().size(); i++) {
+			JSONObject note = new JSONObject();
+			note.put("Title", loggedUser.getNotes().get(i).getTitle());
+			note.put("Content", loggedUser.getNotes().get(i).getContent());
+			note.put("Date", loggedUser.getNotes().get(i).getNoteDate());
+			jsonArray.put(note);
+		}
+		jsonObject.put("notes", jsonArray);
+		try (FileWriter fileWriter = new FileWriter(temp)) {
+			fileWriter.append(jsonObject.toString(5));
 			return true;
 		} catch (Exception e) {
 			System.out.println(e);

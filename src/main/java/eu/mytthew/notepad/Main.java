@@ -64,7 +64,8 @@ public class Main {
 		menuItems.add(new MenuItem(9, "Change login", () -> changeLogin(authService)));
 		menuItems.add(new MenuItem(10, "Change password", () -> changePassword(authService)));
 		menuItems.add(new MenuItem(11, "Logout", () -> {
-			System.out.println("Logged out.");
+			authService.logout();
+			System.out.println("Log out.");
 			return false;
 		}));
 		boolean repeat = true;
@@ -131,13 +132,14 @@ public class Main {
 	}
 
 	public static void logIn(IAuthService authService) {
-		System.out.println("Type nickname:");
+		System.out.println("Type nickname: ");
 		String login = scanner.nextLine();
 		if (authService.containsNickname(login)) {
 			loginLoop(authService, login);
 		} else {
 			System.out.println("The user with the given name does not exist.");
 		}
+
 	}
 
 	public static void addUser(IAuthService authService) {
