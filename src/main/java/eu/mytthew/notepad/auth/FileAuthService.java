@@ -67,20 +67,32 @@ public class FileAuthService implements IAuthService {
 		if (loggedUser == null) {
 			return false;
 		}
-		File temp = new File("users/" + loggedUser.getNickname() + ".json");
-		JSONObject jsonObject = new JSONObject(temp);
-		JSONArray jsonArray = new JSONArray();
-		for (int i = 0; i < loggedUser.getNotes().size(); i++) {
-			JSONObject note = new JSONObject();
-			note.put("Title", loggedUser.getNotes().get(i).getTitle());
-			note.put("Content", loggedUser.getNotes().get(i).getContent());
-			note.put("Date", loggedUser.getNotes().get(i).getNoteDate());
-			jsonArray.put(note);
+		File temp = new File("users", loggedUser.getNickname() + ".json");
+		if (temp.exists()) {
+			temp.delete();
 		}
-		jsonObject.put("notes", jsonArray);
+		JSONObject generalJSON = new JSONObject();
+		generalJSON.put("nick", getLoggedUser().getNickname());
+		generalJSON.put("pass", getLoggedUser().getPassword());
+		JSONArray array = new JSONArray();
+		for (int i = 0; i < getLoggedUser().getNotes().size(); i++) {
+			JSONObject innerObject = new JSONObject();
+			innerObject.put("Title", getLoggedUser().getNotes().get(i).getTitle());
+			innerObject.put("Content", getLoggedUser().getNotes().get(i).getContent());
+			innerObject.put("Data", getLoggedUser().getNotes().get(i).getNoteDate());
+			JSONArray innerArray = new JSONArray();
+			for (int j = 0; j < getLoggedUser().getNotes().get(i).getReminders().size(); j++) {
+				JSONObject secInnerObject = new JSONObject();
+				secInnerObject.put("Name", getLoggedUser().getNotes().get(i).getReminders().get(j).getName());
+				secInnerObject.put("Date", getLoggedUser().getNotes().get(i).getReminders().get(j).getDate());
+				innerArray.put(secInnerObject);
+			}
+			innerObject.put("Reminders", innerArray);
+			array.put(innerObject);
+		}
+		generalJSON.put("Notes", array);
 		try (FileWriter fileWriter = new FileWriter(temp)) {
-			fileWriter.append(jsonObject.toString(5));
-			return true;
+			fileWriter.write(generalJSON.toString(4));
 		} catch (Exception e) {
 			System.out.println(e);
 		}
