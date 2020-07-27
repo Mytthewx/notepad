@@ -176,7 +176,7 @@ public class Main {
 
 	public static void displayAllNotes(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (!userContainsAnyNotes(user)) {
+		if (user.getNotes().isEmpty()) {
 			System.out.println("No notes.");
 		} else {
 			user.getNotes()
@@ -260,7 +260,7 @@ public class Main {
 
 	public static boolean editReminder(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (!userContainsAnyNotes(user)) {
+		if (userContainsAnyNotes(user)) {
 			System.out.println("No notes.");
 			return true;
 		}
@@ -271,7 +271,7 @@ public class Main {
 			return true;
 		}
 		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
-		if (!noteContainsAnyReminder(note)) {
+		if (noteContainsAnyReminder(note)) {
 			System.out.println("This note has no reminder.");
 			return true;
 		}
@@ -293,7 +293,7 @@ public class Main {
 
 	public static boolean removeReminder(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (!userContainsAnyNotes(user)) {
+		if (userContainsAnyNotes(user)) {
 			System.out.println("No notes.");
 			return true;
 		}
@@ -304,7 +304,7 @@ public class Main {
 			return true;
 		}
 		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
-		if (!noteContainsAnyReminder(note)) {
+		if (noteContainsAnyReminder(note)) {
 			System.out.println("This note has no reminder.");
 			return true;
 		}

@@ -45,15 +45,13 @@ public class FileAuthService implements IAuthService {
 				LocalDate noteDate = LocalDate.parse(innerNoteObject.getString("date"));
 				Note note = new Note(noteTitle, noteContent, noteDate);
 				JSONArray arrayReminders = innerNoteObject.getJSONArray("reminders");
-				if (!arrayReminders.isEmpty()) {
-					for (int j = 0; j < arrayReminders.length(); j++) {
-						JSONObject innerReminderObject = arrayReminders.getJSONObject(j);
-						String reminderName = innerReminderObject.getString("name");
-						LocalDate reminderDate = LocalDate.parse(innerReminderObject.getString("date"));
-						note.getReminders().add(new Reminder(reminderName, reminderDate));
-					}
+				for (int j = 0; j < arrayReminders.length(); j++) {
+					JSONObject innerReminderObject = arrayReminders.getJSONObject(j);
+					String reminderName = innerReminderObject.getString("name");
+					LocalDate reminderDate = LocalDate.parse(innerReminderObject.getString("date"));
+					note.getReminders().add(new Reminder(reminderName, reminderDate));
 				}
-				getLoggedUser().getNotes().add(note);
+				getLoggedUser().addNote(note);
 			}
 			return true;
 		}
