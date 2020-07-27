@@ -1,5 +1,7 @@
 package eu.mytthew.notepad.auth;
 
+import eu.mytthew.notepad.Reminder;
+import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 import lombok.Getter;
 import org.json.JSONArray;
@@ -10,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.time.LocalDate;
 
 public class FileAuthService implements IAuthService {
 	@Getter
@@ -34,6 +37,24 @@ public class FileAuthService implements IAuthService {
 		String p = obj.getString("pass");
 		if (p.equals(password)) {
 			loggedUser = new User(nickname, password);
+			JSONArray arrayNotes = obj.getJSONArray("notes");
+			for (int i = 0; i < arrayNotes.length(); i++) {
+				JSONObject innerNoteObject = arrayNotes.getJSONObject(i);
+				String noteTitle = innerNoteObject.getString("title");
+				String noteContent = innerNoteObject.getString("content");
+				LocalDate noteDate = LocalDate.parse(innerNoteObject.getString("date"));
+				Note note = new Note(noteTitle, noteContent, noteDate);
+				JSONArray arrayReminders = innerNoteObject.getJSONArray("reminders");
+				if (!arrayReminders.isEmpty()) {
+					for (int j = 0; j < arrayReminders.length(); j++) {
+						JSONObject innerReminderObject = arrayReminders.getJSONObject(j);
+						String reminderName = innerReminderObject.getString("name");
+						LocalDate reminderDate = LocalDate.parse(innerReminderObject.getString("date"));
+						note.getReminders().add(new Reminder(reminderName, reminderDate));
+					}
+				}
+				getLoggedUser().getNotes().add(note);
+			}
 			return true;
 		}
 		return false;
@@ -77,20 +98,20 @@ public class FileAuthService implements IAuthService {
 		JSONArray array = new JSONArray();
 		for (int i = 0; i < getLoggedUser().getNotes().size(); i++) {
 			JSONObject innerObject = new JSONObject();
-			innerObject.put("Title", getLoggedUser().getNotes().get(i).getTitle());
-			innerObject.put("Content", getLoggedUser().getNotes().get(i).getContent());
-			innerObject.put("Data", getLoggedUser().getNotes().get(i).getNoteDate());
+			innerObject.put("title", getLoggedUser().getNotes().get(i).getTitle());
+			innerObject.put("content", getLoggedUser().getNotes().get(i).getContent());
+			innerObject.put("date", getLoggedUser().getNotes().get(i).getNoteDate());
 			JSONArray innerArray = new JSONArray();
 			for (int j = 0; j < getLoggedUser().getNotes().get(i).getReminders().size(); j++) {
 				JSONObject secInnerObject = new JSONObject();
-				secInnerObject.put("Name", getLoggedUser().getNotes().get(i).getReminders().get(j).getName());
-				secInnerObject.put("Date", getLoggedUser().getNotes().get(i).getReminders().get(j).getDate());
+				secInnerObject.put("name", getLoggedUser().getNotes().get(i).getReminders().get(j).getName());
+				secInnerObject.put("date", getLoggedUser().getNotes().get(i).getReminders().get(j).getDate());
 				innerArray.put(secInnerObject);
 			}
-			innerObject.put("Reminders", innerArray);
+			innerObject.put("reminders", innerArray);
 			array.put(innerObject);
 		}
-		generalJSON.put("Notes", array);
+		generalJSON.put("notes", array);
 		try (FileWriter fileWriter = new FileWriter(temp)) {
 			fileWriter.write(generalJSON.toString(4));
 			return true;
