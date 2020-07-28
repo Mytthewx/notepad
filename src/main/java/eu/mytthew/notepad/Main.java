@@ -326,7 +326,7 @@ public class Main {
 			System.out.println("This nickname is already taken.");
 		} else {
 			String oldNickname = authService.getLoggedUser().getNickname();
-			authService.getLoggedUser().setNickname(newNickname);
+			authService.changeNickname(newNickname);
 			System.out.println("Nickname changed successfully!");
 			System.out.println("Old nickname: " + oldNickname);
 			System.out.println("New nickname: " + newNickname);

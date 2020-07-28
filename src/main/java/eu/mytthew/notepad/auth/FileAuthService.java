@@ -73,6 +73,17 @@ public class FileAuthService implements IAuthService {
 	}
 
 	@Override
+	public boolean changeNickname(String newNickname) {
+		if (containsNickname(newNickname)) {
+			return false;
+		}
+		File file = new File("users", getLoggedUser().getNickname().toLowerCase() + ".json");
+		file.delete();
+		getLoggedUser().setNickname(newNickname);
+		return true;
+	}
+
+	@Override
 	public boolean addUser(String nickname, String password) {
 		File temp = new File("users", nickname.toLowerCase() + ".json");
 		if (temp.exists()) {

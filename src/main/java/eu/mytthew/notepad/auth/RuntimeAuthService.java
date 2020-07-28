@@ -58,6 +58,15 @@ public class RuntimeAuthService implements IAuthService {
 		return false;
 	}
 
+	@Override
+	public boolean changeNickname(String newNickname) {
+		if (containsNickname(newNickname)) {
+			return false;
+		}
+		getLoggedUser().setNickname(newNickname);
+		return true;
+	}
+
 	private String hashPassword(String password) {
 		return Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
 	}

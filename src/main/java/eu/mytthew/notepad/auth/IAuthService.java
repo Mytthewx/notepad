@@ -9,6 +9,8 @@ public interface IAuthService {
 
 	boolean changePassword(String oldPassword, String newPassword);
 
+	boolean changeNickname(String newPassword);
+
 	boolean addUser(String nickname, String password);
 
 	boolean logout();
