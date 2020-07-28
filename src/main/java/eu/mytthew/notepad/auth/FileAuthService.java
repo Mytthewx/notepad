@@ -65,6 +65,10 @@ public class FileAuthService implements IAuthService {
 
 	@Override
 	public boolean changePassword(String oldPassword, String newPassword) {
+		if (loggedUser.getPassword().equals(hashPassword(oldPassword))) {
+			loggedUser.setPassword(hashPassword(newPassword));
+			return true;
+		}
 		return false;
 	}
 
