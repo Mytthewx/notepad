@@ -22,13 +22,13 @@ public class FileAuthService implements IAuthService {
 
 	@Override
 	public boolean containsNickname(String nickname) {
-		File temp = new File("users", nickname + ".json");
+		File temp = new File("users", nickname.toLowerCase() + ".json");
 		return temp.exists();
 	}
 
 	@Override
 	public boolean login(String nickname, String password) {
-		File temp = new File("users", nickname + ".json");
+		File temp = new File("users", nickname.toLowerCase() + ".json");
 		JSONTokener tokener = null;
 		try {
 			tokener = new JSONTokener(new FileInputStream(temp));
@@ -74,7 +74,7 @@ public class FileAuthService implements IAuthService {
 
 	@Override
 	public boolean addUser(String nickname, String password) {
-		File temp = new File("users", nickname + ".json");
+		File temp = new File("users", nickname.toLowerCase() + ".json");
 		if (temp.exists()) {
 			return false;
 		}
@@ -95,7 +95,7 @@ public class FileAuthService implements IAuthService {
 		if (loggedUser == null) {
 			return false;
 		}
-		File temp = new File("users", loggedUser.getNickname() + ".json");
+		File temp = new File("users", loggedUser.getNickname().toLowerCase() + ".json");
 		if (temp.exists()) {
 			temp.delete();
 		}
