@@ -11,14 +11,17 @@ import org.json.JSONTokener;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 
 public class FileAuthService implements IAuthService {
 	@Getter
 	private User loggedUser;
+	private String oldNickname;
 
 	@Override
 	public boolean containsNickname(String nickname) {
@@ -29,38 +32,38 @@ public class FileAuthService implements IAuthService {
 	@Override
 	public boolean login(String nickname, String password) {
 		File temp = new File("users", nickname.toLowerCase() + ".json");
-		JSONTokener tokener = null;
-		try {
-			tokener = new JSONTokener(new FileInputStream(temp));
-		} catch (FileNotFoundException e) {
+		try (FileInputStream fileInputStream = new FileInputStream(temp)) {
+			JSONTokener tokener = new JSONTokener(fileInputStream);
+			JSONObject obj = new JSONObject(tokener);
+			String p = obj.getString("pass");
+			if (p.equals(hashPassword(password))) {
+				loggedUser = new User(nickname, hashPassword(password));
+				if (obj.has("notes")) {
+					JSONArray arrayNotes = obj.getJSONArray("notes");
+					for (int i = 0; i < arrayNotes.length(); i++) {
+						JSONObject innerNoteObject = arrayNotes.getJSONObject(i);
+						String noteTitle = innerNoteObject.getString("title");
+						String noteContent = innerNoteObject.getString("content");
+						LocalDate noteDate = LocalDate.parse(innerNoteObject.getString("date"));
+						Note note = new Note(noteTitle, noteContent, noteDate);
+						JSONArray arrayReminders = innerNoteObject.getJSONArray("reminders");
+						for (int j = 0; j < arrayReminders.length(); j++) {
+							JSONObject innerReminderObject = arrayReminders.getJSONObject(j);
+							String reminderName = innerReminderObject.getString("name");
+							LocalDate reminderDate = LocalDate.parse(innerReminderObject.getString("date"));
+							note.getReminders().add(new Reminder(reminderName, reminderDate));
+						}
+						getLoggedUser().addNote(note);
+					}
+				}
+				oldNickname = getLoggedUser().getNickname();
+				fileInputStream.close();
+				return true;
+			}
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		JSONObject obj = new JSONObject(tokener);
-		String p = obj.getString("pass");
-		if (p.equals(hashPassword(password))) {
-			loggedUser = new User(nickname, hashPassword(password));
-			if (obj.has("notes")) {
-				JSONArray arrayNotes = obj.getJSONArray("notes");
-				for (int i = 0; i < arrayNotes.length(); i++) {
-					JSONObject innerNoteObject = arrayNotes.getJSONObject(i);
-					String noteTitle = innerNoteObject.getString("title");
-					String noteContent = innerNoteObject.getString("content");
-					LocalDate noteDate = LocalDate.parse(innerNoteObject.getString("date"));
-					Note note = new Note(noteTitle, noteContent, noteDate);
-					JSONArray arrayReminders = innerNoteObject.getJSONArray("reminders");
-					for (int j = 0; j < arrayReminders.length(); j++) {
-						JSONObject innerReminderObject = arrayReminders.getJSONObject(j);
-						String reminderName = innerReminderObject.getString("name");
-						LocalDate reminderDate = LocalDate.parse(innerReminderObject.getString("date"));
-						note.getReminders().add(new Reminder(reminderName, reminderDate));
-					}
-					getLoggedUser().addNote(note);
-				}
-			}
-			return true;
-		}
 		return false;
-
 	}
 
 	@Override
@@ -77,8 +80,6 @@ public class FileAuthService implements IAuthService {
 		if (containsNickname(newNickname)) {
 			return false;
 		}
-		File file = new File("users", getLoggedUser().getNickname().toLowerCase() + ".json");
-		file.delete();
 		getLoggedUser().setNickname(newNickname);
 		return true;
 	}
@@ -106,9 +107,13 @@ public class FileAuthService implements IAuthService {
 		if (loggedUser == null) {
 			return false;
 		}
+//		File oldFile = new File("users", oldNickname.toLowerCase() + ".json");
+//		oldFile.delete();
 		File temp = new File("users", loggedUser.getNickname().toLowerCase() + ".json");
-		if (temp.exists()) {
-			temp.delete();
+		try {
+			Files.delete(Paths.get("users", oldNickname.toLowerCase() + ".json"));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		JSONObject generalJSON = new JSONObject();
 		generalJSON.put("nick", getLoggedUser().getNickname());
@@ -116,14 +121,33 @@ public class FileAuthService implements IAuthService {
 		JSONArray array = new JSONArray();
 		for (int i = 0; i < getLoggedUser().getNotes().size(); i++) {
 			JSONObject innerObject = new JSONObject();
-			innerObject.put("title", getLoggedUser().getNotes().get(i).getTitle());
-			innerObject.put("content", getLoggedUser().getNotes().get(i).getContent());
-			innerObject.put("date", getLoggedUser().getNotes().get(i).getNoteDate());
+			innerObject.put("title", getLoggedUser()
+					.getNotes()
+					.get(i)
+					.getTitle());
+			innerObject.put("content", getLoggedUser()
+					.getNotes()
+					.get(i)
+					.getContent());
+			innerObject.put("date", getLoggedUser()
+					.getNotes()
+					.get(i)
+					.getNoteDate());
 			JSONArray innerArray = new JSONArray();
 			for (int j = 0; j < getLoggedUser().getNotes().get(i).getReminders().size(); j++) {
 				JSONObject secInnerObject = new JSONObject();
-				secInnerObject.put("name", getLoggedUser().getNotes().get(i).getReminders().get(j).getName());
-				secInnerObject.put("date", getLoggedUser().getNotes().get(i).getReminders().get(j).getDate());
+				secInnerObject.put("name", getLoggedUser()
+						.getNotes()
+						.get(i)
+						.getReminders()
+						.get(j)
+						.getName());
+				secInnerObject.put("date", getLoggedUser()
+						.getNotes()
+						.get(i)
+						.getReminders()
+						.get(j)
+						.getDate());
 				innerArray.put(secInnerObject);
 			}
 			innerObject.put("reminders", innerArray);
