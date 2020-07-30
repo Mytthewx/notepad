@@ -9,7 +9,7 @@ public interface IAuthService {
 
 	boolean changePassword(String oldPassword, String newPassword);
 
-	boolean changeNickname(String newPassword);
+	boolean changeNickname(String newNickname);
 
 	boolean addUser(String nickname, String password);
 

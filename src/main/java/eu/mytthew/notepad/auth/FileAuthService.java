@@ -107,8 +107,6 @@ public class FileAuthService implements IAuthService {
 		if (loggedUser == null) {
 			return false;
 		}
-//		File oldFile = new File("users", oldNickname.toLowerCase() + ".json");
-//		oldFile.delete();
 		File temp = new File("users", loggedUser.getNickname().toLowerCase() + ".json");
 		try {
 			Files.delete(Paths.get("users", oldNickname.toLowerCase() + ".json"));
@@ -134,7 +132,11 @@ public class FileAuthService implements IAuthService {
 					.get(i)
 					.getNoteDate());
 			JSONArray innerArray = new JSONArray();
-			for (int j = 0; j < getLoggedUser().getNotes().get(i).getReminders().size(); j++) {
+			for (int j = 0; j < getLoggedUser()
+					.getNotes()
+					.get(i)
+					.getReminders()
+					.size(); j++) {
 				JSONObject secInnerObject = new JSONObject();
 				secInnerObject.put("name", getLoggedUser()
 						.getNotes()

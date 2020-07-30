@@ -55,7 +55,8 @@ public class RuntimeAuthService implements IAuthService {
 
 	@Override
 	public boolean logout() {
-		return false;
+		loggedUser = null;
+		return true;
 	}
 
 	@Override
