@@ -16,7 +16,11 @@ public class FileAuthService implements IAuthService {
 	@Getter
 	private User loggedUser;
 	private String oldNickname;
-	FileOperation openFile;
+	private FileOperation file;
+
+	public FileAuthService(FileOperation file) {
+		this.file = file;
+	}
 
 	@Override
 	public boolean containsNickname(String nickname) {
@@ -24,13 +28,9 @@ public class FileAuthService implements IAuthService {
 		return temp.exists();
 	}
 
-	public FileAuthService(FileOperation openFile) {
-		this.openFile = openFile;
-	}
-
 	@Override
 	public boolean login(String nickname, String password) {
-		JSONObject obj = openFile.openFile(nickname);
+		JSONObject obj = file.openFile(nickname);
 		String p = obj.getString("pass");
 		if (p.equals(hashPassword(password))) {
 			loggedUser = new User(nickname, hashPassword(password));
@@ -81,7 +81,7 @@ public class FileAuthService implements IAuthService {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("nick", nickname);
 		jsonObject.put("pass", hashPassword(password));
-		return openFile.createFile(nickname, jsonObject);
+		return file.createFile(nickname, jsonObject);
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class FileAuthService implements IAuthService {
 		if (loggedUser == null) {
 			return false;
 		}
-		openFile.deleteFile(oldNickname.toLowerCase());
+		file.deleteFile(oldNickname.toLowerCase());
 		JSONObject generalJSON = new JSONObject();
 		generalJSON.put("nick", getLoggedUser().getNickname());
 		generalJSON.put("pass", getLoggedUser().getPassword());
@@ -133,7 +133,7 @@ public class FileAuthService implements IAuthService {
 			array.put(innerObject);
 		}
 		generalJSON.put("notes", array);
-		return openFile.createFile(getLoggedUser().getNickname().toLowerCase(), generalJSON);
+		return file.createFile(getLoggedUser().getNickname().toLowerCase(), generalJSON);
 	}
 
 	private String hashPassword(String password) {
