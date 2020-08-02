@@ -7,10 +7,8 @@ import eu.mytthew.notepad.entity.User;
 import lombok.Getter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -22,6 +20,7 @@ public class FileAuthService implements IAuthService {
 	@Getter
 	private User loggedUser;
 	private String oldNickname;
+	OpenFileClass openFile;
 
 	@Override
 	public boolean containsNickname(String nickname) {
@@ -29,39 +28,36 @@ public class FileAuthService implements IAuthService {
 		return temp.exists();
 	}
 
+	public FileAuthService(OpenFileClass openFile) {
+		this.openFile = openFile;
+	}
+
 	@Override
 	public boolean login(String nickname, String password) {
-		File temp = new File("users", nickname.toLowerCase() + ".json");
-		try (FileInputStream fileInputStream = new FileInputStream(temp)) {
-			JSONTokener tokener = new JSONTokener(fileInputStream);
-			JSONObject obj = new JSONObject(tokener);
-			String p = obj.getString("pass");
-			if (p.equals(hashPassword(password))) {
-				loggedUser = new User(nickname, hashPassword(password));
-				if (obj.has("notes")) {
-					JSONArray arrayNotes = obj.getJSONArray("notes");
-					for (int i = 0; i < arrayNotes.length(); i++) {
-						JSONObject innerNoteObject = arrayNotes.getJSONObject(i);
-						String noteTitle = innerNoteObject.getString("title");
-						String noteContent = innerNoteObject.getString("content");
-						LocalDate noteDate = LocalDate.parse(innerNoteObject.getString("date"));
-						Note note = new Note(noteTitle, noteContent, noteDate);
-						JSONArray arrayReminders = innerNoteObject.getJSONArray("reminders");
-						for (int j = 0; j < arrayReminders.length(); j++) {
-							JSONObject innerReminderObject = arrayReminders.getJSONObject(j);
-							String reminderName = innerReminderObject.getString("name");
-							LocalDate reminderDate = LocalDate.parse(innerReminderObject.getString("date"));
-							note.getReminders().add(new Reminder(reminderName, reminderDate));
-						}
-						getLoggedUser().addNote(note);
+		JSONObject obj = openFile.openFile(nickname);
+		String p = obj.getString("pass");
+		if (p.equals(hashPassword(password))) {
+			loggedUser = new User(nickname, hashPassword(password));
+			if (obj.has("notes")) {
+				JSONArray arrayNotes = obj.getJSONArray("notes");
+				for (int i = 0; i < arrayNotes.length(); i++) {
+					JSONObject innerNoteObject = arrayNotes.getJSONObject(i);
+					String noteTitle = innerNoteObject.getString("title");
+					String noteContent = innerNoteObject.getString("content");
+					LocalDate noteDate = LocalDate.parse(innerNoteObject.getString("date"));
+					Note note = new Note(noteTitle, noteContent, noteDate);
+					JSONArray arrayReminders = innerNoteObject.getJSONArray("reminders");
+					for (int j = 0; j < arrayReminders.length(); j++) {
+						JSONObject innerReminderObject = arrayReminders.getJSONObject(j);
+						String reminderName = innerReminderObject.getString("name");
+						LocalDate reminderDate = LocalDate.parse(innerReminderObject.getString("date"));
+						note.getReminders().add(new Reminder(reminderName, reminderDate));
 					}
+					getLoggedUser().addNote(note);
 				}
-				oldNickname = getLoggedUser().getNickname();
-				fileInputStream.close();
-				return true;
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			oldNickname = getLoggedUser().getNickname();
+			return true;
 		}
 		return false;
 	}
