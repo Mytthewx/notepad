@@ -7,8 +7,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-public class OpenFileClass {
+public class FileOperation {
 	public JSONObject openFile(String filename) {
 		File temp = new File("users", filename + ".json");
 		try (FileInputStream fileInputStream = new FileInputStream(temp)) {
@@ -21,12 +23,11 @@ public class OpenFileClass {
 		return null;
 	}
 
-	public boolean createFile(String filename) {
+	public boolean createFile(String filename, JSONObject jsonObject) {
 		File temp = new File("users", filename.toLowerCase() + ".json");
 		if (temp.exists()) {
 			return false;
 		}
-		JSONObject jsonObject = new JSONObject();
 		try (FileWriter fileWriter = new FileWriter(temp)) {
 			fileWriter.write(jsonObject.toString(4));
 			return true;
@@ -34,5 +35,13 @@ public class OpenFileClass {
 			System.out.println(e);
 		}
 		return false;
+	}
+
+	public void deleteFile(String filename) {
+		try {
+			Files.delete(Paths.get("users", filename + ".json"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -9,18 +9,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 
 public class FileAuthService implements IAuthService {
 	@Getter
 	private User loggedUser;
 	private String oldNickname;
-	OpenFileClass openFile;
+	FileOperation openFile;
 
 	@Override
 	public boolean containsNickname(String nickname) {
@@ -28,7 +24,7 @@ public class FileAuthService implements IAuthService {
 		return temp.exists();
 	}
 
-	public FileAuthService(OpenFileClass openFile) {
+	public FileAuthService(FileOperation openFile) {
 		this.openFile = openFile;
 	}
 
@@ -85,7 +81,7 @@ public class FileAuthService implements IAuthService {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("nick", nickname);
 		jsonObject.put("pass", hashPassword(password));
-		return openFile.createFile(nickname);
+		return openFile.createFile(nickname, jsonObject);
 	}
 
 	@Override
@@ -93,12 +89,7 @@ public class FileAuthService implements IAuthService {
 		if (loggedUser == null) {
 			return false;
 		}
-		File temp = new File("users", loggedUser.getNickname().toLowerCase() + ".json");
-		try {
-			Files.delete(Paths.get("users", oldNickname.toLowerCase() + ".json"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		openFile.deleteFile(oldNickname.toLowerCase());
 		JSONObject generalJSON = new JSONObject();
 		generalJSON.put("nick", getLoggedUser().getNickname());
 		generalJSON.put("pass", getLoggedUser().getPassword());
@@ -142,13 +133,7 @@ public class FileAuthService implements IAuthService {
 			array.put(innerObject);
 		}
 		generalJSON.put("notes", array);
-		try (FileWriter fileWriter = new FileWriter(temp)) {
-			fileWriter.write(generalJSON.toString(4));
-			return true;
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-		return false;
+		return openFile.createFile(getLoggedUser().getNickname().toLowerCase(), generalJSON);
 	}
 
 	private String hashPassword(String password) {
