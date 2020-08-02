@@ -82,20 +82,10 @@ public class FileAuthService implements IAuthService {
 
 	@Override
 	public boolean addUser(String nickname, String password) {
-		File temp = new File("users", nickname.toLowerCase() + ".json");
-		if (temp.exists()) {
-			return false;
-		}
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("nick", nickname);
 		jsonObject.put("pass", hashPassword(password));
-		try (FileWriter fileWriter = new FileWriter(temp)) {
-			fileWriter.write(jsonObject.toString(4));
-			return true;
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-		return false;
+		return openFile.createFile(nickname);
 	}
 
 	@Override

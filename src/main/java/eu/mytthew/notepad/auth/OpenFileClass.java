@@ -5,6 +5,7 @@ import org.json.JSONTokener;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class OpenFileClass {
@@ -18,5 +19,20 @@ public class OpenFileClass {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public boolean createFile(String filename) {
+		File temp = new File("users", filename.toLowerCase() + ".json");
+		if (temp.exists()) {
+			return false;
+		}
+		JSONObject jsonObject = new JSONObject();
+		try (FileWriter fileWriter = new FileWriter(temp)) {
+			fileWriter.write(jsonObject.toString(4));
+			return true;
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return false;
 	}
 }
