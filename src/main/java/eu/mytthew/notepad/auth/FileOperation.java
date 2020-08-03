@@ -15,7 +15,6 @@ public class FileOperation {
 		File temp = new File("users", filename + ".json");
 		try (FileInputStream fileInputStream = new FileInputStream(temp)) {
 			JSONTokener tokener = new JSONTokener(fileInputStream);
-			fileInputStream.close();
 			return new JSONObject(tokener);
 		} catch (IOException e) {
 			e.printStackTrace();
