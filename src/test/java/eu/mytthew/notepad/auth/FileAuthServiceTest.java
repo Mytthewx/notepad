@@ -60,6 +60,6 @@ public class FileAuthServiceTest {
 		boolean result = authService.addUser("usertest", "123");
 
 		// then
-		verify(fileOperation, times(1)).createFile(eq("usertest"), eq(jsonObject2));
+		verify(fileOperation, times(1)).createFile(any(), eq(jsonObject2));
 	}
 }
