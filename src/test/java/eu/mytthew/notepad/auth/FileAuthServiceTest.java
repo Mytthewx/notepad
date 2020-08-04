@@ -52,17 +52,14 @@ public class FileAuthServiceTest {
 		IAuthService authService = new FileAuthService(fileOperation);
 		JSONObject jsonObject = new JSONObject();
 		JSONObject jsonObject2 = new JSONObject();
-		jsonObject.put("nick", "UserTest");
-		jsonObject.put("pass", "123");
-		jsonObject2.put("nick", "UserTest");
+		jsonObject2.put("nick", "usertest");
 		jsonObject2.put("pass", "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
-		when(fileOperation.createFile(eq("UserTest"), eq(jsonObject))).thenReturn(true);
+		when(fileOperation.createFile(eq("usertest"), eq(jsonObject2))).thenReturn(true);
 
 		// when
-		boolean result = authService.addUser("UserTest", "123");
+		boolean result = authService.addUser("usertest", "123");
 
 		// then
-
-		verify(fileOperation, times(1)).createFile(eq("UserTest"), eq(jsonObject2));
+		verify(fileOperation, times(1)).createFile(eq("usertest"), eq(jsonObject2));
 	}
 }
