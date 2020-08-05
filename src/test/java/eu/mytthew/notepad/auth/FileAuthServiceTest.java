@@ -32,21 +32,6 @@ public class FileAuthServiceTest {
 	}
 
 	@Test
-	public void addUserTrueWithVerifyTest() {
-		// given
-		FileOperation fileOperation = mock(FileOperation.class);
-		IAuthService authService = new FileAuthService(fileOperation);
-		when(fileOperation.createFile(any(), any())).thenReturn(true);
-
-		// when
-		boolean result = authService.addUser("UserTest", "123");
-
-		// then
-		assertTrue(result);
-		verify(fileOperation, times(1)).createFile(any(), any());
-	}
-
-	@Test
 	public void addUserTrueTest() {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
@@ -68,5 +53,35 @@ public class FileAuthServiceTest {
 		assertTrue(result);
 		assertEquals("usertest", nicknameCaptorVerify.getValue());
 		assertEquals("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3", passwordCaptorVerify.getValue().getString("pass"));
+	}
+
+	@Test
+	public void containsNicknameTest() {
+		// given
+		FileOperation fileOperation = mock(FileOperation.class);
+		IAuthService authService = new FileAuthService(fileOperation);
+		authService.addUser("Mytthew", "123");
+
+		// when
+		boolean result = authService.containsNickname("Mytthew");
+
+		// then
+		assertTrue(result);
+	}
+
+	@Test
+	public void changeNicknameTest() {
+		// given
+		FileOperation fileOperation = mock(FileOperation.class);
+		IAuthService authService = new FileAuthService(fileOperation);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("nick", "Mytthew");
+		jsonObject.put("pass", "123");
+
+		// when
+
+
+		// then
+		assertTrue(authService.containsNickname("Mateusz"));
 	}
 }
