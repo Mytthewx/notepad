@@ -3,12 +3,13 @@ package eu.mytthew.notepad.auth;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -51,15 +52,21 @@ public class FileAuthServiceTest {
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
 		JSONObject jsonObject = new JSONObject();
-		JSONObject jsonObject2 = new JSONObject();
-		jsonObject2.put("nick", "usertest");
-		jsonObject2.put("pass", "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
-		when(fileOperation.createFile(eq("usertest"), eq(jsonObject2))).thenReturn(true);
+		jsonObject.put("nick", "usertest");
+		jsonObject.put("pass", "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		ArgumentCaptor<String> nicknameCaptor = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<JSONObject> passwordCaptor = ArgumentCaptor.forClass(JSONObject.class);
+		when(fileOperation.createFile(nicknameCaptor.capture(), passwordCaptor.capture())).thenReturn(true);
 
 		// when
 		boolean result = authService.addUser("usertest", "123");
 
 		// then
-		verify(fileOperation, times(1)).createFile(any(), eq(jsonObject2));
+		ArgumentCaptor<String> nicknameCaptorVerify = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<JSONObject> passwordCaptorVerify = ArgumentCaptor.forClass(JSONObject.class);
+		verify(fileOperation, times(1)).createFile(nicknameCaptorVerify.capture(), passwordCaptorVerify.capture());
+		assertTrue(result);
+		assertEquals("usertest", nicknameCaptorVerify.getValue());
+		assertEquals("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3", passwordCaptorVerify.getValue().getString("pass"));
 	}
 }
