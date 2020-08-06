@@ -1,5 +1,6 @@
 package eu.mytthew.notepad.auth;
 
+import eu.mytthew.notepad.entity.User;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -74,12 +75,10 @@ public class FileAuthServiceTest {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("nick", "Mytthew");
-		jsonObject.put("pass", "123");
+		User user = new User("Mytthew", "123");
 
 		// when
-
+		authService.changeNickname("Mateusz");
 
 		// then
 		assertTrue(authService.containsNickname("Mateusz"));
