@@ -152,7 +152,7 @@ public class FileAuthServiceTest {
 	}
 
 	@Test
-	public void changePasswordCorrecly() {
+	public void changePasswordCorrectly() {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
