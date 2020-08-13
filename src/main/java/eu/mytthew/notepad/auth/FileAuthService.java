@@ -8,7 +8,6 @@ import lombok.Getter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
@@ -24,8 +23,7 @@ public class FileAuthService implements IAuthService {
 
 	@Override
 	public boolean containsNickname(String nickname) {
-		File temp = new File("users", nickname.toLowerCase() + ".json");
-		return temp.exists();
+		return file.fileExist(nickname);
 	}
 
 	@Override

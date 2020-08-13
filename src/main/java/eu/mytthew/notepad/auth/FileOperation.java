@@ -43,4 +43,9 @@ public class FileOperation {
 			e.printStackTrace();
 		}
 	}
+
+	public boolean fileExist(String filename) {
+		File file = new File("users", filename + ".json");
+		return file.exists();
+	}
 }

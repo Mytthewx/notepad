@@ -1,5 +1,6 @@
 package eu.mytthew.notepad.auth;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +58,7 @@ public class FileAuthServiceTest {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
-		authService.addUser("Mytthew", "123");
+		when(fileOperation.fileExist(eq("Mytthew"))).thenReturn(true);
 
 		// when
 		boolean result = authService.containsNickname("Mytthew");
@@ -67,7 +68,37 @@ public class FileAuthServiceTest {
 	}
 
 	@Test
-	public void loginUserTest() {
+	public void loginUserWithTrueTest() {
+		// given
+		FileOperation fileOperation = mock(FileOperation.class);
+		IAuthService authService = new FileAuthService(fileOperation);
+		JSONObject outerObject = new JSONObject();
+		outerObject.put("nick", "UserTest");
+		outerObject.put("pass", "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		JSONArray arrayNotes = new JSONArray();
+		JSONObject noteObject = new JSONObject();
+		JSONArray remindersArray = new JSONArray();
+		JSONObject reminderObject = new JSONObject();
+		noteObject.put("title", "test1");
+		noteObject.put("content", "test1");
+		noteObject.put("date", "2020-09-25");
+		noteObject.put("reminders", remindersArray);
+		reminderObject.put("name", "reminderTest");
+		reminderObject.put("date", "2020-09-23");
+		remindersArray.put(reminderObject);
+		arrayNotes.put(noteObject);
+		outerObject.put("notes", arrayNotes);
+		when(fileOperation.openFile(any())).thenReturn(outerObject);
+
+		// when
+		boolean result = authService.login("UserTest", "123");
+
+		// then
+		assertTrue(result);
+	}
+
+	@Test
+	public void loginUserWithFalseTest() {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
@@ -77,9 +108,9 @@ public class FileAuthServiceTest {
 		when(fileOperation.openFile(any())).thenReturn(jsonObject);
 
 		// when
-		boolean result = authService.login("UserTest", "123");
+		boolean result = authService.login("UserTest", "12345");
 
 		// then
-		assertTrue(result);
+		assertFalse(result);
 	}
 }
