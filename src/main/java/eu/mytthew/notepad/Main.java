@@ -177,7 +177,7 @@ public class Main {
 
 	public static void displayAllNotes(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (user.getNotes().isEmpty()) {
+		if (userContainsAnyNotes(user)) {
 			System.out.println("No notes.");
 		} else {
 			user.getNotes()

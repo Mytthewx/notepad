@@ -1,20 +1,37 @@
 package eu.mytthew.notepad.auth;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.nio.file.Paths;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FileAuthServiceTest {
+	public JSONObject openTestFile(String filename) {
+		try {
+			return new JSONObject(new JSONTokener(new FileInputStream(Paths.get("src", "test", "resources", filename + ".json").toFile())));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	@Test
 	public void addUserFalseTest() {
 		// given
@@ -34,9 +51,7 @@ public class FileAuthServiceTest {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("nick", "usertest");
-		jsonObject.put("pass", "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		JSONObject jsonObject = openTestFile("UserTest");
 		ArgumentCaptor<String> nicknameCaptor = ArgumentCaptor.forClass(String.class);
 		ArgumentCaptor<JSONObject> passwordCaptor = ArgumentCaptor.forClass(JSONObject.class);
 		when(fileOperation.createFile(nicknameCaptor.capture(), passwordCaptor.capture())).thenReturn(true);
@@ -72,22 +87,7 @@ public class FileAuthServiceTest {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject outerObject = new JSONObject();
-		outerObject.put("nick", "UserTest");
-		outerObject.put("pass", "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
-		JSONArray arrayNotes = new JSONArray();
-		JSONObject noteObject = new JSONObject();
-		JSONArray remindersArray = new JSONArray();
-		JSONObject reminderObject = new JSONObject();
-		noteObject.put("title", "test1");
-		noteObject.put("content", "test1");
-		noteObject.put("date", "2020-09-25");
-		noteObject.put("reminders", remindersArray);
-		reminderObject.put("name", "reminderTest");
-		reminderObject.put("date", "2020-09-23");
-		remindersArray.put(reminderObject);
-		arrayNotes.put(noteObject);
-		outerObject.put("notes", arrayNotes);
+		JSONObject outerObject = openTestFile("UserTest");
 		when(fileOperation.openFile(any())).thenReturn(outerObject);
 
 		// when
@@ -102,9 +102,7 @@ public class FileAuthServiceTest {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("nick", "UserTest");
-		jsonObject.put("pass", "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		JSONObject jsonObject = openTestFile("UserTest");
 		when(fileOperation.openFile(any())).thenReturn(jsonObject);
 
 		// when
@@ -119,9 +117,7 @@ public class FileAuthServiceTest {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("nick", "UserTest");
-		jsonObject.put("pass", "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		JSONObject jsonObject = openTestFile("UserTest");
 		when(fileOperation.openFile(any())).thenReturn(jsonObject);
 		authService.login("UserTest", "123");
 
@@ -137,9 +133,7 @@ public class FileAuthServiceTest {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("nick", "UserTest");
-		jsonObject.put("pass", "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		JSONObject jsonObject = openTestFile("UserTest");
 		when(fileOperation.openFile(any())).thenReturn(jsonObject);
 		authService.login("UserTest", "123");
 		when(fileOperation.fileExist("UserTest")).thenReturn(true);
@@ -156,9 +150,7 @@ public class FileAuthServiceTest {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("nick", "UserTest");
-		jsonObject.put("pass", "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		JSONObject jsonObject = openTestFile("UserTest");
 		when(fileOperation.openFile(any())).thenReturn(jsonObject);
 		authService.login("UserTest", "123");
 
@@ -174,9 +166,7 @@ public class FileAuthServiceTest {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("nick", "UserTest");
-		jsonObject.put("pass", "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		JSONObject jsonObject = openTestFile("UserTest");
 		when(fileOperation.openFile(any())).thenReturn(jsonObject);
 		authService.login("UserTest", "123");
 
@@ -192,22 +182,7 @@ public class FileAuthServiceTest {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject outerObject = new JSONObject();
-		outerObject.put("nick", "UserTest");
-		outerObject.put("pass", "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
-		JSONArray arrayNotes = new JSONArray();
-		JSONObject noteObject = new JSONObject();
-		JSONArray remindersArray = new JSONArray();
-		JSONObject reminderObject = new JSONObject();
-		noteObject.put("title", "test1");
-		noteObject.put("content", "test1");
-		noteObject.put("date", "2020-09-25");
-		noteObject.put("reminders", remindersArray);
-		reminderObject.put("name", "reminderTest");
-		reminderObject.put("date", "2020-09-23");
-		remindersArray.put(reminderObject);
-		arrayNotes.put(noteObject);
-		outerObject.put("notes", arrayNotes);
+		JSONObject outerObject = openTestFile("UserTest");
 		when(fileOperation.openFile(any())).thenReturn(outerObject);
 		authService.login("UserTest", "123");
 		when(fileOperation.createFile(any(), any())).thenReturn(true);
