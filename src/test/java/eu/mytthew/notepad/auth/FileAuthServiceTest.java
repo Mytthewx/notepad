@@ -51,7 +51,6 @@ public class FileAuthServiceTest {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
 		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject jsonObject = openTestFile("UserTest");
 		ArgumentCaptor<String> nicknameCaptor = ArgumentCaptor.forClass(String.class);
 		ArgumentCaptor<JSONObject> passwordCaptor = ArgumentCaptor.forClass(JSONObject.class);
 		when(fileOperation.createFile(nicknameCaptor.capture(), passwordCaptor.capture())).thenReturn(true);

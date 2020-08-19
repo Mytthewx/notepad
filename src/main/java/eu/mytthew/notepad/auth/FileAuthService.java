@@ -92,39 +92,16 @@ public class FileAuthService implements IAuthService {
 		generalJSON.put("nick", getLoggedUser().getNickname());
 		generalJSON.put("pass", getLoggedUser().getPassword());
 		JSONArray array = new JSONArray();
-		for (int i = 0; i < getLoggedUser().getNotes().size(); i++) {
+		for (Note note : getLoggedUser().getNotes()) {
 			JSONObject innerObject = new JSONObject();
-			innerObject.put("title", getLoggedUser()
-					.getNotes()
-					.get(i)
-					.getTitle());
-			innerObject.put("content", getLoggedUser()
-					.getNotes()
-					.get(i)
-					.getContent());
-			innerObject.put("date", getLoggedUser()
-					.getNotes()
-					.get(i)
-					.getNoteDate());
+			innerObject.put("title", note.getTitle());
+			innerObject.put("content", note.getContent());
+			innerObject.put("date", note.getNoteDate());
 			JSONArray innerArray = new JSONArray();
-			for (int j = 0; j < getLoggedUser()
-					.getNotes()
-					.get(i)
-					.getReminders()
-					.size(); j++) {
+			for (Reminder reminder : note.getReminders()) {
 				JSONObject secInnerObject = new JSONObject();
-				secInnerObject.put("name", getLoggedUser()
-						.getNotes()
-						.get(i)
-						.getReminders()
-						.get(j)
-						.getName());
-				secInnerObject.put("date", getLoggedUser()
-						.getNotes()
-						.get(i)
-						.getReminders()
-						.get(j)
-						.getDate());
+				secInnerObject.put("name", reminder.getName());
+				secInnerObject.put("date", reminder.getDate());
 				innerArray.put(secInnerObject);
 			}
 			innerObject.put("reminders", innerArray);
