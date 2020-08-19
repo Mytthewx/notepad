@@ -97,6 +97,21 @@ public class FileAuthServiceTest {
 	}
 
 	@Test
+	public void loginUserWithoutNotesTrueTest() {
+		// given
+		FileOperation fileOperation = mock(FileOperation.class);
+		IAuthService authService = new FileAuthService(fileOperation);
+		JSONObject outerObject = openTestFile("usertest-without-notes");
+		when(fileOperation.openFile(any())).thenReturn(outerObject);
+
+		// when
+		boolean result = authService.login("usertest-without-notes", "123");
+
+		// then
+		assertTrue(result);
+	}
+
+	@Test
 	public void loginUserWithFalseTest() {
 		// given
 		FileOperation fileOperation = mock(FileOperation.class);
