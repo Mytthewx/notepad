@@ -140,7 +140,6 @@ public class Main {
 		} else {
 			System.out.println("The user with the given name does not exist.");
 		}
-
 	}
 
 	public static void addUser(IAuthService authService) {
