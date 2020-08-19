@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AuthServiceTest {
+public class RuntimeAuthServiceTest {
 	@Test
 	public void loginWithCorrectNicknameAndPassword() {
 		// given
@@ -133,5 +133,51 @@ public class AuthServiceTest {
 
 		// then
 		assertTrue(result);
+	}
+
+	@Test
+	public void changeNicknameThatNotExist() {
+		// given
+		IAuthService authService = new RuntimeAuthService();
+		authService.addUser("Mytthew", "123");
+		authService.login("Mytthew", "123");
+
+		// when
+		boolean result = authService.changeNickname("Mateusz");
+
+		// result
+		assertTrue(result);
+		assertEquals("Mateusz", authService.getLoggedUser().getNickname());
+	}
+
+	@Test
+	public void changeNicknameThatExist() {
+		// given
+		IAuthService authService = new RuntimeAuthService();
+		authService.addUser("Mytthew", "123");
+		authService.addUser("Mateusz", "123");
+		authService.login("Mytthew", "123");
+
+		// when
+		boolean result = authService.changeNickname("Mateusz");
+
+		// result
+		assertFalse(result);
+		assertEquals("Mytthew", authService.getLoggedUser().getNickname());
+	}
+
+	@Test
+	public void logoutUser() {
+		// given
+		IAuthService authService = new RuntimeAuthService();
+		authService.addUser("Mytthew", "123");
+		authService.login("Mytthew", "123");
+
+		// when
+		boolean result = authService.logout();
+
+		// result
+		assertTrue(result);
+		assertNull(authService.getLoggedUser());
 	}
 }

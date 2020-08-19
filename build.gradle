@@ -25,14 +25,18 @@ repositories {
 }
 
 dependencies {
-	compile 'com.google.guava:guava:20.0'
-	compileOnly 'org.projectlombok:lombok:1.18.12'
-	annotationProcessor 'org.projectlombok:lombok:1.18.12'
+	implementation group: 'com.google.guava', name: 'guava', version: '20.0'
+	implementation group: 'org.json', name: 'json', version: '20200518'
+	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
+	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.12'
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+	testImplementation group: 'org.json', name: 'json', version: '20200518'
+	testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.1.0'
+	testCompileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
+	testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.6.2'
+	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
+	testImplementation group: 'junit', name: 'junit', version: '4.13'
+	testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
 }
 
 jar {
@@ -52,7 +56,7 @@ jacocoTestReport {
 	reports.xml.enabled true
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(dir: it, exclude: 'eu/mytthew/notepad/Main*')
+			fileTree(dir: it, exclude: ['eu/mytthew/notepad/Main*', 'eu/mytthew/notepad/auth/FileOperation*'])
 		}))
 	}
 }
@@ -66,7 +70,7 @@ jacocoTestCoverageVerification {
 				value = 'COVEREDRATIO'
 				minimum = 1.0
 			}
-			excludes = ['eu.mytthew.notepad.Main*']
+			excludes = ['eu.mytthew.notepad.Main*', 'eu.mytthew.notepad.auth.FileOperation*']
 		}
 	}
 }

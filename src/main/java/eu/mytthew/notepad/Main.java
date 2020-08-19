@@ -1,7 +1,8 @@
 package eu.mytthew.notepad;
 
+import eu.mytthew.notepad.auth.FileAuthService;
+import eu.mytthew.notepad.auth.FileOperation;
 import eu.mytthew.notepad.auth.IAuthService;
-import eu.mytthew.notepad.auth.RuntimeAuthService;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 
@@ -15,7 +16,7 @@ public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
 
 	public static void main(String[] args) {
-		IAuthService authService = new RuntimeAuthService();
+		IAuthService authService = new FileAuthService(new FileOperation());
 		List<MenuItem> loginMenuItems = new ArrayList<>();
 		loginMenuItems.add(new MenuItem(0, "Exit", () -> false));
 		loginMenuItems.add(new MenuItem(1, "Log in", () -> logIn(authService)));
@@ -64,7 +65,8 @@ public class Main {
 		menuItems.add(new MenuItem(9, "Change login", () -> changeLogin(authService)));
 		menuItems.add(new MenuItem(10, "Change password", () -> changePassword(authService)));
 		menuItems.add(new MenuItem(11, "Logout", () -> {
-			System.out.println("Logged out.");
+			authService.logout();
+			System.out.println("Log out.");
 			return false;
 		}));
 		boolean repeat = true;
@@ -164,7 +166,7 @@ public class Main {
 			date = String.valueOf(LocalDate.now());
 			loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
 			System.out.println("Note added successfully!");
-		} else if (date.matches("^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$")) {
+		} else if (date.matches("^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$")) {
 			loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
 			System.out.println("Note added successfully!");
 		} else {
@@ -174,7 +176,7 @@ public class Main {
 
 	public static void displayAllNotes(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (!userContainsAnyNotes(user)) {
+		if (userContainsAnyNotes(user)) {
 			System.out.println("No notes.");
 		} else {
 			user.getNotes()
@@ -258,7 +260,7 @@ public class Main {
 
 	public static boolean editReminder(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (!userContainsAnyNotes(user)) {
+		if (userContainsAnyNotes(user)) {
 			System.out.println("No notes.");
 			return true;
 		}
@@ -269,7 +271,7 @@ public class Main {
 			return true;
 		}
 		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
-		if (!noteContainsAnyReminder(note)) {
+		if (noteContainsAnyReminder(note)) {
 			System.out.println("This note has no reminder.");
 			return true;
 		}
@@ -291,7 +293,7 @@ public class Main {
 
 	public static boolean removeReminder(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (!userContainsAnyNotes(user)) {
+		if (userContainsAnyNotes(user)) {
 			System.out.println("No notes.");
 			return true;
 		}
@@ -302,7 +304,7 @@ public class Main {
 			return true;
 		}
 		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
-		if (!noteContainsAnyReminder(note)) {
+		if (noteContainsAnyReminder(note)) {
 			System.out.println("This note has no reminder.");
 			return true;
 		}
@@ -324,7 +326,7 @@ public class Main {
 			System.out.println("This nickname is already taken.");
 		} else {
 			String oldNickname = authService.getLoggedUser().getNickname();
-			authService.getLoggedUser().setNickname(newNickname);
+			authService.changeNickname(newNickname);
 			System.out.println("Nickname changed successfully!");
 			System.out.println("Old nickname: " + oldNickname);
 			System.out.println("New nickname: " + newNickname);
