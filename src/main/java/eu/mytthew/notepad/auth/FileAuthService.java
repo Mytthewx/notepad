@@ -12,10 +12,10 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 public class FileAuthService implements IAuthService {
+	private final FileOperation file;
 	@Getter
 	private User loggedUser;
 	private String oldFileName;
-	private FileOperation file;
 
 	public FileAuthService(FileOperation file) {
 		this.file = file;

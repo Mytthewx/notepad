@@ -10,7 +10,6 @@ build:
   script: gradle build -x test
   allow_failure: false
 
-
 delombok:
   stage: build
   script: gradle delombok

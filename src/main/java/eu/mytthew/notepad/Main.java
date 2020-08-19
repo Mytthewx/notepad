@@ -166,7 +166,7 @@ public class Main {
 			date = String.valueOf(LocalDate.now());
 			loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
 			System.out.println("Note added successfully!");
-		} else if (date.matches("^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$")) {
+		} else if (date.matches("^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$")) {
 			loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
 			System.out.println("Note added successfully!");
 		} else {

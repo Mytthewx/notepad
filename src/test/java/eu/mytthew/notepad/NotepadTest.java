@@ -13,17 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 public class NotepadTest {
 	@Test
 	public void menuItemConstructorTest() {
-		// given
-		MenuItem menuItem;
-
 		// when
-		menuItem = new MenuItem(0, "Test", () -> {
-			System.out.println("Test");
-		});
+		MenuItem menuItem = new MenuItem(0, "Test", () -> System.out.println("Test"));
 
 		// then
 		assertEquals(0, menuItem.getId());
@@ -93,7 +87,6 @@ public class NotepadTest {
 		User loggedUser = authService.getLoggedUser();
 		Note note = new Note("Title1", "Content1", LocalDate.now());
 		Note note2 = new Note("Title2", "Content2", LocalDate.now());
-		Note note3 = new Note("Title1", "Content3", LocalDate.now());
 		loggedUser.addNote(note);
 		loggedUser.addNote(note2);
 

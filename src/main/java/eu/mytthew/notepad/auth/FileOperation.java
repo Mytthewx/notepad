@@ -14,8 +14,7 @@ public class FileOperation {
 	public JSONObject openFile(String filename) {
 		File temp = new File("users", filename + ".json");
 		try (FileInputStream fileInputStream = new FileInputStream(temp)) {
-			JSONTokener tokener = new JSONTokener(fileInputStream);
-			return new JSONObject(tokener);
+			return new JSONObject(new JSONTokener(fileInputStream));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -30,8 +29,8 @@ public class FileOperation {
 		try (FileWriter fileWriter = new FileWriter(temp)) {
 			fileWriter.write(jsonObject.toString(4));
 			return true;
-		} catch (Exception e) {
-			System.out.println(e);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return false;
 	}
