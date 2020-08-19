@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 public class FileAuthServiceTest {
 	public JSONObject openTestFile(String filename) {
 		try {
-			return new JSONObject(new JSONTokener(new FileInputStream(Paths.get("src", "test", "resources", filename + ".json").toFile())));
+			return new JSONObject(new JSONTokener(new FileInputStream(Paths.get("src", "test", "resources", filename.toLowerCase() + ".json").toFile())));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
