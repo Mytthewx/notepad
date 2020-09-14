@@ -1,7 +1,6 @@
 package eu.mytthew.notepad;
 
-import eu.mytthew.notepad.auth.FileAuthService;
-import eu.mytthew.notepad.auth.FileOperation;
+import eu.mytthew.notepad.auth.DatabaseAuthService;
 import eu.mytthew.notepad.auth.IAuthService;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
@@ -16,7 +15,7 @@ public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
 
 	public static void main(String[] args) {
-		IAuthService authService = new FileAuthService(new FileOperation());
+		IAuthService authService = new DatabaseAuthService();
 		List<MenuItem> loginMenuItems = new ArrayList<>();
 		loginMenuItems.add(new MenuItem(0, "Exit", () -> false));
 		loginMenuItems.add(new MenuItem(1, "Log in", () -> logIn(authService)));
