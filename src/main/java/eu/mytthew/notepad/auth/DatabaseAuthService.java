@@ -1,6 +1,7 @@
 package eu.mytthew.notepad.auth;
 
 import com.google.common.hash.Hashing;
+import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 import lombok.Getter;
 
@@ -9,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class DatabaseAuthService implements IAuthService {
 	Connection connection = null;
@@ -23,22 +25,24 @@ public class DatabaseAuthService implements IAuthService {
 		}
 	}
 
-	public void readNotes(User user, String nickname) {
+	public void readNotes(User user) {
 		String getUserID = "SELECT id FROM users WHERE login = ?";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(getUserID);
-			preparedStatement.setString(1, nickname);
-			preparedStatement.execute();
-			int userid = preparedStatement.getResultSet().getInt("id");
-			String getNotes = "SELECT * FROM notes WHERE user_id = ?";
-			preparedStatement.setInt(1, userid);
+			preparedStatement.setString(1, user.getNickname());
 			preparedStatement.execute();
 			while (preparedStatement.getResultSet().next()) {
-				String getNoteId = "SELECT id FROM notes WHERE user_id = ?";
-				PreparedStatement noteStatement = connection.prepareStatement(getNoteTitle);
-				noteStatement.setString();
-				String getNoteTitle = "SELECT title FROM notes WHERE user_id = ?";
-				String getNoteContent = "SELECT content FROM notes WHERE user_id = ?";
+				int iduser = preparedStatement.getResultSet().getInt("id");
+				String notesSQL = "SELECT * FROM notes WHERE user_id = ?";
+				PreparedStatement notesStatement = connection.prepareStatement(notesSQL);
+				notesStatement.setInt(1, iduser);
+				notesStatement.execute();
+				while (notesStatement.getResultSet().next()) {
+					String title = notesStatement.getResultSet().getString("title");
+					String content = notesStatement.getResultSet().getString("content");
+					String localDate = notesStatement.getResultSet().getString("date");
+					user.addNote(new Note(title, content, LocalDate.parse(localDate)));
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -80,6 +84,7 @@ public class DatabaseAuthService implements IAuthService {
 					preparedStatement.setString(1, nickname);
 					preparedStatement.execute();
 					loggedUser = new User(nickname, password);
+					readNotes(loggedUser);
 					return true;
 				}
 			} catch (SQLException e) {
