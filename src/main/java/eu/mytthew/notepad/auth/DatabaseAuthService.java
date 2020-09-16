@@ -23,6 +23,28 @@ public class DatabaseAuthService implements IAuthService {
 		}
 	}
 
+	public void readNotes(User user, String nickname) {
+		String getUserID = "SELECT id FROM users WHERE login = ?";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(getUserID);
+			preparedStatement.setString(1, nickname);
+			preparedStatement.execute();
+			int userid = preparedStatement.getResultSet().getInt("id");
+			String getNotes = "SELECT * FROM notes WHERE user_id = ?";
+			preparedStatement.setInt(1, userid);
+			preparedStatement.execute();
+			while (preparedStatement.getResultSet().next()) {
+				String getNoteId = "SELECT id FROM notes WHERE user_id = ?";
+				PreparedStatement noteStatement = connection.prepareStatement(getNoteTitle);
+				noteStatement.setString();
+				String getNoteTitle = "SELECT title FROM notes WHERE user_id = ?";
+				String getNoteContent = "SELECT content FROM notes WHERE user_id = ?";
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public boolean containsNickname(String nickname) {
 		String sql = "SELECT login FROM users WHERE login = ?";
@@ -69,6 +91,25 @@ public class DatabaseAuthService implements IAuthService {
 
 	@Override
 	public boolean changePassword(String oldPassword, String newPassword) {
+		try {
+			String userPasswordSQL = "SELECT password FROM users WHERE login = ?";
+			PreparedStatement userPassword = connection.prepareStatement(userPasswordSQL);
+			userPassword.setString(1, getLoggedUser().getNickname());
+			userPassword.execute();
+			if (userPassword.getResultSet().next()) {
+				if (!userPassword.getResultSet().getString("password").equals(hashPassword(oldPassword))) {
+					return false;
+				}
+				String sql = "UPDATE users SET password = ? WHERE login = ?";
+				PreparedStatement preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setString(1, hashPassword(newPassword));
+				preparedStatement.setString(2, getLoggedUser().getNickname());
+				preparedStatement.execute();
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
