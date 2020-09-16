@@ -11,9 +11,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseAuthService implements IAuthService {
 	Connection connection = null;
+	private int loggedUserid;
+	private List<Integer> listOfIndexes = new ArrayList<>();
 	@Getter
 	private User loggedUser;
 
@@ -32,18 +36,46 @@ public class DatabaseAuthService implements IAuthService {
 			preparedStatement.setString(1, user.getNickname());
 			preparedStatement.execute();
 			while (preparedStatement.getResultSet().next()) {
-				int iduser = preparedStatement.getResultSet().getInt("id");
+				loggedUserid = preparedStatement.getResultSet().getInt("id");
 				String notesSQL = "SELECT * FROM notes WHERE user_id = ?";
 				PreparedStatement notesStatement = connection.prepareStatement(notesSQL);
-				notesStatement.setInt(1, iduser);
+				notesStatement.setInt(1, loggedUserid);
 				notesStatement.execute();
 				while (notesStatement.getResultSet().next()) {
+					listOfIndexes.add(notesStatement.getResultSet().getInt("id"));
 					String title = notesStatement.getResultSet().getString("title");
 					String content = notesStatement.getResultSet().getString("content");
 					String localDate = notesStatement.getResultSet().getString("date");
 					user.addNote(new Note(title, content, LocalDate.parse(localDate)));
 				}
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void addAllNotesToDB(User user) {
+		String sql = "INSERT INTO notes (title, content, date, user_id) VALUES (?, ?, ?, ?)";
+		try {
+			PreparedStatement addNotesStatement = connection.prepareStatement(sql);
+			for (int i = 0; i < user.getNotes().size(); i++) {
+				addNotesStatement.setString(1, user.getNotes().get(i).getTitle());
+				addNotesStatement.setString(2, user.getNotes().get(i).getContent());
+				addNotesStatement.setString(3, user.getNotes().get(i).getNoteDate().toString());
+				addNotesStatement.setString(4, String.valueOf(loggedUserid));
+				addNotesStatement.execute();
+			}
+		} catch (SQLException throwables) {
+			throwables.printStackTrace();
+		}
+	}
+
+	public void deleteNoteWithId(int id) {
+		String sql = "DELETE FROM notes WHERE id = ?";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			preparedStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -159,6 +191,8 @@ public class DatabaseAuthService implements IAuthService {
 
 	@Override
 	public boolean logout() {
+		listOfIndexes.forEach(this::deleteNoteWithId);
+		addAllNotesToDB(getLoggedUser());
 		loggedUser = null;
 		try {
 			connection.close();
