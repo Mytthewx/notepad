@@ -14,16 +14,13 @@ public class DatabaseAuthService implements IAuthService {
 	Connection connection = null;
 	@Getter
 	private User loggedUser;
-	private String oldNickname;
 
-	public Connection connectToDatabase() {
+	public void connectToDatabase() {
 		try {
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/notepad", "root", "");
-			return connection;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
 	}
 
 	@Override
@@ -37,8 +34,8 @@ public class DatabaseAuthService implements IAuthService {
 			if (preparedStatement.getResultSet().next()) {
 				return true;
 			}
-		} catch (SQLException throwables) {
-			throwables.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return false;
 	}
@@ -56,8 +53,9 @@ public class DatabaseAuthService implements IAuthService {
 					if (!userPassword.getResultSet().getString("password").equals(hashPassword(password))) {
 						return false;
 					}
-					String sql = "SELECT * FROM users WHERE login = '" + nickname + "'";
+					String sql = "SELECT * FROM users WHERE login = ?";
 					PreparedStatement preparedStatement = connection.prepareStatement(sql);
+					preparedStatement.setString(1, nickname);
 					preparedStatement.execute();
 					loggedUser = new User(nickname, password);
 					return true;
@@ -78,7 +76,7 @@ public class DatabaseAuthService implements IAuthService {
 	public boolean changeNickname(String newNickname) {
 		if (!containsNickname(newNickname)) {
 			try {
-				oldNickname = getLoggedUser().getNickname();
+				String oldNickname = getLoggedUser().getNickname();
 				String sql = "UPDATE users SET login = ? WHERE login = ?;";
 				PreparedStatement preparedStatement = connection.prepareStatement(sql);
 				preparedStatement.setString(1, newNickname);
