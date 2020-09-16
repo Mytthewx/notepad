@@ -8,9 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class DatabaseAuthService implements IAuthService {
 	Connection connection = null;
@@ -30,10 +28,11 @@ public class DatabaseAuthService implements IAuthService {
 
 	@Override
 	public boolean containsNickname(String nickname) {
-		String sql = "SELECT login FROM users WHERE login = '" + nickname + "'";
+		String sql = "SELECT login FROM users WHERE login = ?";
 		connectToDatabase();
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, nickname);
 			preparedStatement.execute();
 			if (preparedStatement.getResultSet().next()) {
 				return true;
@@ -49,8 +48,9 @@ public class DatabaseAuthService implements IAuthService {
 		connectToDatabase();
 		if (containsNickname(nickname)) {
 			try {
-				String userPasswordSQL = "SELECT password FROM users WHERE login = '" + nickname + "'";
+				String userPasswordSQL = "SELECT password FROM users WHERE login = ?";
 				PreparedStatement userPassword = connection.prepareStatement(userPasswordSQL);
+				userPassword.setString(1, nickname);
 				userPassword.execute();
 				if (userPassword.getResultSet().next()) {
 					if (!userPassword.getResultSet().getString("password").equals(hashPassword(password))) {
@@ -78,11 +78,13 @@ public class DatabaseAuthService implements IAuthService {
 	public boolean changeNickname(String newNickname) {
 		if (!containsNickname(newNickname)) {
 			try {
-				String sql = "UPDATE users SET login = '" + newNickname + "'" + " WHERE login = '" + oldNickname + "'";
-				connectToDatabase();
-				Statement st = connection.createStatement();
-				ResultSet rs = st.executeQuery(sql);
-				if (rs.next()) {
+				oldNickname = getLoggedUser().getNickname();
+				String sql = "UPDATE users SET login = ? WHERE login = ?;";
+				PreparedStatement preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setString(1, newNickname);
+				preparedStatement.setString(2, oldNickname);
+				preparedStatement.execute();
+				if (containsNickname(newNickname) && !containsNickname(oldNickname) && !newNickname.equals(oldNickname)) {
 					return true;
 				}
 			} catch (SQLException e) {
