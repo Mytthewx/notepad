@@ -54,33 +54,6 @@ public class DatabaseAuthService implements IAuthService {
 		}
 	}
 
-	public void addAllNotesToDB(User user) {
-		String sql = "INSERT INTO notes (title, content, date, user_id) VALUES (?, ?, ?, ?)";
-		try {
-			PreparedStatement addNotesStatement = connection.prepareStatement(sql);
-			for (int i = 0; i < user.getNotes().size(); i++) {
-				addNotesStatement.setString(1, user.getNotes().get(i).getTitle());
-				addNotesStatement.setString(2, user.getNotes().get(i).getContent());
-				addNotesStatement.setString(3, user.getNotes().get(i).getNoteDate().toString());
-				addNotesStatement.setString(4, String.valueOf(loggedUserid));
-				addNotesStatement.execute();
-			}
-		} catch (SQLException throwables) {
-			throwables.printStackTrace();
-		}
-	}
-
-	public void deleteNoteWithId(int id) {
-		String sql = "DELETE FROM notes WHERE id = ?";
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setInt(1, id);
-			preparedStatement.execute();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
 	@Override
 	public boolean containsNickname(String nickname) {
 		String sql = "SELECT login FROM users WHERE login = ?";
@@ -189,10 +162,56 @@ public class DatabaseAuthService implements IAuthService {
 		return false;
 	}
 
+//	public void deleteAllNotesFromDatabase() {
+//		String sql = "DELETE FROM notes";
+//		try {
+//			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+//			preparedStatement.execute();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//	}
+//
+//	public void addAllNotesFromUserToDatabase(User user) {
+//		String sql = "INSERT INTO notes (title, content, date, user_id) VALUES (?, ?, ?, ?)";
+//		try {
+//			PreparedStatement addNotesStatement = connection.prepareStatement(sql);
+//			for (int i = 0; i < user.getNotes().size(); i++) {
+//				addNotesStatement.setString(1, user.getNotes().get(i).getTitle());
+//				addNotesStatement.setString(2, user.getNotes().get(i).getContent());
+//				addNotesStatement.setString(3, user.getNotes().get(i).getNoteDate().toString());
+//				addNotesStatement.setString(4, String.valueOf(loggedUserid));
+//				addNotesStatement.execute();
+//			}
+//		} catch (SQLException throwables) {
+//			throwables.printStackTrace();
+//		}
+//	}
+
+	public void deleteOldNotesAndAddAllNewNotes(User user) {
+		String notesSQL = "INSERT INTO notes (title, content, date, user_id) VALUES (?, ?, ?, ?);";
+		try {
+			PreparedStatement addNotesStatement = connection.prepareStatement(notesSQL);
+			String sql = "START TRANSACTION;" +
+					"DELETE FROM notes;" + notesSQL +
+					"COMMIT;";
+			PreparedStatement finish = connection.prepareStatement(sql);
+			for (int i = 0; i < user.getNotes().size(); i++) {
+				addNotesStatement.setString(1, user.getNotes().get(i).getTitle());
+				addNotesStatement.setString(2, user.getNotes().get(i).getContent());
+				addNotesStatement.setString(3, user.getNotes().get(i).getNoteDate().toString());
+				addNotesStatement.setString(4, String.valueOf(loggedUserid));
+				addNotesStatement.execute();
+			}
+			finish.execute();
+		} catch (SQLException throwables) {
+			throwables.printStackTrace();
+		}
+	}
+
 	@Override
 	public boolean logout() {
-		listOfIndexes.forEach(this::deleteNoteWithId);
-		addAllNotesToDB(getLoggedUser());
+		deleteOldNotesAndAddAllNewNotes(getLoggedUser());
 		loggedUser = null;
 		try {
 			connection.close();
