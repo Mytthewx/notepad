@@ -16,4 +16,6 @@ public interface IAuthService {
 	boolean logout();
 
 	User getLoggedUser();
+
+	boolean addNoteDirectlyToDatabase(String title, String content, String date);
 }
