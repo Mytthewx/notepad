@@ -8,7 +8,6 @@ import eu.mytthew.notepad.entity.User;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
 	private static final NoteService noteService = new NoteService();
 	private static final Connection connection = connectToDatabase();
-	private static int loggedUserId;
 	private static final IAuthService authService = new DatabaseAuthService(connection);
 
 	public static void main(String[] args) {
@@ -174,11 +172,11 @@ public class Main {
 			date = String.valueOf(LocalDate.now());
 			Note note = new Note(title, content, LocalDate.parse(date));
 			loggedUser.addNote(note);
-			noteService.addNoteToDatabase(connection, loggedUserId, note);
 			System.out.println("Note added successfully!");
 		} else if (date.matches("^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$")) {
-			loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
-
+			Note note = new Note(title, content, LocalDate.parse(date));
+			noteService.addNoteToDatabase(connection, loggedUser, note);
+			loggedUser.addNote(note);
 			System.out.println("Note added successfully!");
 		} else {
 			System.out.println("Wrong date format.");
@@ -363,19 +361,5 @@ public class Main {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	public int getLoggedUserId(User user) {
-		String getUserID = "SELECT id FROM users WHERE login = ?";
-		try {
-			PreparedStatement getUserIdStatement = connection.prepareStatement(getUserID);
-			getUserIdStatement.setString(1, authService.getLoggedUser().getNickname());
-			getUserIdStatement.execute();
-			getUserIdStatement.getResultSet().next();
-			loggedUserId = getUserIdStatement.getResultSet().getInt("id");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return loggedUserId;
 	}
 }

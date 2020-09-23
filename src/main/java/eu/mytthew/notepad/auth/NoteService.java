@@ -26,13 +26,19 @@ public class NoteService {
 		}
 	}
 
-	public void addNoteToDatabase(Connection connection, int loggedUserId, Note note) {
+	public void addNoteToDatabase(Connection connection, User user, Note note) {
 		String noteToSQL = "INSERT INTO notes(title, content, date, user_id) VALUES (?, ?, ?, ?)";
 		try {
+			String getUserSQL = "SELECT id FROM users WHERE login = ?";
+			PreparedStatement getUserIdStatement = connection.prepareStatement(getUserSQL);
+			getUserIdStatement.setString(1, user.getNickname());
+			getUserIdStatement.execute();
+			getUserIdStatement.getResultSet().next();
+			int loggedUserId = getUserIdStatement.getResultSet().getInt("id");
 			PreparedStatement preparedStatement = connection.prepareStatement(noteToSQL);
 			preparedStatement.setString(1, note.getTitle());
 			preparedStatement.setString(2, note.getContent());
-			preparedStatement.setString(3, "2020-10-10");
+			preparedStatement.setString(3, note.getNoteDate().toString());
 			preparedStatement.setInt(4, loggedUserId);
 			preparedStatement.execute();
 		} catch (SQLException e) {

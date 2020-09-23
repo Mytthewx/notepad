@@ -13,6 +13,8 @@ public class DatabaseAuthService implements IAuthService {
 	Connection connection;
 	@Getter
 	private User loggedUser;
+	@Getter
+	private int loggedUserId;
 
 	public DatabaseAuthService(Connection connection) {
 		this.connection = connection;
