@@ -10,15 +10,16 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DatabaseAuthService implements IAuthService {
-	DatabaseOperations databaseOperations = new DatabaseOperations();
-	Connection connection = databaseOperations.connectToDatabase();
+	Connection connection;
 	@Getter
 	private User loggedUser;
 
+	public DatabaseAuthService(Connection connection) {
+		this.connection = connection;
+	}
 
 	@Override
 	public boolean containsNickname(String nickname) {
-		connection = databaseOperations.connectToDatabase();
 		String sql = "SELECT login FROM users WHERE login = ?";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -35,7 +36,6 @@ public class DatabaseAuthService implements IAuthService {
 
 	@Override
 	public boolean login(String nickname, String password) {
-		connection = databaseOperations.connectToDatabase();
 		if (containsNickname(nickname)) {
 			try {
 				String userPasswordSQL = "SELECT password FROM users WHERE login = ?";
@@ -51,15 +51,6 @@ public class DatabaseAuthService implements IAuthService {
 					preparedStatement.setString(1, nickname);
 					preparedStatement.execute();
 					loggedUser = new User(nickname, password);
-					if (preparedStatement.getResultSet().next()) {
-						String getUserID = "SELECT id FROM users WHERE login = ?";
-						PreparedStatement getUserIdStatement = connection.prepareStatement(getUserID);
-						getUserIdStatement.setString(1, nickname);
-						getUserIdStatement.execute();
-						getUserIdStatement.getResultSet().next();
-						int loggedUserId = getUserIdStatement.getResultSet().getInt("id");
-						System.out.println("logged user id " + loggedUserId);
-					}
 					return true;
 				}
 			} catch (SQLException e) {
@@ -116,7 +107,6 @@ public class DatabaseAuthService implements IAuthService {
 
 	@Override
 	public boolean addUser(String nickname, String userPassword) {
-		connection = databaseOperations.connectToDatabase();
 		if (containsNickname(nickname)) {
 			return false;
 		}

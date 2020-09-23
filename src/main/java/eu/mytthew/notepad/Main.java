@@ -2,9 +2,14 @@ package eu.mytthew.notepad;
 
 import eu.mytthew.notepad.auth.DatabaseAuthService;
 import eu.mytthew.notepad.auth.IAuthService;
+import eu.mytthew.notepad.auth.NoteService;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +18,13 @@ import java.util.stream.Collectors;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
+	private static final NoteService noteService = new NoteService();
+	private static final Connection connection = connectToDatabase();
+	private static int loggedUserId;
+	private static final IAuthService authService = new DatabaseAuthService(connection);
 
 	public static void main(String[] args) {
-		IAuthService authService = new DatabaseAuthService();
+
 		List<MenuItem> loginMenuItems = new ArrayList<>();
 		loginMenuItems.add(new MenuItem(0, "Exit", () -> false));
 		loginMenuItems.add(new MenuItem(1, "Log in", () -> logIn(authService)));
@@ -164,9 +173,11 @@ public class Main {
 		if (date.equals("")) {
 			date = String.valueOf(LocalDate.now());
 			loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
+			noteService.addNoteToDatabase(connection, loggedUserId, note);
 			System.out.println("Note added successfully!");
 		} else if (date.matches("^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$")) {
 			loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
+
 			System.out.println("Note added successfully!");
 		} else {
 			System.out.println("Wrong date format.");
@@ -342,5 +353,28 @@ public class Main {
 		} else {
 			System.out.println("Wrong current password.");
 		}
+	}
+
+	public static Connection connectToDatabase() {
+		try {
+			return DriverManager.getConnection("jdbc:mysql://localhost:3306/notepad", "root", "");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public int getLoggedUserId(User user) {
+		String getUserID = "SELECT id FROM users WHERE login = ?";
+		try {
+			PreparedStatement getUserIdStatement = connection.prepareStatement(getUserID);
+			getUserIdStatement.setString(1, authService.getLoggedUser().getNickname());
+			getUserIdStatement.execute();
+			getUserIdStatement.getResultSet().next();
+			loggedUserId = getUserIdStatement.getResultSet().getInt("id");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return loggedUserId;
 	}
 }
