@@ -22,7 +22,6 @@ public class Main {
 	private static final IAuthService authService = new DatabaseAuthService(connection);
 
 	public static void main(String[] args) {
-
 		List<MenuItem> loginMenuItems = new ArrayList<>();
 		loginMenuItems.add(new MenuItem(0, "Exit", () -> false));
 		loginMenuItems.add(new MenuItem(1, "Log in", () -> logIn(authService)));
@@ -47,6 +46,7 @@ public class Main {
 			if (authService.login(login, password)) {
 				System.out.println("Logged in!");
 				isUserLogged = true;
+				noteService.readNotes(connection, authService.getLoggedUser());
 				display(authService);
 			} else {
 				System.out.println("Wrong password!");
