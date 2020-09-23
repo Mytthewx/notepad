@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 public class DatabaseAuthService implements IAuthService {
 	DatabaseOperations databaseOperations = new DatabaseOperations();
-	Connection connection = null;
+	Connection connection = databaseOperations.connectToDatabase();
 	@Getter
 	private User loggedUser;
 
@@ -116,6 +116,7 @@ public class DatabaseAuthService implements IAuthService {
 
 	@Override
 	public boolean addUser(String nickname, String userPassword) {
+		connection = databaseOperations.connectToDatabase();
 		if (containsNickname(nickname)) {
 			return false;
 		}
