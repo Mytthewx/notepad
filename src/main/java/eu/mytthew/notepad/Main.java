@@ -91,7 +91,8 @@ public class Main {
 	}
 
 	public static String formatNote(Note note) {
-		return "\nDate: " + note.getNoteDate() +
+		return "\nID: " + note.getId() +
+				"\nDate: " + note.getNoteDate() +
 				"\nTitle: " + note.getTitle() +
 				"\nContent: '" + note.getContent() + '\'' +
 				note.getReminders()
@@ -101,17 +102,17 @@ public class Main {
 						.collect(Collectors.joining()) + "\n";
 	}
 
-	public static void verifyEditNote(Note note, String newTitle, String newContent, String newDate) {
-		if (!newTitle.equals("")) {
-			note.setTitle(newTitle);
-		}
-		if (!newContent.equals("")) {
-			note.setContent(newContent);
-		}
-		if (!newDate.equals("")) {
-			note.setNoteDate(LocalDate.parse(newDate));
-		}
-	}
+//	public static void verifyEditNote(Note note, String newTitle, String newContent, String newDate) {
+//		if (!newTitle.equals("")) {
+//			note.setTitle(newTitle);
+//		}
+//		if (!newContent.equals("")) {
+//			note.setContent(newContent);
+//		}
+//		if (!newDate.equals("")) {
+//			note.setNoteDate(LocalDate.parse(newDate));
+//		}
+//	}
 
 	public static void verifyEditReminder(Reminder reminder, String newReminderName, String newReminderDate) {
 		if (!newReminderName.equals("")) {
@@ -122,9 +123,9 @@ public class Main {
 		}
 	}
 
-	public static boolean userContainsAnyNotes(User user) {
-		return user.getNotes().isEmpty();
-	}
+//	public static boolean userContainsAnyNotes(User user) {
+//		return user.getNotes().isEmpty();
+//	}
 
 	public static boolean noteContainsAnyReminder(Note note) {
 		return note.getReminders().isEmpty();
@@ -185,7 +186,7 @@ public class Main {
 
 	public static void displayAllNotes(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (userContainsAnyNotes(user)) {
+		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
 			System.out.println("No notes.");
 		} else {
 			user.getNotes()
@@ -211,14 +212,13 @@ public class Main {
 	}
 
 	public static void removeNotes(IAuthService authService) {
-		if (authService.getLoggedUser().getNotes().isEmpty()) {
+		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
 			System.out.println("No notes.");
 		} else {
 			System.out.println("Select note: ");
 			String id = scanner.nextLine();
-			User user = authService.getLoggedUser();
-			if (user.getNotes().size() > Integer.parseInt(id)) {
-				if (user.removeNote(user.getNotes().get(Integer.parseInt(id)).getUuid())) {
+			if (noteService.noteWithThisIdExist(connection, Integer.parseInt(id))) {
+				if (noteService.removeNote(connection, Integer.parseInt(id))) {
 					System.out.println("Note removed.");
 				}
 			} else {
@@ -228,20 +228,19 @@ public class Main {
 	}
 
 	public static boolean editNote(IAuthService authService) {
-		if (authService.getLoggedUser().getNotes().isEmpty()) {
+		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
 			System.out.println("No notes.");
 		} else {
 			System.out.println("Select note to edit:");
 			String selectedNote = scanner.nextLine();
-			User user = authService.getLoggedUser();
-			if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
+			if (noteService.noteWithThisIdExist(connection, Integer.parseInt(selectedNote))) {
 				System.out.println("New title:");
 				String newTitle = scanner.nextLine();
 				System.out.println("New content:");
 				String newContent = scanner.nextLine();
 				System.out.println("New date:");
 				String newDate = scanner.nextLine();
-				verifyEditNote(user.getNotes().get(Integer.parseInt(selectedNote)), newTitle, newContent, newDate);
+				noteService.editNoteInDatabase(connection, Integer.parseInt(selectedNote), newTitle, newContent, newDate);
 				System.out.println("Note changed successfully.");
 			} else {
 				System.out.println("Note with this id doesn't exist.");
@@ -269,7 +268,7 @@ public class Main {
 
 	public static boolean editReminder(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (userContainsAnyNotes(user)) {
+		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
 			System.out.println("No notes.");
 			return true;
 		}
@@ -302,7 +301,7 @@ public class Main {
 
 	public static boolean removeReminder(IAuthService authService) {
 		User user = authService.getLoggedUser();
-		if (userContainsAnyNotes(user)) {
+		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
 			System.out.println("No notes.");
 			return true;
 		}

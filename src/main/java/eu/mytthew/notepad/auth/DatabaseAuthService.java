@@ -128,11 +128,6 @@ public class DatabaseAuthService implements IAuthService {
 	@Override
 	public boolean logout() {
 		loggedUser = null;
-		try {
-			connection.close();
-		} catch (SQLException throwables) {
-			throwables.printStackTrace();
-		}
 		return true;
 	}
 

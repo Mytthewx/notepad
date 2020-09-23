@@ -6,8 +6,6 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 
 public class User {
@@ -38,16 +36,5 @@ public class User {
 		}
 		notes.remove(note);
 		return true;
-	}
-
-	public boolean removeNote(UUID uuid) {
-		Optional<Note> optionalNote = notes.stream()
-				.filter(note -> note.getUuid().equals(uuid))
-				.findAny();
-		if (optionalNote.isPresent()) {
-			notes.remove(optionalNote.get());
-			return true;
-		}
-		return false;
 	}
 }

@@ -31,10 +31,11 @@ public class NoteService {
 			notesStatement.setInt(1, loggedUserId);
 			notesStatement.execute();
 			while (notesStatement.getResultSet().next()) {
+				int id = notesStatement.getResultSet().getInt("id");
 				String title = notesStatement.getResultSet().getString("title");
 				String content = notesStatement.getResultSet().getString("content");
 				String localDate = notesStatement.getResultSet().getString("date");
-				user.addNote(new Note(title, content, LocalDate.parse(localDate)));
+				user.addNote(new Note(id, title, content, LocalDate.parse(localDate)));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -54,5 +55,79 @@ public class NoteService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void editNoteInDatabase(Connection conection, int noteId, String newTitle, String newContent, String newDate) {
+		if (!newTitle.equals("")) {
+			String editTitle = "UPDATE notes SET title = ? WHERE id = ?";
+			try {
+				PreparedStatement preparedStatement = conection.prepareStatement(editTitle);
+				preparedStatement.setString(1, newTitle);
+				preparedStatement.setInt(2, noteId);
+				preparedStatement.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		if (!newContent.equals("")) {
+			String editContent = "UPDATE notes SET content = ? WHERE id = ?";
+			try {
+				PreparedStatement preparedStatement = conection.prepareStatement(editContent);
+				preparedStatement.setString(1, newContent);
+				preparedStatement.setInt(2, noteId);
+				preparedStatement.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		if (!newDate.equals("")) {
+			String editDate = "UPDATE notes SET date = ? WHERE id = ?";
+			try {
+				PreparedStatement preparedStatement = conection.prepareStatement(editDate);
+				preparedStatement.setString(1, newDate);
+				preparedStatement.setInt(2, noteId);
+				preparedStatement.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public boolean removeNote(Connection connection, int id) {
+		String sql = "DELETE FROM notes WHERE id = ?";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			preparedStatement.execute();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	private boolean preparedStatement(Connection connection, int loggedUserId, String sql) {
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, loggedUserId);
+			preparedStatement.execute();
+			if (preparedStatement.getResultSet().next()) {
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean userContainsAnyNotes(Connection connection, User user) {
+		int loggedUserId = getUserId(connection, user);
+		String sql = "SELECT * FROM notes WHERE user_id = ?";
+		return preparedStatement(connection, loggedUserId, sql);
+	}
+
+	public boolean noteWithThisIdExist(Connection connection, int id) {
+		String sql = "SELECT * FROM notes WHERE id = ?";
+		return preparedStatement(connection, id, sql);
 	}
 }
