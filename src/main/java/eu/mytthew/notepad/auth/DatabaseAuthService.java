@@ -1,20 +1,20 @@
 package eu.mytthew.notepad.auth;
 
-import com.google.common.hash.Hashing;
 import eu.mytthew.notepad.entity.User;
 import lombok.Getter;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import static eu.mytthew.notepad.auth.HashPassword.hashPassword;
+
+
 public class DatabaseAuthService implements IAuthService {
-	Connection connection;
+	private final Connection connection;
 	@Getter
 	private User loggedUser;
-	@Getter
-	private int loggedUserId;
+
 
 	public DatabaseAuthService(Connection connection) {
 		this.connection = connection;
@@ -52,7 +52,10 @@ public class DatabaseAuthService implements IAuthService {
 					PreparedStatement preparedStatement = connection.prepareStatement(sql);
 					preparedStatement.setString(1, nickname);
 					preparedStatement.execute();
-					loggedUser = new User(nickname, password);
+					if (preparedStatement.getResultSet().next()) {
+						int userId = preparedStatement.getResultSet().getInt("id");
+						loggedUser = new User(userId, nickname, password);
+					}
 					return true;
 				}
 			} catch (SQLException e) {
@@ -70,15 +73,16 @@ public class DatabaseAuthService implements IAuthService {
 			userPassword.setString(1, getLoggedUser().getNickname());
 			userPassword.execute();
 			if (userPassword.getResultSet().next()) {
-				if (!userPassword.getResultSet().getString("password").equals(hashPassword(oldPassword))) {
+				if (userPassword.getResultSet().getString("password").equals(hashPassword(oldPassword))) {
+					String sql = "UPDATE users SET password = ? WHERE login = ?";
+					PreparedStatement preparedStatement = connection.prepareStatement(sql);
+					preparedStatement.setString(1, hashPassword(newPassword));
+					preparedStatement.setString(2, getLoggedUser().getNickname());
+					preparedStatement.execute();
+					return true;
+				} else {
 					return false;
 				}
-				String sql = "UPDATE users SET password = ? WHERE login = ?";
-				PreparedStatement preparedStatement = connection.prepareStatement(sql);
-				preparedStatement.setString(1, hashPassword(newPassword));
-				preparedStatement.setString(2, getLoggedUser().getNickname());
-				preparedStatement.execute();
-				return true;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -88,24 +92,24 @@ public class DatabaseAuthService implements IAuthService {
 
 	@Override
 	public boolean changeNickname(String newNickname) {
-		if (!containsNickname(newNickname)) {
-			try {
-				String oldNickname = getLoggedUser().getNickname();
-				String sql = "UPDATE users SET login = ? WHERE login = ?;";
-				PreparedStatement preparedStatement = connection.prepareStatement(sql);
-				preparedStatement.setString(1, newNickname);
-				preparedStatement.setString(2, oldNickname);
-				preparedStatement.execute();
-				if (containsNickname(newNickname) && !containsNickname(oldNickname) && !newNickname.equals(oldNickname)) {
-					getLoggedUser().setNickname(newNickname);
-					return true;
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			return true;
+		if (containsNickname(newNickname)) {
+			return false;
 		}
-		return false;
+		try {
+			String oldNickname = getLoggedUser().getNickname();
+			String sql = "UPDATE users SET login = ? WHERE login = ?;";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, newNickname);
+			preparedStatement.setString(2, oldNickname);
+			preparedStatement.execute();
+			if (containsNickname(newNickname) && !containsNickname(oldNickname) && !newNickname.equals(oldNickname)) {
+				getLoggedUser().setNickname(newNickname);
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 	@Override
@@ -130,9 +134,5 @@ public class DatabaseAuthService implements IAuthService {
 	public boolean logout() {
 		loggedUser = null;
 		return true;
-	}
-
-	private String hashPassword(String password) {
-		return Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
 	}
 }

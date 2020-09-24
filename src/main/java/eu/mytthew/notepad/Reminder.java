@@ -11,9 +11,8 @@ public class Reminder {
 	private LocalDate date;
 
 	public Reminder(int id, String name, LocalDate date) {
+		this(name, date);
 		this.id = id;
-		this.name = name;
-		this.date = date;
 	}
 
 	public Reminder(String name, LocalDate date) {

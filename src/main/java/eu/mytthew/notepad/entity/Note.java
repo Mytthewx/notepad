@@ -9,7 +9,6 @@ import java.util.List;
 
 @Data
 public class Note {
-	//	private final UUID uuid = UUID.randomUUID();
 	private int id;
 	private final List<Reminder> reminders = new ArrayList<>();
 	private String title;

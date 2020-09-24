@@ -46,7 +46,7 @@ public class Main {
 			if (authService.login(login, password)) {
 				System.out.println("Logged in!");
 				isUserLogged = true;
-				noteService.readNotes(connection, authService.getLoggedUser());
+				noteService.getAllNotes(connection, authService.getLoggedUser());
 				display(authService);
 			} else {
 				System.out.println("Wrong password!");
@@ -91,7 +91,7 @@ public class Main {
 	}
 
 	public static String formatNote(Note note) {
-		List<Reminder> reminders = noteService.readReminders(connection, note.getId());
+		List<Reminder> reminders = noteService.getAllReminders(connection, note.getId());
 		return "\nID: " + note.getId() +
 				"\nDate: " + note.getNoteDate() +
 				"\nTitle: " + note.getTitle() +
@@ -137,11 +137,11 @@ public class Main {
 		if (date.equals("")) {
 			date = String.valueOf(LocalDate.now());
 			Note note = new Note(title, content, LocalDate.parse(date));
-			noteService.addNoteToDatabase(connection, loggedUser, note);
+			noteService.addNote(connection, loggedUser, note);
 			System.out.println("Note added successfully!");
 		} else if (date.matches("^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$")) {
 			Note note = new Note(title, content, LocalDate.parse(date));
-			noteService.addNoteToDatabase(connection, loggedUser, note);
+			noteService.addNote(connection, loggedUser, note);
 			System.out.println("Note added successfully!");
 		} else {
 			System.out.println("Wrong date format.");
@@ -152,7 +152,7 @@ public class Main {
 		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
 			System.out.println("No notes.");
 		} else {
-			List<Note> noteList = noteService.readNotes(connection, authService.getLoggedUser());
+			List<Note> noteList = noteService.getAllNotes(connection, authService.getLoggedUser());
 			noteList.stream()
 					.map(Main::formatNote)
 					.forEach(System.out::println);
@@ -163,7 +163,7 @@ public class Main {
 		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
 			System.out.println("No notes.");
 		} else {
-			List<Note> noteTodayList = noteService.readNotes(connection, authService.getLoggedUser());
+			List<Note> noteTodayList = noteService.getAllNotes(connection, authService.getLoggedUser());
 			noteTodayList.stream()
 					.filter(note -> note.getNoteDate().equals(LocalDate.now()))
 					.map(Main::formatNote)
@@ -200,7 +200,7 @@ public class Main {
 				String newContent = scanner.nextLine();
 				System.out.println("New date:");
 				String newDate = scanner.nextLine();
-				noteService.editNoteInDatabase(connection, Integer.parseInt(selectedNote), newTitle, newContent, newDate);
+				noteService.editNote(connection, Integer.parseInt(selectedNote), newTitle, newContent, newDate);
 				System.out.println("Note changed successfully.");
 			} else {
 				System.out.println("Note with this id doesn't exist.");
@@ -222,7 +222,7 @@ public class Main {
 			System.out.println("Reminder date [yyyy-MM-dd]:");
 			String reminderDate = scanner.nextLine();
 			Reminder reminder = new Reminder(reminderName, LocalDate.parse(reminderDate));
-			noteService.addReminderToDatabase(connection, Integer.parseInt(selectedNote), reminder);
+			noteService.addReminder(connection, Integer.parseInt(selectedNote), reminder);
 			System.out.println("Reminder added successfully.");
 		} else {
 			System.out.println("Note with this id doesn't exist.");
@@ -255,7 +255,7 @@ public class Main {
 		String newReminderName = scanner.nextLine();
 		System.out.println("New reminder date [yyyy-MM-dd]:");
 		String newReminderDate = scanner.nextLine();
-		noteService.editReminderInDatabase(connection, Integer.parseInt(selectedReminder), newReminderName, newReminderDate);
+		noteService.editReminder(connection, Integer.parseInt(selectedReminder), newReminderName, newReminderDate);
 		System.out.println("Reminder changed successfully.");
 		return true;
 	}

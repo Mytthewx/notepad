@@ -13,24 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NoteService {
-	private int getUserId(Connection connection, User user) {
-		String getUserSQL = "SELECT id FROM users WHERE login = ?";
-		try {
-			PreparedStatement getUserIdStatement = connection.prepareStatement(getUserSQL);
-			getUserIdStatement.setString(1, user.getNickname());
-			getUserIdStatement.execute();
-			getUserIdStatement.getResultSet().next();
-			return getUserIdStatement.getResultSet().getInt("id");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return -1;
-	}
-
-	public List<Note> readNotes(Connection connection, User user) {
+	public List<Note> getAllNotes(Connection connection, User user) {
 		List<Note> noteList = new ArrayList<>();
 		try {
-			int loggedUserId = getUserId(connection, user);
+			int loggedUserId = user.getId();
 			String notesSQL = "SELECT * FROM notes WHERE user_id = ?";
 			PreparedStatement notesStatement = connection.prepareStatement(notesSQL);
 			notesStatement.setInt(1, loggedUserId);
@@ -49,17 +35,18 @@ public class NoteService {
 		return noteList;
 	}
 
-	public List<Reminder> readReminders(Connection connection, int noteId) {
+	public List<Reminder> getAllReminders(Connection connection, int noteId) {
 		List<Reminder> reminderList = new ArrayList<>();
 		try {
 			String remindersSQL = "SELECT * FROM reminders WHERE note_id = ?";
 			PreparedStatement reminderStatement = connection.prepareStatement(remindersSQL);
 			reminderStatement.setInt(1, noteId);
 			reminderStatement.execute();
-			while (reminderStatement.getResultSet().next()) {
-				int id = reminderStatement.getResultSet().getInt("id");
-				String name = reminderStatement.getResultSet().getString("name");
-				String localDate = reminderStatement.getResultSet().getString("date");
+			ResultSet rs = reminderStatement.getResultSet();
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String name = rs.getString("name");
+				String localDate = rs.getString("date");
 				Reminder reminder = new Reminder(id, name, LocalDate.parse(localDate));
 				reminderList.add(reminder);
 			}
@@ -69,10 +56,10 @@ public class NoteService {
 		return reminderList;
 	}
 
-	public void addNoteToDatabase(Connection connection, User user, Note note) {
+	public void addNote(Connection connection, User user, Note note) {
 		String noteToSQL = "INSERT INTO notes(title, content, date, user_id) VALUES (?, ?, ?, ?)";
 		try {
-			int loggedUserId = getUserId(connection, user);
+			int loggedUserId = user.getId();
 			PreparedStatement preparedStatement = connection.prepareStatement(noteToSQL);
 			preparedStatement.setString(1, note.getTitle());
 			preparedStatement.setString(2, note.getContent());
@@ -84,7 +71,7 @@ public class NoteService {
 		}
 	}
 
-	public void addReminderToDatabase(Connection connection, int noteId, Reminder reminder) {
+	public void addReminder(Connection connection, int noteId, Reminder reminder) {
 		String reminderSQL = "INSERT INTO reminders (name, date, note_id) VALUES (?, ?, ?)";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(reminderSQL);
@@ -97,7 +84,7 @@ public class NoteService {
 		}
 	}
 
-	public void editReminderInDatabase(Connection connection, int reminderId, String newName, String newDate) {
+	public void editReminder(Connection connection, int reminderId, String newName, String newDate) {
 		try {
 			if (!newName.equals("")) {
 				String editName = "UPDATE reminders SET name = ? WHERE id = ?";
@@ -120,7 +107,7 @@ public class NoteService {
 		}
 	}
 
-	public void editNoteInDatabase(Connection conection, int noteId, String newTitle, String newContent, String newDate) {
+	public void editNote(Connection conection, int noteId, String newTitle, String newContent, String newDate) {
 		try {
 			if (!newTitle.equals("")) {
 				String editTitle = "UPDATE notes SET title = ? WHERE id = ?";
@@ -200,7 +187,7 @@ public class NoteService {
 	}
 
 	public boolean userContainsAnyNotes(Connection connection, User user) {
-		int loggedUserId = getUserId(connection, user);
+		int loggedUserId = user.getId();
 		String sql = "SELECT * FROM notes WHERE user_id = ?";
 		return preparedStatementExistingById(connection, loggedUserId, sql);
 	}

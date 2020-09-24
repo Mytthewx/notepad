@@ -11,11 +11,18 @@ import java.util.List;
 public class User {
 	private final List<Note> notes = new ArrayList<>();
 	@Getter
+	private int id;
+	@Getter
 	@Setter
 	private String nickname;
 	@Getter
 	@Setter
 	private String password;
+
+	public User(int id, String nickname, String password) {
+		this(nickname, password);
+		this.id = id;
+	}
 
 	public User(String nickname, String password) {
 		this.nickname = nickname;
