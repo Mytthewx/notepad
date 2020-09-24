@@ -8,6 +8,8 @@ import eu.mytthew.notepad.entity.User;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -178,8 +180,10 @@ public class Main {
 			System.out.println("Select note: ");
 			String id = scanner.nextLine();
 			if (noteService.noteWithThisIdExist(connection, Integer.parseInt(id))) {
-				if (noteService.removeNote(connection, Integer.parseInt(id))) {
-					System.out.println("Note removed.");
+				if (checkIfUserHasNoteWithId(authService.getLoggedUser().getId(), Integer.parseInt(id))) {
+					if (noteService.removeNote(connection, Integer.parseInt(id))) {
+						System.out.println("Note removed.");
+					}
 				}
 			} else {
 				System.out.println("Note with this id doesn't exist.");
@@ -322,5 +326,21 @@ public class Main {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static boolean checkIfUserHasNoteWithId(int idUser, int idNote) {
+		String sql = "SELECT * FROM notes WHERE id = ?";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, idNote);
+			preparedStatement.execute();
+			ResultSet rs = preparedStatement.getResultSet();
+			if (rs.getInt("user_id") == idUser) {
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

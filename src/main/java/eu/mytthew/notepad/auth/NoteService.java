@@ -138,7 +138,7 @@ public class NoteService {
 	}
 
 	public boolean removeNote(Connection connection, int id) {
-		String sql = "DELETE FROM notes WHERE id = ?";
+		String sql = "DELETE FROM notes WHERE id = ? ";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, id);

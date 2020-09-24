@@ -52,7 +52,7 @@ public class NotepadTest {
 		authService.getLoggedUser().addNote(note);
 
 		// when
-		boolean result = loggedUser.removeNote(note.getUuid());
+		boolean result = loggedUser.removeNote(note);
 
 		// then
 		assertTrue(result);
@@ -71,7 +71,7 @@ public class NotepadTest {
 		loggedUser.addNote(note);
 
 		// when
-		boolean result = loggedUser.removeNote(note2.getUuid());
+		boolean result = loggedUser.removeNote(note2);
 
 		// then
 		assertFalse(result);
