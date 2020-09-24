@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NoteService {
 	private int getUserId(Connection connection, User user) {
@@ -23,7 +25,8 @@ public class NoteService {
 		return -1;
 	}
 
-	public void readNotes(Connection connection, User user) {
+	public List<Note> readNotes(Connection connection, User user) {
+		List<Note> noteList = new ArrayList<>();
 		try {
 			int loggedUserId = getUserId(connection, user);
 			String notesSQL = "SELECT * FROM notes WHERE user_id = ?";
@@ -35,11 +38,13 @@ public class NoteService {
 				String title = notesStatement.getResultSet().getString("title");
 				String content = notesStatement.getResultSet().getString("content");
 				String localDate = notesStatement.getResultSet().getString("date");
-				user.addNote(new Note(id, title, content, LocalDate.parse(localDate)));
+				Note note = new Note(id, title, content, LocalDate.parse(localDate));
+				noteList.add(note);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return noteList;
 	}
 
 	public void addNoteToDatabase(Connection connection, User user, Note note) {
