@@ -91,32 +91,17 @@ public class Main {
 	}
 
 	public static String formatNote(Note note) {
+		List<Reminder> reminders = noteService.readReminders(connection, note.getId());
 		return "\nID: " + note.getId() +
 				"\nDate: " + note.getNoteDate() +
 				"\nTitle: " + note.getTitle() +
 				"\nContent: '" + note.getContent() + '\'' +
-				note.getReminders()
+				reminders
 						.stream()
 						.filter(reminder -> reminder.getDate().equals(LocalDate.now()))
-						.map(reminder -> "\nReminder name: " + reminder.getName())
+						.map(reminder -> "\nReminder ID: " + reminder.getId() +
+								"\nReminder name: " + reminder.getName())
 						.collect(Collectors.joining()) + "\n";
-	}
-
-	public static void verifyEditReminder(Reminder reminder, String newReminderName, String newReminderDate) {
-		if (!newReminderName.equals("")) {
-			reminder.setName(newReminderName);
-		}
-		if (!newReminderDate.equals("")) {
-			reminder.setDate(LocalDate.parse(newReminderDate));
-		}
-	}
-
-	public static boolean noteContainsAnyReminder(Note note) {
-		return note.getReminders().isEmpty();
-	}
-
-	public static boolean reminderIdExist(String id, Note note) {
-		return Integer.parseInt(id) >= note.getReminders().size();
 	}
 
 	public static void logIn(IAuthService authService) {
@@ -176,7 +161,7 @@ public class Main {
 
 	public static void displayTodayNotes(IAuthService authService) {
 		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
-			System.out.println("No notes for today.");
+			System.out.println("No notes.");
 		} else {
 			List<Note> noteTodayList = noteService.readNotes(connection, authService.getLoggedUser());
 			noteTodayList.stream()
@@ -246,7 +231,6 @@ public class Main {
 	}
 
 	public static boolean editReminder(IAuthService authService) {
-		User user = authService.getLoggedUser();
 		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
 			System.out.println("No notes.");
 			return true;
@@ -257,29 +241,26 @@ public class Main {
 			System.out.println("Note with this id doesn't exist.");
 			return true;
 		}
-		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
-		if (noteContainsAnyReminder(note)) {
+		if (!noteService.noteContainsAnyReminders(connection, Integer.parseInt(selectedNote))) {
 			System.out.println("This note has no reminder.");
 			return true;
 		}
 		System.out.println("Select reminder:");
 		String selectedReminder = scanner.nextLine();
-		if (!noteService.noteWithThisIdExist(connection, Integer.parseInt(selectedNote))) {
+		if (!noteService.reminderWithThisIdExist(connection, Integer.parseInt(selectedReminder))) {
 			System.out.println("Reminder with this id doesn't exist.");
 			return true;
 		}
-		Reminder reminder = note.getReminders().get(Integer.parseInt(selectedReminder));
 		System.out.println("New reminder name:");
 		String newReminderName = scanner.nextLine();
 		System.out.println("New reminder date [yyyy-MM-dd]:");
 		String newReminderDate = scanner.nextLine();
-		verifyEditReminder(reminder, newReminderName, newReminderDate);
+		noteService.editReminderInDatabase(connection, Integer.parseInt(selectedReminder), newReminderName, newReminderDate);
 		System.out.println("Reminder changed successfully.");
 		return true;
 	}
 
 	public static boolean removeReminder(IAuthService authService) {
-		User user = authService.getLoggedUser();
 		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
 			System.out.println("No notes.");
 			return true;
@@ -290,19 +271,21 @@ public class Main {
 			System.out.println("Note with this id doesn't exist.");
 			return true;
 		}
-		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
-		if (noteContainsAnyReminder(note)) {
+		if (!noteService.noteContainsAnyReminders(connection, Integer.parseInt(selectedNote))) {
 			System.out.println("This note has no reminder.");
 			return true;
 		}
 		System.out.println("Select reminder:");
 		String selectedReminder = scanner.nextLine();
-		if (reminderIdExist(selectedReminder, note)) {
+		if (!noteService.reminderWithThisIdExist(connection, Integer.parseInt(selectedReminder))) {
 			System.out.println("Reminder with this id doesn't exist.");
 			return true;
 		}
-		note.getReminders().remove(Integer.parseInt(selectedReminder));
-		System.out.println("Reminder removed successfully.");
+		if (noteService.removeReminder(connection, Integer.parseInt(selectedNote), Integer.parseInt(selectedReminder))) {
+			System.out.println("Reminder removed successfully.");
+			return true;
+		}
+		System.out.println("Wrong reminder id.");
 		return true;
 	}
 
