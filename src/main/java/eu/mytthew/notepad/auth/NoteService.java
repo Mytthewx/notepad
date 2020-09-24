@@ -1,5 +1,6 @@
 package eu.mytthew.notepad.auth;
 
+import eu.mytthew.notepad.Reminder;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 
@@ -62,6 +63,19 @@ public class NoteService {
 		}
 	}
 
+	public void addReminderToDatabase(Connection connection, int noteId, Reminder reminder) {
+		String reminderSQL = "INSERT INTO reminders (name, date, note_id) VALUES (?, ?, ?)";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(reminderSQL);
+			preparedStatement.setString(1, reminder.getName());
+			preparedStatement.setString(2, reminder.getDate().toString());
+			preparedStatement.setInt(3, noteId);
+			preparedStatement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void editNoteInDatabase(Connection conection, int noteId, String newTitle, String newContent, String newDate) {
 		if (!newTitle.equals("")) {
 			String editTitle = "UPDATE notes SET title = ? WHERE id = ?";
@@ -111,7 +125,7 @@ public class NoteService {
 		return false;
 	}
 
-	private boolean preparedStatement(Connection connection, int loggedUserId, String sql) {
+	private boolean preparedStatementExistingById(Connection connection, int loggedUserId, String sql) {
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, loggedUserId);
@@ -128,11 +142,11 @@ public class NoteService {
 	public boolean userContainsAnyNotes(Connection connection, User user) {
 		int loggedUserId = getUserId(connection, user);
 		String sql = "SELECT * FROM notes WHERE user_id = ?";
-		return preparedStatement(connection, loggedUserId, sql);
+		return preparedStatementExistingById(connection, loggedUserId, sql);
 	}
 
 	public boolean noteWithThisIdExist(Connection connection, int id) {
 		String sql = "SELECT * FROM notes WHERE id = ?";
-		return preparedStatement(connection, id, sql);
+		return preparedStatementExistingById(connection, id, sql);
 	}
 }

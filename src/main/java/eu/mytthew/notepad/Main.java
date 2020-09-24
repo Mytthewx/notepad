@@ -114,7 +114,7 @@ public class Main {
 	public static boolean noteContainsAnyReminder(Note note) {
 		return note.getReminders().isEmpty();
 	}
-	
+
 	public static boolean reminderIdExist(String id, Note note) {
 		return Integer.parseInt(id) >= note.getReminders().size();
 	}
@@ -225,15 +225,19 @@ public class Main {
 	}
 
 	public static boolean addReminder(IAuthService authService) {
+		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
+			System.out.println("No notes.");
+			return true;
+		}
 		System.out.println("Select note:");
 		String selectedNote = scanner.nextLine();
-		User user = authService.getLoggedUser();
-		if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
+		if (noteService.noteWithThisIdExist(connection, Integer.parseInt(selectedNote))) {
 			System.out.println("Reminder name:");
 			String reminderName = scanner.nextLine();
 			System.out.println("Reminder date [yyyy-MM-dd]:");
 			String reminderDate = scanner.nextLine();
-			user.getNotes().get(Integer.parseInt(selectedNote)).getReminders().add(new Reminder(reminderName, LocalDate.parse(reminderDate)));
+			Reminder reminder = new Reminder(reminderName, LocalDate.parse(reminderDate));
+			noteService.addReminderToDatabase(connection, Integer.parseInt(selectedNote), reminder);
 			System.out.println("Reminder added successfully.");
 		} else {
 			System.out.println("Note with this id doesn't exist.");
