@@ -66,7 +66,7 @@ public class RuntimeNotesService implements INotesService {
 
 	@Override
 	public boolean userContainsAnyNotes(User user) {
-		return !user.getNotes().isEmpty();
+		return false;
 	}
 
 	@Override
