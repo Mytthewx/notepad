@@ -19,6 +19,7 @@ public class DatabaseNotesService implements INotesService {
 		this.connection = connection;
 	}
 
+	@Override
 	public List<Note> getAllNotes(User user) {
 		List<Note> noteList = new ArrayList<>();
 		try {
@@ -41,6 +42,7 @@ public class DatabaseNotesService implements INotesService {
 		return noteList;
 	}
 
+	@Override
 	public List<Reminder> getAllReminders(int noteId) {
 		List<Reminder> reminderList = new ArrayList<>();
 		try {
@@ -78,6 +80,7 @@ public class DatabaseNotesService implements INotesService {
 		}
 	}
 
+	@Override
 	public void addReminder(int noteId, Reminder reminder) {
 		String reminderSQL = "INSERT INTO reminders (name, date, note_id) VALUES (?, ?, ?)";
 		try {
@@ -91,6 +94,7 @@ public class DatabaseNotesService implements INotesService {
 		}
 	}
 
+	@Override
 	public void editReminder(int reminderId, String newName, String newDate) {
 		try {
 			if (!newName.equals("")) {
@@ -114,6 +118,7 @@ public class DatabaseNotesService implements INotesService {
 		}
 	}
 
+	@Override
 	public void editNote(int noteId, String newTitle, String newContent, String newDate) {
 		try {
 			if (!newTitle.equals("")) {
@@ -137,13 +142,13 @@ public class DatabaseNotesService implements INotesService {
 				editDateStatement.setString(1, newDate);
 				editDateStatement.setInt(2, noteId);
 				editDateStatement.execute();
-
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
+	@Override
 	public boolean removeNote(int id) {
 		String sql = "DELETE FROM notes WHERE id = ?";
 		try {
@@ -157,6 +162,7 @@ public class DatabaseNotesService implements INotesService {
 		return false;
 	}
 
+	@Override
 	public boolean removeReminder(int noteId, int reminderId) {
 		try {
 			String noteIdVerify = "SELECT note_id FROM reminders WHERE id = ?";
@@ -164,14 +170,12 @@ public class DatabaseNotesService implements INotesService {
 			noteIdVerifyStatement.setInt(1, noteId);
 			noteIdVerifyStatement.execute();
 			ResultSet rs = noteIdVerifyStatement.getResultSet();
-			if (rs.next()) {
-				if (rs.getInt("note_id") == noteId) {
-					String removeReminderSQL = "DELETE FROM reminders WHERE id = ?";
-					PreparedStatement removeReminderStatement = connection.prepareStatement(removeReminderSQL);
-					removeReminderStatement.setInt(1, reminderId);
-					removeReminderStatement.execute();
-					return true;
-				}
+			if (rs.next() && rs.getInt("note_id") == noteId) {
+				String removeReminderSQL = "DELETE FROM reminders WHERE id = ?";
+				PreparedStatement removeReminderStatement = connection.prepareStatement(removeReminderSQL);
+				removeReminderStatement.setInt(1, reminderId);
+				removeReminderStatement.execute();
+				return true;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -193,24 +197,45 @@ public class DatabaseNotesService implements INotesService {
 		return false;
 	}
 
+	@Override
 	public boolean userContainsAnyNotes(User user) {
 		int loggedUserId = user.getId();
 		String sql = "SELECT * FROM notes WHERE user_id = ?";
 		return preparedStatementExistingById(loggedUserId, sql);
 	}
 
+	@Override
 	public boolean noteContainsAnyReminders(int noteId) {
 		String sql = "SELECT * FROM reminders WHERE note_id = ?";
 		return preparedStatementExistingById(noteId, sql);
 	}
 
+	@Override
 	public boolean noteWithThisIdExist(int id) {
 		String sql = "SELECT * FROM notes WHERE id = ?";
 		return preparedStatementExistingById(id, sql);
 	}
 
+	@Override
 	public boolean reminderWithThisIdExist(int id) {
 		String sql = "SELECT * FROM reminders WHERE id = ?";
 		return preparedStatementExistingById(id, sql);
+	}
+
+	@Override
+	public boolean checkIfUserHasNoteWithId(int idUser, int idNote) {
+		String sql = "SELECT * FROM notes WHERE id = ?";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, idNote);
+			preparedStatement.execute();
+			ResultSet rs = preparedStatement.getResultSet();
+			if (rs.next() && rs.getInt("user_id") == idUser) {
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }
