@@ -12,8 +12,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NoteService {
-	public List<Note> getAllNotes(Connection connection, User user) {
+public class DatabaseNotesService implements INotesService {
+	Connection connection;
+
+	public DatabaseNotesService(Connection connection) {
+		this.connection = connection;
+	}
+
+	public List<Note> getAllNotes(User user) {
 		List<Note> noteList = new ArrayList<>();
 		try {
 			int loggedUserId = user.getId();
@@ -35,7 +41,7 @@ public class NoteService {
 		return noteList;
 	}
 
-	public List<Reminder> getAllReminders(Connection connection, int noteId) {
+	public List<Reminder> getAllReminders(int noteId) {
 		List<Reminder> reminderList = new ArrayList<>();
 		try {
 			String remindersSQL = "SELECT * FROM reminders WHERE note_id = ?";
@@ -56,7 +62,8 @@ public class NoteService {
 		return reminderList;
 	}
 
-	public void addNote(Connection connection, User user, Note note) {
+	@Override
+	public void addNote(User user, Note note) {
 		String noteToSQL = "INSERT INTO notes(title, content, date, user_id) VALUES (?, ?, ?, ?)";
 		try {
 			int loggedUserId = user.getId();
@@ -71,7 +78,7 @@ public class NoteService {
 		}
 	}
 
-	public void addReminder(Connection connection, int noteId, Reminder reminder) {
+	public void addReminder(int noteId, Reminder reminder) {
 		String reminderSQL = "INSERT INTO reminders (name, date, note_id) VALUES (?, ?, ?)";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(reminderSQL);
@@ -84,7 +91,7 @@ public class NoteService {
 		}
 	}
 
-	public void editReminder(Connection connection, int reminderId, String newName, String newDate) {
+	public void editReminder(int reminderId, String newName, String newDate) {
 		try {
 			if (!newName.equals("")) {
 				String editName = "UPDATE reminders SET name = ? WHERE id = ?";
@@ -107,26 +114,26 @@ public class NoteService {
 		}
 	}
 
-	public void editNote(Connection conection, int noteId, String newTitle, String newContent, String newDate) {
+	public void editNote(int noteId, String newTitle, String newContent, String newDate) {
 		try {
 			if (!newTitle.equals("")) {
 				String editTitle = "UPDATE notes SET title = ? WHERE id = ?";
 
-				PreparedStatement editTitleStatement = conection.prepareStatement(editTitle);
+				PreparedStatement editTitleStatement = connection.prepareStatement(editTitle);
 				editTitleStatement.setString(1, newTitle);
 				editTitleStatement.setInt(2, noteId);
 				editTitleStatement.execute();
 			}
 			if (!newContent.equals("")) {
 				String editContent = "UPDATE notes SET content = ? WHERE id = ?";
-				PreparedStatement editContentStatement = conection.prepareStatement(editContent);
+				PreparedStatement editContentStatement = connection.prepareStatement(editContent);
 				editContentStatement.setString(1, newContent);
 				editContentStatement.setInt(2, noteId);
 				editContentStatement.execute();
 			}
 			if (!newDate.equals("")) {
 				String editDate = "UPDATE notes SET date = ? WHERE id = ?";
-				PreparedStatement editDateStatement = conection.prepareStatement(editDate);
+				PreparedStatement editDateStatement = connection.prepareStatement(editDate);
 				editDateStatement.setString(1, newDate);
 				editDateStatement.setInt(2, noteId);
 				editDateStatement.execute();
@@ -137,8 +144,8 @@ public class NoteService {
 		}
 	}
 
-	public boolean removeNote(Connection connection, int id) {
-		String sql = "DELETE FROM notes WHERE id = ? ";
+	public boolean removeNote(int id) {
+		String sql = "DELETE FROM notes WHERE id = ?";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
@@ -150,7 +157,7 @@ public class NoteService {
 		return false;
 	}
 
-	public boolean removeReminder(Connection connection, int noteId, int reminderId) {
+	public boolean removeReminder(int noteId, int reminderId) {
 		try {
 			String noteIdVerify = "SELECT note_id FROM reminders WHERE id = ?";
 			PreparedStatement noteIdVerifyStatement = connection.prepareStatement(noteIdVerify);
@@ -172,7 +179,7 @@ public class NoteService {
 		return false;
 	}
 
-	private boolean preparedStatementExistingById(Connection connection, int id, String sql) {
+	private boolean preparedStatementExistingById(int id, String sql) {
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
@@ -186,24 +193,24 @@ public class NoteService {
 		return false;
 	}
 
-	public boolean userContainsAnyNotes(Connection connection, User user) {
+	public boolean userContainsAnyNotes(User user) {
 		int loggedUserId = user.getId();
 		String sql = "SELECT * FROM notes WHERE user_id = ?";
-		return preparedStatementExistingById(connection, loggedUserId, sql);
+		return preparedStatementExistingById(loggedUserId, sql);
 	}
 
-	public boolean noteContainsAnyReminders(Connection connection, int noteId) {
+	public boolean noteContainsAnyReminders(int noteId) {
 		String sql = "SELECT * FROM reminders WHERE note_id = ?";
-		return preparedStatementExistingById(connection, noteId, sql);
+		return preparedStatementExistingById(noteId, sql);
 	}
 
-	public boolean noteWithThisIdExist(Connection connection, int id) {
+	public boolean noteWithThisIdExist(int id) {
 		String sql = "SELECT * FROM notes WHERE id = ?";
-		return preparedStatementExistingById(connection, id, sql);
+		return preparedStatementExistingById(id, sql);
 	}
 
-	public boolean reminderWithThisIdExist(Connection connection, int id) {
+	public boolean reminderWithThisIdExist(int id) {
 		String sql = "SELECT * FROM reminders WHERE id = ?";
-		return preparedStatementExistingById(connection, id, sql);
+		return preparedStatementExistingById(id, sql);
 	}
 }

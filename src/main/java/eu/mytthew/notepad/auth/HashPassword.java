@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 @UtilityClass
 public class HashPassword {
-	public String hashPassword(String password) {
+	public static String hashPassword(String password) {
 		return Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
 	}
 }

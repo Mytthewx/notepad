@@ -1,8 +1,8 @@
 package eu.mytthew.notepad;
 
 import eu.mytthew.notepad.auth.DatabaseAuthService;
+import eu.mytthew.notepad.auth.DatabaseNotesService;
 import eu.mytthew.notepad.auth.IAuthService;
-import eu.mytthew.notepad.auth.NoteService;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 
@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
-	private static final NoteService noteService = new NoteService();
 	private static final Connection connection = connectToDatabase();
+	private static final DatabaseNotesService databaseNotesService = new DatabaseNotesService(connection);
 	private static final IAuthService authService = new DatabaseAuthService(connection);
 
 	public static void main(String[] args) {
@@ -48,7 +48,7 @@ public class Main {
 			if (authService.login(login, password)) {
 				System.out.println("Logged in!");
 				isUserLogged = true;
-				noteService.getAllNotes(connection, authService.getLoggedUser());
+				databaseNotesService.getAllNotes(authService.getLoggedUser());
 				display(authService);
 			} else {
 				System.out.println("Wrong password!");
@@ -93,7 +93,7 @@ public class Main {
 	}
 
 	public static String formatNote(Note note) {
-		List<Reminder> reminders = noteService.getAllReminders(connection, note.getId());
+		List<Reminder> reminders = databaseNotesService.getAllReminders(note.getId());
 		return "\nID: " + note.getId() +
 				"\nDate: " + note.getNoteDate() +
 				"\nTitle: " + note.getTitle() +
@@ -139,11 +139,11 @@ public class Main {
 		if (date.equals("")) {
 			date = String.valueOf(LocalDate.now());
 			Note note = new Note(title, content, LocalDate.parse(date));
-			noteService.addNote(connection, loggedUser, note);
+			databaseNotesService.addNote(loggedUser, note);
 			System.out.println("Note added successfully!");
 		} else if (date.matches("^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$")) {
 			Note note = new Note(title, content, LocalDate.parse(date));
-			noteService.addNote(connection, loggedUser, note);
+			databaseNotesService.addNote(loggedUser, note);
 			System.out.println("Note added successfully!");
 		} else {
 			System.out.println("Wrong date format.");
@@ -151,10 +151,10 @@ public class Main {
 	}
 
 	public static void displayAllNotes(IAuthService authService) {
-		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
+		if (!databaseNotesService.userContainsAnyNotes(authService.getLoggedUser())) {
 			System.out.println("No notes.");
 		} else {
-			List<Note> noteList = noteService.getAllNotes(connection, authService.getLoggedUser());
+			List<Note> noteList = databaseNotesService.getAllNotes(authService.getLoggedUser());
 			noteList.stream()
 					.map(Main::formatNote)
 					.forEach(System.out::println);
@@ -162,10 +162,10 @@ public class Main {
 	}
 
 	public static void displayTodayNotes(IAuthService authService) {
-		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
+		if (!databaseNotesService.userContainsAnyNotes(authService.getLoggedUser())) {
 			System.out.println("No notes.");
 		} else {
-			List<Note> noteTodayList = noteService.getAllNotes(connection, authService.getLoggedUser());
+			List<Note> noteTodayList = databaseNotesService.getAllNotes(authService.getLoggedUser());
 			noteTodayList.stream()
 					.filter(note -> note.getNoteDate().equals(LocalDate.now()))
 					.map(Main::formatNote)
@@ -174,16 +174,18 @@ public class Main {
 	}
 
 	public static void removeNotes(IAuthService authService) {
-		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
+		if (!databaseNotesService.userContainsAnyNotes(authService.getLoggedUser())) {
 			System.out.println("No notes.");
 		} else {
 			System.out.println("Select note: ");
 			String id = scanner.nextLine();
-			if (noteService.noteWithThisIdExist(connection, Integer.parseInt(id))) {
+			if (databaseNotesService.noteWithThisIdExist(Integer.parseInt(id))) {
 				if (checkIfUserHasNoteWithId(authService.getLoggedUser().getId(), Integer.parseInt(id))) {
-					if (noteService.removeNote(connection, Integer.parseInt(id))) {
+					if (databaseNotesService.removeNote(Integer.parseInt(id))) {
 						System.out.println("Note removed.");
 					}
+				} else {
+					System.out.println("Wrong note id.");
 				}
 			} else {
 				System.out.println("Note with this id doesn't exist.");
@@ -192,19 +194,19 @@ public class Main {
 	}
 
 	public static boolean editNote(IAuthService authService) {
-		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
+		if (!databaseNotesService.userContainsAnyNotes(authService.getLoggedUser())) {
 			System.out.println("No notes.");
 		} else {
 			System.out.println("Select note to edit:");
 			String selectedNote = scanner.nextLine();
-			if (noteService.noteWithThisIdExist(connection, Integer.parseInt(selectedNote))) {
+			if (databaseNotesService.noteWithThisIdExist(Integer.parseInt(selectedNote))) {
 				System.out.println("New title:");
 				String newTitle = scanner.nextLine();
 				System.out.println("New content:");
 				String newContent = scanner.nextLine();
 				System.out.println("New date:");
 				String newDate = scanner.nextLine();
-				noteService.editNote(connection, Integer.parseInt(selectedNote), newTitle, newContent, newDate);
+				databaseNotesService.editNote(Integer.parseInt(selectedNote), newTitle, newContent, newDate);
 				System.out.println("Note changed successfully.");
 			} else {
 				System.out.println("Note with this id doesn't exist.");
@@ -214,19 +216,19 @@ public class Main {
 	}
 
 	public static boolean addReminder(IAuthService authService) {
-		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
+		if (!databaseNotesService.userContainsAnyNotes(authService.getLoggedUser())) {
 			System.out.println("No notes.");
 			return true;
 		}
 		System.out.println("Select note:");
 		String selectedNote = scanner.nextLine();
-		if (noteService.noteWithThisIdExist(connection, Integer.parseInt(selectedNote))) {
+		if (databaseNotesService.noteWithThisIdExist(Integer.parseInt(selectedNote))) {
 			System.out.println("Reminder name:");
 			String reminderName = scanner.nextLine();
 			System.out.println("Reminder date [yyyy-MM-dd]:");
 			String reminderDate = scanner.nextLine();
 			Reminder reminder = new Reminder(reminderName, LocalDate.parse(reminderDate));
-			noteService.addReminder(connection, Integer.parseInt(selectedNote), reminder);
+			databaseNotesService.addReminder(Integer.parseInt(selectedNote), reminder);
 			System.out.println("Reminder added successfully.");
 		} else {
 			System.out.println("Note with this id doesn't exist.");
@@ -235,23 +237,23 @@ public class Main {
 	}
 
 	public static boolean editReminder(IAuthService authService) {
-		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
+		if (!databaseNotesService.userContainsAnyNotes(authService.getLoggedUser())) {
 			System.out.println("No notes.");
 			return true;
 		}
 		System.out.println("Select note:");
 		String selectedNote = scanner.nextLine();
-		if (!noteService.noteWithThisIdExist(connection, Integer.parseInt(selectedNote))) {
+		if (!databaseNotesService.noteWithThisIdExist(Integer.parseInt(selectedNote))) {
 			System.out.println("Note with this id doesn't exist.");
 			return true;
 		}
-		if (!noteService.noteContainsAnyReminders(connection, Integer.parseInt(selectedNote))) {
+		if (!databaseNotesService.noteContainsAnyReminders(Integer.parseInt(selectedNote))) {
 			System.out.println("This note has no reminder.");
 			return true;
 		}
 		System.out.println("Select reminder:");
 		String selectedReminder = scanner.nextLine();
-		if (!noteService.reminderWithThisIdExist(connection, Integer.parseInt(selectedReminder))) {
+		if (!databaseNotesService.reminderWithThisIdExist(Integer.parseInt(selectedReminder))) {
 			System.out.println("Reminder with this id doesn't exist.");
 			return true;
 		}
@@ -259,33 +261,33 @@ public class Main {
 		String newReminderName = scanner.nextLine();
 		System.out.println("New reminder date [yyyy-MM-dd]:");
 		String newReminderDate = scanner.nextLine();
-		noteService.editReminder(connection, Integer.parseInt(selectedReminder), newReminderName, newReminderDate);
+		databaseNotesService.editReminder(Integer.parseInt(selectedReminder), newReminderName, newReminderDate);
 		System.out.println("Reminder changed successfully.");
 		return true;
 	}
 
 	public static boolean removeReminder(IAuthService authService) {
-		if (!noteService.userContainsAnyNotes(connection, authService.getLoggedUser())) {
+		if (!databaseNotesService.userContainsAnyNotes(authService.getLoggedUser())) {
 			System.out.println("No notes.");
 			return true;
 		}
 		System.out.println("Select note:");
 		String selectedNote = scanner.nextLine();
-		if (!noteService.noteWithThisIdExist(connection, Integer.parseInt(selectedNote))) {
+		if (!databaseNotesService.noteWithThisIdExist(Integer.parseInt(selectedNote))) {
 			System.out.println("Note with this id doesn't exist.");
 			return true;
 		}
-		if (!noteService.noteContainsAnyReminders(connection, Integer.parseInt(selectedNote))) {
+		if (!databaseNotesService.noteContainsAnyReminders(Integer.parseInt(selectedNote))) {
 			System.out.println("This note has no reminder.");
 			return true;
 		}
 		System.out.println("Select reminder:");
 		String selectedReminder = scanner.nextLine();
-		if (!noteService.reminderWithThisIdExist(connection, Integer.parseInt(selectedReminder))) {
+		if (!databaseNotesService.reminderWithThisIdExist(Integer.parseInt(selectedReminder))) {
 			System.out.println("Reminder with this id doesn't exist.");
 			return true;
 		}
-		if (noteService.removeReminder(connection, Integer.parseInt(selectedNote), Integer.parseInt(selectedReminder))) {
+		if (databaseNotesService.removeReminder(Integer.parseInt(selectedNote), Integer.parseInt(selectedReminder))) {
 			System.out.println("Reminder removed successfully.");
 			return true;
 		}
@@ -335,7 +337,7 @@ public class Main {
 			preparedStatement.setInt(1, idNote);
 			preparedStatement.execute();
 			ResultSet rs = preparedStatement.getResultSet();
-			if (rs.getInt("user_id") == idUser) {
+			if (rs.next() && rs.getInt("user_id") == idUser) {
 				return true;
 			}
 		} catch (SQLException e) {
