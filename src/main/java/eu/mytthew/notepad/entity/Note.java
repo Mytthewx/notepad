@@ -14,12 +14,12 @@ public class Note {
 	private String title;
 	private String content;
 	private LocalDate noteDate;
+	private int userId;
 
-	public Note(int id, String title, String content, LocalDate noteDate) {
+	public Note(int id, String title, String content, LocalDate noteDate, int userId) {
+		this(title, content, noteDate);
 		this.id = id;
-		this.title = title;
-		this.content = content;
-		this.noteDate = noteDate;
+		this.userId = userId;
 	}
 
 	public Note(String title, String content, LocalDate noteDate) {

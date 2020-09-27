@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
-	private static final Connection connection = connectToDatabase();
+	//	private static final Connection connection = connectToDatabase();
 	private static final INotesService notesService = new RuntimeNotesService();
 	private static final IAuthService authService = new RuntimeAuthService();
 

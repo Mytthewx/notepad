@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class RuntimeNotesService implements INotesService {
 	private final List<Note> noteList = new ArrayList<>();
@@ -19,7 +20,8 @@ public class RuntimeNotesService implements INotesService {
 		String title = note.getTitle();
 		String content = note.getContent();
 		LocalDate localDate = note.getNoteDate();
-		Note newNote = new Note(id, title, content, localDate);
+		int userId = user.getId();
+		Note newNote = new Note(id, title, content, localDate, userId);
 		noteList.add(newNote);
 	}
 
@@ -66,7 +68,7 @@ public class RuntimeNotesService implements INotesService {
 
 	@Override
 	public boolean userContainsAnyNotes(User user) {
-		return false;
+		return noteList.stream().anyMatch(note -> note.getUserId() == user.getId());
 	}
 
 	@Override
@@ -77,7 +79,9 @@ public class RuntimeNotesService implements INotesService {
 	@Override
 	public List<Note> getAllNotes(User user) {
 		loggedUser = user;
-		return noteList;
+		return noteList.stream()
+				.filter(note -> note.getUserId() == user.getId())
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -104,6 +108,6 @@ public class RuntimeNotesService implements INotesService {
 	public boolean checkIfUserHasNoteWithId(int idUser, int idNote) {
 		return noteList
 				.stream()
-				.anyMatch(note -> note.getId() == idNote);
+				.anyMatch(note -> note.getId() == idNote && note.getUserId() == idUser);
 	}
 }
