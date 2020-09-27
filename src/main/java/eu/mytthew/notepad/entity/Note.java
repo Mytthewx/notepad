@@ -29,4 +29,11 @@ public class Note {
 		this.content = content;
 		this.noteDate = noteDate;
 	}
+
+	public Note(String title, String content, LocalDate noteDate, int userId) {
+		this.title = title;
+		this.content = content;
+		this.noteDate = noteDate;
+		this.userId = userId;
+	}
 }

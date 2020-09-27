@@ -11,6 +11,7 @@ import java.util.Optional;
 
 public class RuntimeAuthService implements IAuthService {
 	private final List<User> users = new ArrayList<>();
+	private final IdProvider userProvider = new IdProvider();
 	@Getter
 	private User loggedUser;
 
@@ -49,7 +50,7 @@ public class RuntimeAuthService implements IAuthService {
 		if (users.stream().anyMatch(user -> user.getNickname().equals(nickname))) {
 			return false;
 		}
-		int id = IdProvider.userInstance.getNextUserSequence();
+		int id = userProvider.next();
 		User user = new User(id, nickname, hashPassword(password));
 		users.add(user);
 		return true;

@@ -58,7 +58,7 @@ public class RuntimeNotesServiceTest {
 		User user = new User("Mytthew", "123");
 		authService.addUser(user.getNickname(), user.getPassword());
 		authService.login("Mytthew", "123");
-		Note note = new Note(0, "Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
 
 		// when

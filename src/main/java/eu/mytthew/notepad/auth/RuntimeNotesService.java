@@ -13,10 +13,12 @@ import java.util.Optional;
 public class RuntimeNotesService implements INotesService {
 	private final List<Note> noteList = new ArrayList<>();
 	private final List<Reminder> reminderList = new ArrayList<>();
+	private final IdProvider noteProvider = new IdProvider();
+	private final IdProvider reminderProvider = new IdProvider();
 
 	@Override
 	public void addNote(User user, Note note) {
-		int id = IdProvider.noteInstance.getNextNoteSequence();
+		int id = noteProvider.next();
 		String title = note.getTitle();
 		String content = note.getContent();
 		LocalDate localDate = note.getNoteDate();
@@ -67,7 +69,7 @@ public class RuntimeNotesService implements INotesService {
 
 	@Override
 	public void addReminder(int noteId, Reminder reminder) {
-		int id = IdProvider.reminderInstance.getNextReminderSequence();
+		int id = reminderProvider.next();
 		String name = reminder.getName();
 		LocalDate localDate = reminder.getDate();
 		Reminder newReminder = new Reminder(id, name, localDate, noteId);
