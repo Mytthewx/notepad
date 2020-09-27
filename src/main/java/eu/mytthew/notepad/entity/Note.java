@@ -17,8 +17,10 @@ public class Note {
 	private int userId;
 
 	public Note(int id, String title, String content, LocalDate noteDate, int userId) {
-		this(title, content, noteDate);
 		this.id = id;
+		this.title = title;
+		this.content = content;
+		this.noteDate = noteDate;
 		this.userId = userId;
 	}
 

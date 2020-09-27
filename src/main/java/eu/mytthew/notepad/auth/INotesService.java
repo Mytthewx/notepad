@@ -13,14 +13,6 @@ public interface INotesService {
 
 	boolean removeNote(int id);
 
-	boolean reminderWithThisIdExist(int id);
-
-	boolean noteWithThisIdExist(int id);
-
-	boolean userContainsAnyNotes(User user);
-
-	boolean noteContainsAnyReminders(int noteId);
-
 	List<Note> getAllNotes(User user);
 
 	List<Reminder> getAllReminders(int noteId);
@@ -31,5 +23,11 @@ public interface INotesService {
 
 	boolean removeReminder(int noteId, int reminderId);
 
-	boolean checkIfUserHasNoteWithId(int idUser, int idNote);
+	boolean noteWithThisIdExistAndBelongToUser(int noteId, User user);
+
+	boolean reminderWithThisIdExistAndBelongToNote(int reminderId, int noteId);
+
+	boolean userContainsAnyNotes(User user);
+
+	boolean noteContainsAnyReminders(int noteId);
 }

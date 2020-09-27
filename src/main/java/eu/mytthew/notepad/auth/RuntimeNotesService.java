@@ -6,17 +6,17 @@ import eu.mytthew.notepad.entity.User;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class RuntimeNotesService implements INotesService {
 	private final List<Note> noteList = new ArrayList<>();
-	private User loggedUser;
+	private final List<Reminder> reminderList = new ArrayList<>();
 
 	@Override
 	public void addNote(User user, Note note) {
-		int id = IdProvider.instance.getNextSequence();
+		int id = IdProvider.noteInstance.getNextNoteSequence();
 		String title = note.getTitle();
 		String content = note.getContent();
 		LocalDate localDate = note.getNoteDate();
@@ -27,13 +27,15 @@ public class RuntimeNotesService implements INotesService {
 
 	@Override
 	public void editNote(int noteId, String newTitle, String newContent, String newDate) {
-		Optional<Note> optionalNote = noteList.stream().filter(note -> note.getId() == noteId).findAny();
+		Optional<Note> optionalNote = noteList.stream()
+				.filter(note -> note.getId() == noteId)
+				.findAny();
 		if (optionalNote.isPresent()) {
 			if (!newTitle.equals("")) {
 				optionalNote.get().setTitle(newTitle);
 			}
 			if (!newContent.equals("")) {
-				optionalNote.get().setTitle(newContent);
+				optionalNote.get().setContent(newContent);
 			}
 			if (!newDate.equals("")) {
 				optionalNote.get().setNoteDate(LocalDate.parse(newDate));
@@ -43,8 +45,7 @@ public class RuntimeNotesService implements INotesService {
 
 	@Override
 	public boolean removeNote(int id) {
-		Optional<Note> optionalNote = noteList
-				.stream()
+		Optional<Note> optionalNote = noteList.stream()
 				.filter(note -> note.getId() == id)
 				.findAny();
 		if (optionalNote.isPresent()) {
@@ -55,59 +56,77 @@ public class RuntimeNotesService implements INotesService {
 	}
 
 	@Override
-	public boolean reminderWithThisIdExist(int id) {
-		return false;
-	}
-
-	@Override
-	public boolean noteWithThisIdExist(int id) {
-		return noteList
-				.stream()
-				.anyMatch(note -> note.getId() == id);
-	}
-
-	@Override
-	public boolean userContainsAnyNotes(User user) {
-		return noteList.stream().anyMatch(note -> note.getUserId() == user.getId());
-	}
-
-	@Override
-	public boolean noteContainsAnyReminders(int noteId) {
-		return false;
-	}
-
-	@Override
 	public List<Note> getAllNotes(User user) {
-		loggedUser = user;
-		return noteList.stream()
-				.filter(note -> note.getUserId() == user.getId())
-				.collect(Collectors.toList());
+		return Collections.unmodifiableList(noteList);
 	}
 
 	@Override
 	public List<Reminder> getAllReminders(int noteId) {
-		return noteList.get(noteId).getReminders();
+		return Collections.unmodifiableList(reminderList);
 	}
 
 	@Override
 	public void addReminder(int noteId, Reminder reminder) {
-
+		int id = IdProvider.reminderInstance.getNextReminderSequence();
+		String name = reminder.getName();
+		LocalDate localDate = reminder.getDate();
+		Reminder newReminder = new Reminder(id, name, localDate, noteId);
+		reminderList.add(newReminder);
 	}
 
 	@Override
 	public void editReminder(int reminderId, String newName, String newDate) {
-
+		Optional<Reminder> optionalReminder = reminderList.stream()
+				.filter(reminder -> reminder.getId() == reminderId)
+				.findAny();
+		if (optionalReminder.isPresent()) {
+			if (!newName.equals("")) {
+				optionalReminder.get().setName(newName);
+			}
+			if (!newDate.equals("")) {
+				optionalReminder.get().setDate(LocalDate.parse(newDate));
+			}
+		}
 	}
 
 	@Override
 	public boolean removeReminder(int noteId, int reminderId) {
+		Optional<Reminder> optionalReminder = reminderList
+				.stream()
+				.filter(reminder -> reminder.getId() == reminderId)
+				.findAny();
+		if (optionalReminder.isPresent()) {
+			reminderList.remove(optionalReminder.get());
+			return true;
+		}
 		return false;
 	}
 
 	@Override
-	public boolean checkIfUserHasNoteWithId(int idUser, int idNote) {
-		return noteList
+	public boolean noteWithThisIdExistAndBelongToUser(int noteId, User user) {
+		return getAllNotes(user)
 				.stream()
-				.anyMatch(note -> note.getId() == idNote && note.getUserId() == idUser);
+				.anyMatch(note -> note.getId() == noteId && note.getUserId() == user.getId());
+	}
+
+	@Override
+	public boolean reminderWithThisIdExistAndBelongToNote(int reminderId, int noteId) {
+		return getAllReminders(noteId)
+				.stream()
+				.anyMatch(reminder -> reminder.getId() == reminderId && reminder.getNoteId() == noteId);
+	}
+
+	@Override
+	public boolean userContainsAnyNotes(User user) {
+		return getAllNotes(user)
+				.stream()
+				.anyMatch(note -> note.getUserId() == user.getId());
+	}
+
+	@Override
+	public boolean noteContainsAnyReminders(int noteId) {
+		return getAllReminders(noteId)
+				.stream()
+				.anyMatch(reminder -> reminder.getNoteId() == noteId);
 	}
 }
