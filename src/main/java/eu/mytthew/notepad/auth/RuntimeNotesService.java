@@ -32,7 +32,7 @@ public class RuntimeNotesService implements INotesService {
 		Optional<Note> optionalNote = noteList.stream()
 				.filter(note -> note.getId() == noteId)
 				.findAny();
-		if (optionalNote.isPresent()) {
+		optionalNote.ifPresent(x -> {
 			if (!newTitle.equals("")) {
 				optionalNote.get().setTitle(newTitle);
 			}
@@ -42,7 +42,7 @@ public class RuntimeNotesService implements INotesService {
 			if (!newDate.equals("")) {
 				optionalNote.get().setNoteDate(LocalDate.parse(newDate));
 			}
-		}
+		});
 	}
 
 	@Override
@@ -81,14 +81,14 @@ public class RuntimeNotesService implements INotesService {
 		Optional<Reminder> optionalReminder = reminderList.stream()
 				.filter(reminder -> reminder.getId() == reminderId)
 				.findAny();
-		if (optionalReminder.isPresent()) {
+		optionalReminder.ifPresent(x -> {
 			if (!newName.equals("")) {
 				optionalReminder.get().setName(newName);
 			}
 			if (!newDate.equals("")) {
 				optionalReminder.get().setDate(LocalDate.parse(newDate));
 			}
-		}
+		});
 	}
 
 	@Override
@@ -106,20 +106,35 @@ public class RuntimeNotesService implements INotesService {
 
 	@Override
 	public boolean noteWithThisIdExistAndBelongToUser(int noteId, User user) {
+		if (noteList.isEmpty()) {
+			return false;
+		}
 		return getAllNotes(user)
 				.stream()
-				.anyMatch(note -> note.getId() == noteId && note.getUserId() == user.getId());
+				.anyMatch(note -> note.getId() == noteId
+						&& note.getUserId() == user.getId());
+
 	}
 
 	@Override
 	public boolean reminderWithThisIdExistAndBelongToNote(int reminderId, int noteId) {
+		if (noteList.isEmpty()) {
+			return false;
+		}
+		if (reminderList.isEmpty()) {
+			return false;
+		}
 		return getAllReminders(noteId)
 				.stream()
-				.anyMatch(reminder -> reminder.getId() == reminderId && reminder.getNoteId() == noteId);
+				.anyMatch(reminder -> reminder.getId() == reminderId
+						&& reminder.getNoteId() == noteId);
 	}
 
 	@Override
 	public boolean userContainsAnyNotes(User user) {
+		if (noteList.isEmpty()) {
+			return false;
+		}
 		return getAllNotes(user)
 				.stream()
 				.anyMatch(note -> note.getUserId() == user.getId());
@@ -127,6 +142,12 @@ public class RuntimeNotesService implements INotesService {
 
 	@Override
 	public boolean noteContainsAnyReminders(int noteId) {
+		if (noteList.isEmpty()) {
+			return false;
+		}
+		if (reminderList.isEmpty()) {
+			return false;
+		}
 		return getAllReminders(noteId)
 				.stream()
 				.anyMatch(reminder -> reminder.getNoteId() == noteId);
