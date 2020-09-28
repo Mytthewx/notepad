@@ -307,10 +307,13 @@ class RuntimeNotesServiceTest {
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
-		authService.login("Mytthew", "123");
+		User user2 = authService.addUser("Andret", "12345");
+		authService.login("Andret", "12345");
+		Note note = new Note("title", "content", LocalDate.parse("2020-09-28"));
+		notesService.addNote(user, note);
 
 		// when
-		boolean result = notesService.userContainsAnyNotes(user);
+		boolean result = notesService.userContainsAnyNotes(user2);
 
 		// then
 		assertFalse(result);
