@@ -1,26 +1,16 @@
 package eu.mytthew.notepad.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-
+@Data
+@AllArgsConstructor
 public class User {
-	@Getter
-	private int id;
-	@Getter
-	@Setter
+	private final int id;
 	private String nickname;
-	@Getter
-	@Setter
 	private String password;
 
-	public User(int id, String nickname, String password) {
-		this(nickname, password);
-		this.id = id;
-	}
-
 	public User(String nickname, String password) {
-		this.nickname = nickname;
-		this.password = password;
+		this(0, nickname, password);
 	}
 }

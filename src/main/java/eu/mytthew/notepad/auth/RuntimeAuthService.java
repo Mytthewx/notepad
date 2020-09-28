@@ -46,14 +46,14 @@ public class RuntimeAuthService implements IAuthService {
 	}
 
 	@Override
-	public boolean addUser(String nickname, String password) {
+	public User addUser(String nickname, String password) {
 		if (users.stream().anyMatch(user -> user.getNickname().equals(nickname))) {
-			return false;
+			return null;
 		}
 		int id = userProvider.next();
 		User user = new User(id, nickname, hashPassword(password));
 		users.add(user);
-		return true;
+		return user;
 	}
 
 	@Override

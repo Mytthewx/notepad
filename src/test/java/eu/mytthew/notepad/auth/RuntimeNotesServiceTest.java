@@ -18,8 +18,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-29"));
 
@@ -37,8 +36,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-29"));
 		notesService.addNote(user, note);
@@ -58,8 +56,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note(0, "Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -76,8 +73,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note(0, "Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -95,8 +91,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note(0, "Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -113,8 +108,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note(0, "Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -133,8 +127,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note(0, "Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -154,8 +147,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note(0, "Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -174,8 +166,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note(0, "Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -193,8 +184,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -211,8 +201,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -230,8 +219,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -250,8 +238,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -268,8 +255,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -288,8 +274,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -306,8 +291,22 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
+		authService.login("Mytthew", "123");
+
+		// when
+		boolean result = notesService.userContainsAnyNotes(user);
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	void containsAnyNotesFalseWithWrongUserId() {
+		// given
+		IAuthService authService = new RuntimeAuthService();
+		INotesService notesService = new RuntimeNotesService();
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 
 		// when
@@ -322,8 +321,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -342,8 +340,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -360,8 +357,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -380,8 +376,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -398,8 +393,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 
 		// when
@@ -414,8 +408,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -434,8 +427,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -452,11 +444,9 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
-		Note note2 = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
 		Reminder reminder = new Reminder("Name", LocalDate.parse("2020-09-28"));
 		notesService.addReminder(0, reminder);
@@ -473,8 +463,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 
 		// when
@@ -489,8 +478,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -507,8 +495,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -525,8 +512,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -543,8 +529,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 
 		// when
@@ -559,8 +544,7 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
 		notesService.addNote(user, note);
@@ -577,9 +561,8 @@ class RuntimeNotesServiceTest {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
-		User user = new User("Mytthew", "123");
-		User user2 = new User("Andret", "12345");
-		authService.addUser(user.getNickname(), user.getPassword());
+		User user = authService.addUser("Myttew", "123");
+		User user2 = authService.addUser("Andret", "12345");
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);

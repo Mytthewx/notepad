@@ -120,10 +120,10 @@ public class Main {
 		String nickname = scanner.nextLine();
 		System.out.println("Type password: ");
 		String password = scanner.nextLine();
-		if (authService.addUser(nickname, password)) {
-			System.out.println("User added successfully!");
-		} else {
+		if (authService.addUser(nickname, password) == null) {
 			System.out.println("This nickname is already taken.");
+		} else {
+			System.out.println("User added successfully.");
 		}
 	}
 
