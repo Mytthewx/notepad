@@ -1,13 +1,13 @@
 package eu.mytthew.notepad.auth;
 
-import com.google.common.hash.Hashing;
 import eu.mytthew.notepad.entity.User;
 import lombok.Getter;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static eu.mytthew.notepad.auth.HashPassword.hashPassword;
 
 public class RuntimeAuthService implements IAuthService {
 	private final List<User> users = new ArrayList<>();
@@ -69,9 +69,5 @@ public class RuntimeAuthService implements IAuthService {
 		}
 		getLoggedUser().setNickname(newNickname);
 		return true;
-	}
-
-	private String hashPassword(String password) {
-		return Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
 	}
 }
