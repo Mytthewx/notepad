@@ -186,7 +186,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 
 		// when
@@ -203,7 +203,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 		Reminder reminder = new Reminder("Reminder name", LocalDate.parse("2020-09-27"));
 
@@ -221,7 +221,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 		Reminder reminder = new Reminder("Reminder name", LocalDate.parse("2020-09-27"));
 		notesService.addReminder(0, reminder);
@@ -240,7 +240,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 
 		// when
@@ -257,7 +257,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 		Reminder reminder = new Reminder("Reminder name", LocalDate.parse("2020-09-27"));
 		notesService.addReminder(0, reminder);
@@ -276,7 +276,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 
 		// when
@@ -326,7 +326,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 		Reminder reminder = new Reminder("Reminder name", LocalDate.parse("2020-09-27"));
 		notesService.addReminder(0, reminder);
@@ -345,7 +345,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 
 		// when
@@ -362,7 +362,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 		Reminder reminder = new Reminder("Reminder name", LocalDate.parse("2020-09-27"));
 		notesService.addReminder(0, reminder);
@@ -381,7 +381,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 
 		// when
@@ -413,7 +413,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 		Reminder reminder = new Reminder("Reminder name", LocalDate.parse("2020-09-27"));
 		notesService.addReminder(0, reminder);
@@ -432,7 +432,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 
 		// when
@@ -449,7 +449,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 		Reminder reminder = new Reminder("Name", LocalDate.parse("2020-09-28"));
 		notesService.addReminder(0, reminder);
@@ -483,7 +483,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 
 		// when
@@ -500,7 +500,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 
 		// when
@@ -517,7 +517,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 
 		// when
@@ -549,7 +549,7 @@ class RuntimeNotesServiceTest {
 		INotesService notesService = new RuntimeNotesService();
 		User user = authService.addUser("Mytthew", "123");
 		authService.login("Mytthew", "123");
-		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"), user.getId());
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
 		notesService.addNote(user, note);
 
 		// when

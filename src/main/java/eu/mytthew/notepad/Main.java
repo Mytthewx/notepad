@@ -47,7 +47,6 @@ public class Main {
 			if (authService.login(login, password)) {
 				System.out.println("Logged in!");
 				isUserLogged = true;
-				notesService.getAllNotes(authService.getLoggedUser());
 				display(authService);
 			} else {
 				System.out.println("Wrong password!");
@@ -278,23 +277,23 @@ public class Main {
 		int selectedNote = scanner.nextInt();
 		scanner.nextLine();
 		if (notesService.noteWithThisIdExistAndBelongToUser(selectedNote, authService.getLoggedUser())) {
-			if (notesService.noteContainsAnyReminders(selectedNote)) {
+			if (!notesService.noteContainsAnyReminders(selectedNote)) {
+				System.out.println("This note has no reminders.");
+				return true;
+			} else {
 				System.out.println("Select reminder:");
 				int selectedReminder = scanner.nextInt();
 				scanner.nextLine();
-				if (notesService.reminderWithThisIdExistAndBelongToNote(selectedReminder, selectedNote)) {
+				if (!notesService.reminderWithThisIdExistAndBelongToNote(selectedReminder, selectedNote)) {
+					System.out.println("Wrong reminder id.");
+				} else {
 					if (notesService.removeReminder(selectedNote, selectedReminder)) {
 						System.out.println("Reminder removed successfully.");
 					} else {
-						System.out.println("Something goes wrong.");
+						System.out.println("Reminder.");
 					}
 					return true;
-				} else {
-					System.out.println("Wrong reminder id.");
 				}
-			} else {
-				System.out.println("This note has no reminders.");
-				return true;
 			}
 		}
 		System.out.println("Wrong note id.");

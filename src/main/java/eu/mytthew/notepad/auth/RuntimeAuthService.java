@@ -50,8 +50,7 @@ public class RuntimeAuthService implements IAuthService {
 		if (users.stream().anyMatch(user -> user.getNickname().equals(nickname))) {
 			return null;
 		}
-		int id = userProvider.next();
-		User user = new User(id, nickname, hashPassword(password));
+		User user = new User(userProvider.next(), nickname, hashPassword(password));
 		users.add(user);
 		return user;
 	}
