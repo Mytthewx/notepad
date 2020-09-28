@@ -54,7 +54,7 @@ public class DatabaseAuthService implements IAuthService {
 					preparedStatement.execute();
 					if (preparedStatement.getResultSet().next()) {
 						int userId = preparedStatement.getResultSet().getInt("id");
-						loggedUser = new User(userId, nickname, password);
+						loggedUser = new User(nickname, password);
 					}
 					return true;
 				}
