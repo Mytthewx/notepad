@@ -109,7 +109,7 @@ public class RuntimeNotesService implements INotesService {
 		if (noteList.isEmpty()) {
 			return false;
 		}
-		return getAllNotes(user)
+		return noteList
 				.stream()
 				.anyMatch(note -> note.getId() == noteId
 						&& note.getUserId() == user.getId());

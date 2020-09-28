@@ -578,7 +578,7 @@ class RuntimeNotesServiceTest {
 		IAuthService authService = new RuntimeAuthService();
 		INotesService notesService = new RuntimeNotesService();
 		User user = new User("Mytthew", "123");
-		User user2 = new User("Mytthew", "123");
+		User user2 = new User("Andret", "12345");
 		authService.addUser(user.getNickname(), user.getPassword());
 		authService.login("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-09-27"));
