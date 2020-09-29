@@ -1,9 +1,9 @@
 package eu.mytthew.notepad;
 
+import eu.mytthew.notepad.auth.DatabaseAuthService;
+import eu.mytthew.notepad.auth.DatabaseNotesService;
 import eu.mytthew.notepad.auth.IAuthService;
 import eu.mytthew.notepad.auth.INotesService;
-import eu.mytthew.notepad.auth.RuntimeAuthService;
-import eu.mytthew.notepad.auth.RuntimeNotesService;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.User;
 
@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
-	//	private static final Connection connection = connectToDatabase();
-	private static final INotesService notesService = new RuntimeNotesService();
-	private static final IAuthService authService = new RuntimeAuthService();
+	private static final Connection connection = connectToDatabase();
+	private static final INotesService notesService = new DatabaseNotesService(connection);
+	private static final IAuthService authService = new DatabaseAuthService(connection);
 
 	public static void main(String[] args) {
 		List<MenuItem> loginMenuItems = new ArrayList<>();
@@ -280,20 +280,17 @@ public class Main {
 			if (!notesService.noteContainsAnyReminders(selectedNote)) {
 				System.out.println("This note has no reminders.");
 				return true;
-			} else {
-				System.out.println("Select reminder:");
-				int selectedReminder = scanner.nextInt();
-				scanner.nextLine();
-				if (!notesService.reminderWithThisIdExistAndBelongToNote(selectedReminder, selectedNote)) {
-					System.out.println("Wrong reminder id.");
-				} else {
-					if (notesService.removeReminder(selectedNote, selectedReminder)) {
-						System.out.println("Reminder removed successfully.");
-					} else {
-						System.out.println("Reminder.");
-					}
-					return true;
-				}
+			}
+			System.out.println("Select reminder:");
+			int selectedReminder = scanner.nextInt();
+			scanner.nextLine();
+			if (!notesService.reminderWithThisIdExistAndBelongToNote(selectedReminder, selectedNote)) {
+				System.out.println("Wrong reminder id.");
+				return true;
+			}
+			if (notesService.removeReminder(selectedNote, selectedReminder)) {
+				System.out.println("Reminder removed successfully.");
+				return true;
 			}
 		}
 		System.out.println("Wrong note id.");
