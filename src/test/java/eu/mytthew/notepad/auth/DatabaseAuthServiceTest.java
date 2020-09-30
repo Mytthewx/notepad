@@ -1,6 +1,7 @@
 package eu.mytthew.notepad.auth;
 
 import eu.mytthew.notepad.entity.User;
+import org.junit.function.ThrowingRunnable;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
@@ -9,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
@@ -53,10 +55,10 @@ class DatabaseAuthServiceTest {
 		IAuthService authService = new DatabaseAuthService(connection);
 
 		// when
-		authService.addUser("Mytthew", "123");
+		User user = authService.addUser("Mytthew", "123");
 
 		// then
-		assertThrows(SQLException.class, () -> connection.prepareStatement("INSERT INTO users(login, password) VALUES (?, ?);"));
+		assertNull(user);
 	}
 
 	@Test
@@ -77,5 +79,22 @@ class DatabaseAuthServiceTest {
 
 		// then
 		assertNull(result);
+	}
+
+	@Test
+	void containsNicknameWithException() throws SQLException {
+		// given
+		Connection connection = mock(Connection.class);
+		PreparedStatement containsUserStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenThrow(new SQLException());
+		IAuthService authService = new DatabaseAuthService(connection);
+
+		// when
+		boolean result = authService.containsNickname("Mytthew");
+		ThrowingRunnable throwingRunnable = () -> connection.prepareStatement("SELECT login FROM users WHERE login = ?");
+
+		// then
+		assertFalse(result);
+		assertThrows(SQLException.class, throwingRunnable);
 	}
 }
