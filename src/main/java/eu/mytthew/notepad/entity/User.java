@@ -1,5 +1,6 @@
 package eu.mytthew.notepad.entity;
 
+import eu.mytthew.notepad.auth.HashPassword;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -12,5 +13,9 @@ public class User {
 
 	public User(String nickname, String password) {
 		this(0, nickname, password);
+	}
+
+	public String getPassword() {
+		return HashPassword.hashPassword(password);
 	}
 }

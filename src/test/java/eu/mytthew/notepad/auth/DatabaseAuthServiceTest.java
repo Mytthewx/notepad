@@ -5,21 +5,27 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class DatabaseAuthServiceTest {
 	@Test
-	void addNoteTest() throws SQLException {
+	void addUserTest() throws SQLException {
 		// given
 		Connection connection = mock(Connection.class);
-		PreparedStatement preparedStatement = mock(PreparedStatement.class);
-		when(connection.prepareStatement(any())).thenReturn(preparedStatement);
+		PreparedStatement addUserStatement = mock(PreparedStatement.class);
+		PreparedStatement containsUserStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenReturn(containsUserStatement);
+		ResultSet rs = mock(ResultSet.class);
+		when(containsUserStatement.getResultSet()).thenReturn(rs);
+		when(rs.next()).thenReturn(false);
+		when(connection.prepareStatement(eq("INSERT INTO users(login, password) VALUES (?, ?);"))).thenReturn(addUserStatement);
 		IAuthService authService = new DatabaseAuthService(connection);
 
 		// when
