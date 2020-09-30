@@ -51,7 +51,6 @@ public class DatabaseAuthService implements IAuthService {
 					preparedStatement.setString(1, nickname);
 					preparedStatement.execute();
 					if (preparedStatement.getResultSet().next()) {
-						int userId = preparedStatement.getResultSet().getInt("id");
 						loggedUser = new User(nickname, password);
 					}
 					return true;
@@ -121,7 +120,7 @@ public class DatabaseAuthService implements IAuthService {
 			preparedStatement.setString(1, nickname);
 			preparedStatement.setString(2, hashPassword(userPassword));
 			preparedStatement.execute();
-			return new User(nickname, userPassword);
+			return new User(nickname, hashPassword(userPassword));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
