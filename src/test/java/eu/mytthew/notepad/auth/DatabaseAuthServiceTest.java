@@ -1,9 +1,7 @@
 package eu.mytthew.notepad.auth;
 
 import eu.mytthew.notepad.entity.User;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,8 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DatabaseAuthServiceTest {
+class DatabaseAuthServiceTest {
 	@Test
 	void addNoteTest() throws SQLException {
 		// given

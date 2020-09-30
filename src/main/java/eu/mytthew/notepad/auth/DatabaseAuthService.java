@@ -27,9 +27,7 @@ public class DatabaseAuthService implements IAuthService {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, nickname);
 			preparedStatement.execute();
-			if (preparedStatement.getResultSet().next()) {
-				return true;
-			}
+			return preparedStatement.getResultSet().next();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
