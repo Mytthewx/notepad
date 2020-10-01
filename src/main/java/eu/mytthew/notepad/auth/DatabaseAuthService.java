@@ -99,7 +99,9 @@ public class DatabaseAuthService implements IAuthService {
 			preparedStatement.setString(1, newNickname);
 			preparedStatement.setString(2, oldNickname);
 			preparedStatement.execute();
-			if (containsNickname(newNickname) && !containsNickname(oldNickname) && !newNickname.equals(oldNickname)) {
+			if (containsNickname(newNickname)
+					&& !containsNickname(oldNickname)
+					&& !newNickname.equals(oldNickname)) {
 				getLoggedUser().setNickname(newNickname);
 				return true;
 			}

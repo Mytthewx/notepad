@@ -235,4 +235,150 @@ class DatabaseAuthServiceTest {
 		// then
 		assertFalse(result);
 	}
+
+	@Test
+	void logoutTest() throws SQLException {
+		// given
+		Connection connection = mock(Connection.class);
+		IAuthService authService = new DatabaseAuthService(connection);
+		PreparedStatement containsUserStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenReturn(containsUserStatement);
+		ResultSet rs = mock(ResultSet.class);
+		when(containsUserStatement.getResultSet()).thenReturn(rs);
+		when(rs.next()).thenReturn(true);
+		PreparedStatement userPasswordSQL = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT password FROM users WHERE login = ?"))).thenReturn(userPasswordSQL);
+		ResultSet rs2 = mock(ResultSet.class);
+		when(userPasswordSQL.getResultSet()).thenReturn(rs2);
+		when(rs2.next()).thenReturn(true);
+		when(rs2.getString("password")).thenReturn("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		PreparedStatement loginStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT * FROM users WHERE login = ?"))).thenReturn(loginStatement);
+		ResultSet rs3 = mock(ResultSet.class);
+		when(loginStatement.getResultSet()).thenReturn(rs3);
+		when(rs3.next()).thenReturn(true);
+		authService.login("Mytthew", "123");
+
+		// when
+		boolean result = authService.logout();
+
+		// then
+		assertTrue(result);
+	}
+
+	@Test
+	void changeNicknameFalseContainsTest() throws SQLException {
+		// given
+		Connection connection = mock(Connection.class);
+		IAuthService authService = new DatabaseAuthService(connection);
+		PreparedStatement containsUserStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenReturn(containsUserStatement);
+		ResultSet rs = mock(ResultSet.class);
+		when(containsUserStatement.getResultSet()).thenReturn(rs);
+		when(rs.next()).thenReturn(true);
+		PreparedStatement userPasswordSQL = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT password FROM users WHERE login = ?"))).thenReturn(userPasswordSQL);
+		ResultSet rs2 = mock(ResultSet.class);
+		when(userPasswordSQL.getResultSet()).thenReturn(rs2);
+		when(rs2.next()).thenReturn(true);
+		when(rs2.getString("password")).thenReturn("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		PreparedStatement loginStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT * FROM users WHERE login = ?"))).thenReturn(loginStatement);
+		ResultSet rs3 = mock(ResultSet.class);
+		when(loginStatement.getResultSet()).thenReturn(rs3);
+		when(rs3.next()).thenReturn(true);
+		authService.login("Mytthew", "123");
+		PreparedStatement containsUserNewNickname = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenReturn(containsUserNewNickname);
+		ResultSet rs4 = mock(ResultSet.class);
+		when(containsUserNewNickname.getResultSet()).thenReturn(rs4);
+		when(rs4.next()).thenReturn(true);
+
+		// when
+		boolean result = authService.changeNickname("NewNickname");
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	void changeNicknameTrueTest() throws SQLException {
+		// given
+		Connection connection = mock(Connection.class);
+		IAuthService authService = new DatabaseAuthService(connection);
+		PreparedStatement containsUserStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenReturn(containsUserStatement);
+		ResultSet rs = mock(ResultSet.class);
+		when(containsUserStatement.getResultSet()).thenReturn(rs);
+		when(rs.next()).thenReturn(true);
+		PreparedStatement userPasswordSQL = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT password FROM users WHERE login = ?"))).thenReturn(userPasswordSQL);
+		ResultSet rs2 = mock(ResultSet.class);
+		when(userPasswordSQL.getResultSet()).thenReturn(rs2);
+		when(rs2.next()).thenReturn(true);
+		when(rs2.getString("password")).thenReturn("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		PreparedStatement loginStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT * FROM users WHERE login = ?"))).thenReturn(loginStatement);
+		ResultSet rs3 = mock(ResultSet.class);
+		when(loginStatement.getResultSet()).thenReturn(rs3);
+		when(rs3.next()).thenReturn(true);
+		authService.login("Mytthew", "123");
+		PreparedStatement containsUserNewNickname = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenReturn(containsUserNewNickname);
+		ResultSet rs4 = mock(ResultSet.class);
+		when(containsUserNewNickname.getResultSet()).thenReturn(rs4);
+		when(rs4.next()).thenReturn(false);
+		PreparedStatement changeNicknameStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("UPDATE users SET login = ? WHERE login = ?;"))).thenReturn(changeNicknameStatement);
+		ResultSet rs5 = mock(ResultSet.class);
+		when(changeNicknameStatement.getResultSet()).thenReturn(rs5);
+		when(rs5.next()).thenReturn(true);
+
+		// when
+		boolean result = authService.changeNickname("NewNickname");
+
+		// then
+		assertTrue(result);
+	}
+
+	@Test
+	void changeNicknameFalseChangingTest() throws SQLException {
+		// given
+		Connection connection = mock(Connection.class);
+		IAuthService authService = new DatabaseAuthService(connection);
+		PreparedStatement containsUserStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenReturn(containsUserStatement);
+		ResultSet rs = mock(ResultSet.class);
+		when(containsUserStatement.getResultSet()).thenReturn(rs);
+		when(rs.next()).thenReturn(true);
+		PreparedStatement userPasswordSQL = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT password FROM users WHERE login = ?"))).thenReturn(userPasswordSQL);
+		ResultSet rs2 = mock(ResultSet.class);
+		when(userPasswordSQL.getResultSet()).thenReturn(rs2);
+		when(rs2.next()).thenReturn(true);
+		when(rs2.getString("password")).thenReturn("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		PreparedStatement loginStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT * FROM users WHERE login = ?"))).thenReturn(loginStatement);
+		ResultSet rs3 = mock(ResultSet.class);
+		when(loginStatement.getResultSet()).thenReturn(rs3);
+		when(rs3.next()).thenReturn(true);
+		authService.login("Mytthew", "123");
+		PreparedStatement containsUserNewNickname = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenReturn(containsUserNewNickname);
+		ResultSet rs4 = mock(ResultSet.class);
+		when(containsUserNewNickname.getResultSet()).thenReturn(rs4);
+		when(rs4.next()).thenReturn(false);
+		PreparedStatement changeNicknameStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("UPDATE users SET login = ? WHERE login = ?;"))).thenReturn(changeNicknameStatement);
+		ResultSet rs5 = mock(ResultSet.class);
+		when(changeNicknameStatement.getResultSet()).thenReturn(rs5);
+		when(rs5.next()).thenReturn(true);
+
+		// when
+		boolean result = authService.changeNickname("Mytthew");
+
+		// then
+		assertEquals("Mytthew", authService.getLoggedUser().getNickname());
+		assertTrue(result);
+	}
 }
