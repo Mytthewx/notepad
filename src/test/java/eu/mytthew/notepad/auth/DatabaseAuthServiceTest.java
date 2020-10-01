@@ -1,7 +1,6 @@
 package eu.mytthew.notepad.auth;
 
 import eu.mytthew.notepad.entity.User;
-import org.junit.function.ThrowingRunnable;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
@@ -12,7 +11,6 @@ import java.sql.SQLException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -45,7 +43,6 @@ class DatabaseAuthServiceTest {
 	void addUserTestWithException() throws SQLException {
 		// given
 		Connection connection = mock(Connection.class);
-		PreparedStatement addUserStatement = mock(PreparedStatement.class);
 		PreparedStatement containsUserStatement = mock(PreparedStatement.class);
 		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenReturn(containsUserStatement);
 		ResultSet rs = mock(ResultSet.class);
@@ -85,16 +82,13 @@ class DatabaseAuthServiceTest {
 	void containsNicknameWithException() throws SQLException {
 		// given
 		Connection connection = mock(Connection.class);
-		PreparedStatement containsUserStatement = mock(PreparedStatement.class);
 		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenThrow(new SQLException());
 		IAuthService authService = new DatabaseAuthService(connection);
 
 		// when
 		boolean result = authService.containsNickname("Mytthew");
-		ThrowingRunnable throwingRunnable = () -> connection.prepareStatement("SELECT login FROM users WHERE login = ?");
 
 		// then
 		assertFalse(result);
-		assertThrows(SQLException.class, throwingRunnable);
 	}
 }

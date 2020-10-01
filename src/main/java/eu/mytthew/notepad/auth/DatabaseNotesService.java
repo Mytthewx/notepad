@@ -105,7 +105,6 @@ public class DatabaseNotesService implements INotesService {
 				editNameStatement.setString(1, newName);
 				editNameStatement.setInt(2, reminderId);
 				editNameStatement.execute();
-
 			}
 			if (!newDate.equals("")) {
 				String editDate = "UPDATE reminders SET date = ? WHERE id = ?";

@@ -9,12 +9,10 @@ import java.sql.SQLException;
 
 import static eu.mytthew.notepad.auth.HashPassword.hashPassword;
 
-
 public class DatabaseAuthService implements IAuthService {
 	private final Connection connection;
 	@Getter
 	private User loggedUser;
-
 
 	public DatabaseAuthService(Connection connection) {
 		this.connection = connection;

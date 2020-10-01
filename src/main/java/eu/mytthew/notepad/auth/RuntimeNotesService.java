@@ -113,7 +113,6 @@ public class RuntimeNotesService implements INotesService {
 				.stream()
 				.anyMatch(note -> note.getId() == noteId
 						&& note.getUserId() == user.getId());
-
 	}
 
 	@Override
