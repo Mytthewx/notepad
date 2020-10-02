@@ -7,7 +7,7 @@ import eu.mytthew.notepad.entity.User;
 import java.util.List;
 
 public interface INotesService {
-	void addNote(User user, Note note);
+	Note addNote(User user, Note note);
 
 	void editNote(int noteId, String newTitle, String newContent, String newDate);
 

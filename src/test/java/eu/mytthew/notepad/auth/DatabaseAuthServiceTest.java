@@ -65,7 +65,6 @@ class DatabaseAuthServiceTest {
 	void addUserTestWithException() throws SQLException {
 		// given
 		Connection connection = mock(Connection.class);
-		PreparedStatement addUserStatement = mock(PreparedStatement.class);
 		PreparedStatement containsUserStatement = mock(PreparedStatement.class);
 		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenReturn(containsUserStatement);
 		ResultSet rs = mock(ResultSet.class);

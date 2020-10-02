@@ -67,7 +67,7 @@ public class DatabaseNotesService implements INotesService {
 	}
 
 	@Override
-	public void addNote(User user, Note note) {
+	public Note addNote(User user, Note note) {
 		String noteToSQL = "INSERT INTO notes(title, content, date, user_id) VALUES (?, ?, ?, ?)";
 		try {
 			int loggedUserId = user.getId();
@@ -77,9 +77,11 @@ public class DatabaseNotesService implements INotesService {
 			preparedStatement.setString(3, note.getNoteDate().toString());
 			preparedStatement.setInt(4, loggedUserId);
 			preparedStatement.execute();
+			return note;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	@Override

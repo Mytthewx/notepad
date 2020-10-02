@@ -17,7 +17,7 @@ public class RuntimeNotesService implements INotesService {
 	private final IdProvider reminderProvider = new IdProvider();
 
 	@Override
-	public void addNote(User user, Note note) {
+	public Note addNote(User user, Note note) {
 		int id = noteProvider.next();
 		String title = note.getTitle();
 		String content = note.getContent();
@@ -25,6 +25,7 @@ public class RuntimeNotesService implements INotesService {
 		int userId = user.getId();
 		Note newNote = new Note(id, title, content, localDate, userId);
 		noteList.add(newNote);
+		return note;
 	}
 
 	@Override
