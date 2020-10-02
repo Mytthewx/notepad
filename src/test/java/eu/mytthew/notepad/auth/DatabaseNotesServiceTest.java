@@ -288,6 +288,90 @@ public class DatabaseNotesServiceTest {
 	}
 
 	@Test
+	void editReminderTest() throws SQLException {
+		// given
+		Connection connection = mock(Connection.class);
+		INotesService notesService = new DatabaseNotesService(connection);
+		IAuthService authService = new RuntimeAuthService();
+		User user = authService.addUser("Mytthew", "123");
+		addNote(user, connection, notesService);
+		PreparedStatement addReminder = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("INSERT INTO reminders (name, date, note_id) VALUES (?, ?, ?)"))).thenReturn(addReminder);
+		Reminder reminder = new Reminder("Name", LocalDate.parse("2020-10-02"));
+		notesService.addReminder(0, reminder);
+		PreparedStatement newNameStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("UPDATE reminders SET name = ? WHERE id = ?"))).thenReturn(newNameStatement);
+		ResultSet rs2 = mock(ResultSet.class);
+		when(newNameStatement.getResultSet()).thenReturn(rs2);
+		when(rs2.next()).thenReturn(true);
+		PreparedStatement newDateStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("UPDATE reminders SET date = ? WHERE id = ?"))).thenReturn(newDateStatement);
+		ResultSet rs3 = mock(ResultSet.class);
+		when(newDateStatement.getResultSet()).thenReturn(rs3);
+		when(rs3.next()).thenReturn(true);
+		SQLException sqlException = mock(SQLException.class);
+
+		// when
+		notesService.editReminder(0, "New Name", "2020-10-02");
+
+		// then
+		verify(sqlException, times(0)).printStackTrace();
+	}
+
+	@Test
+	void editReminderWithoutChangesTest() throws SQLException {
+		// given
+		Connection connection = mock(Connection.class);
+		INotesService notesService = new DatabaseNotesService(connection);
+		IAuthService authService = new RuntimeAuthService();
+		User user = authService.addUser("Mytthew", "123");
+		addNote(user, connection, notesService);
+		PreparedStatement addReminder = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("INSERT INTO reminders (name, date, note_id) VALUES (?, ?, ?)"))).thenReturn(addReminder);
+		Reminder reminder = new Reminder("Name", LocalDate.parse("2020-10-02"));
+		notesService.addReminder(0, reminder);
+		PreparedStatement newNameStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("UPDATE reminders SET name = ? WHERE id = ?"))).thenReturn(newNameStatement);
+		ResultSet rs2 = mock(ResultSet.class);
+		when(newNameStatement.getResultSet()).thenReturn(rs2);
+		when(rs2.next()).thenReturn(true);
+		PreparedStatement newDateStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("UPDATE reminders SET date = ? WHERE id = ?"))).thenReturn(newDateStatement);
+		ResultSet rs3 = mock(ResultSet.class);
+		when(newDateStatement.getResultSet()).thenReturn(rs3);
+		when(rs3.next()).thenReturn(true);
+		SQLException sqlException = mock(SQLException.class);
+
+		// when
+		notesService.editReminder(0, "", "");
+
+		// then
+		verify(sqlException, times(0)).printStackTrace();
+	}
+
+	@Test
+	void editReminderException() throws SQLException {
+		// given
+		Connection connection = mock(Connection.class);
+		INotesService notesService = new DatabaseNotesService(connection);
+		IAuthService authService = new RuntimeAuthService();
+		User user = authService.addUser("Mytthew", "123");
+		addNote(user, connection, notesService);
+		PreparedStatement addReminder = mock(PreparedStatement.class);
+		when(connection.prepareStatement(eq("INSERT INTO reminders (name, date, note_id) VALUES (?, ?, ?)"))).thenReturn(addReminder);
+		Reminder reminder = new Reminder("Name", LocalDate.parse("2020-10-02"));
+		notesService.addReminder(0, reminder);
+		SQLException sqlException = mock(SQLException.class);
+		when(connection.prepareStatement(eq("UPDATE reminders SET name = ? WHERE id = ?"))).thenThrow(sqlException);
+
+		// when
+		notesService.editReminder(0, "NewTitle", "2020-10-03");
+
+		// then
+		verify(sqlException, times(1)).printStackTrace();
+	}
+
+	@Test
 	void addReminder() throws SQLException {
 		// given
 		Connection connection = mock(Connection.class);
