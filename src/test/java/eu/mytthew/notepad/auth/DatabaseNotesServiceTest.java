@@ -101,7 +101,8 @@ public class DatabaseNotesServiceTest {
 		INotesService notesService = new DatabaseNotesService(connection);
 		PreparedStatement preparedStatement = mock(PreparedStatement.class);
 		when(connection.prepareStatement(eq("INSERT INTO notes(title, content, date, user_id) VALUES (?, ?, ?, ?)"))).thenReturn(preparedStatement);
-		User user = new User("Mytthew", "123");
+		IAuthService authService = new RuntimeAuthService();
+		User user = authService.addUser("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-10-02"));
 
 		// when
@@ -118,7 +119,8 @@ public class DatabaseNotesServiceTest {
 		INotesService notesService = new DatabaseNotesService(connection);
 		PreparedStatement preparedStatement = mock(PreparedStatement.class);
 		when(connection.prepareStatement(eq("INSERT INTO notes(title, content, date, user_id) VALUES (?, ?, ?, ?)"))).thenThrow(new SQLException());
-		User user = new User("Mytthew", "123");
+		IAuthService authService = new RuntimeAuthService();
+		User user = authService.addUser("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-10-02"));
 
 		// when
@@ -134,7 +136,8 @@ public class DatabaseNotesServiceTest {
 		// given
 		Connection connection = mock(Connection.class);
 		INotesService notesService = new DatabaseNotesService(connection);
-		User user = new User("Mytthew", "123");
+		IAuthService authService = new RuntimeAuthService();
+		User user = authService.addUser("Mytthew", "123");
 		addNote(user, connection, notesService);
 		PreparedStatement deleteNoteStatement = mock(PreparedStatement.class);
 		when(connection.prepareStatement(eq("DELETE FROM notes WHERE id = ?"))).thenReturn(deleteNoteStatement);
@@ -151,12 +154,107 @@ public class DatabaseNotesServiceTest {
 		// given
 		Connection connection = mock(Connection.class);
 		INotesService notesService = new DatabaseNotesService(connection);
-		User user = new User("Mytthew", "123");
+		IAuthService authService = new RuntimeAuthService();
+		User user = authService.addUser("Mytthew", "123");
 		addNote(user, connection, notesService);
 		when(connection.prepareStatement(eq("DELETE FROM notes WHERE id = ?"))).thenThrow(new SQLException());
 
 		// when
 		boolean result = notesService.removeNote(1);
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	void userContainsAnyNotesTrueTest() throws SQLException {
+		// given
+		Connection connection = mock(Connection.class);
+		INotesService notesService = new DatabaseNotesService(connection);
+		IAuthService authService = new RuntimeAuthService();
+		User user = authService.addUser("Mytthew", "123");
+		PreparedStatement preparedStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement("SELECT * FROM notes WHERE user_id = ?")).thenReturn(preparedStatement);
+		ResultSet rs = mock(ResultSet.class);
+		when(preparedStatement.getResultSet()).thenReturn(rs);
+		when(rs.next()).thenReturn(true);
+
+		// when
+		boolean result = notesService.userContainsAnyNotes(user);
+
+		// then
+		assertTrue(result);
+	}
+
+	@Test
+	void userContainsAnyNotesFalseTest() throws SQLException {
+		// given
+		Connection connection = mock(Connection.class);
+		INotesService notesService = new DatabaseNotesService(connection);
+		IAuthService authService = new RuntimeAuthService();
+		User user = authService.addUser("Mytthew", "123");
+		PreparedStatement preparedStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement("SELECT * FROM notes WHERE user_id = ?")).thenReturn(preparedStatement);
+		ResultSet rs = mock(ResultSet.class);
+		when(preparedStatement.getResultSet()).thenReturn(rs);
+		when(rs.next()).thenReturn(false);
+
+		// when
+		boolean result = notesService.userContainsAnyNotes(user);
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	void noteContainsAnyRemindersTrueTest() throws SQLException {
+		// given
+		Connection connection = mock(Connection.class);
+		INotesService notesService = new DatabaseNotesService(connection);
+		PreparedStatement preparedStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement("SELECT * FROM reminders WHERE note_id = ?")).thenReturn(preparedStatement);
+		ResultSet rs = mock(ResultSet.class);
+		when(preparedStatement.getResultSet()).thenReturn(rs);
+		when(rs.next()).thenReturn(true);
+
+		// when
+		boolean result = notesService.noteContainsAnyReminders(0);
+
+		// then
+		assertTrue(result);
+	}
+
+	@Test
+	void noteContainsAnyRemindersFalseTest() throws SQLException {
+		// given
+		Connection connection = mock(Connection.class);
+		INotesService notesService = new DatabaseNotesService(connection);
+		PreparedStatement preparedStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement("SELECT * FROM reminders WHERE note_id = ?")).thenReturn(preparedStatement);
+		ResultSet rs = mock(ResultSet.class);
+		when(preparedStatement.getResultSet()).thenReturn(rs);
+		when(rs.next()).thenReturn(false);
+
+		// when
+		boolean result = notesService.noteContainsAnyReminders(0);
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	void preparedStatementExceptionTest() throws SQLException {
+		// given
+		Connection connection = mock(Connection.class);
+		INotesService notesService = new DatabaseNotesService(connection);
+		PreparedStatement preparedStatement = mock(PreparedStatement.class);
+		when(connection.prepareStatement("SELECT * FROM reminders WHERE note_id = ?")).thenThrow(new SQLException());
+		ResultSet rs = mock(ResultSet.class);
+		when(preparedStatement.getResultSet()).thenReturn(rs);
+		when(rs.next()).thenReturn(false);
+
+		// when
+		boolean result = notesService.noteContainsAnyReminders(0);
 
 		// then
 		assertFalse(result);
