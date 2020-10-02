@@ -85,7 +85,7 @@ public class DatabaseNotesService implements INotesService {
 	}
 
 	@Override
-	public void addReminder(int noteId, Reminder reminder) {
+	public Reminder addReminder(int noteId, Reminder reminder) {
 		String reminderSQL = "INSERT INTO reminders (name, date, note_id) VALUES (?, ?, ?)";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(reminderSQL);
@@ -93,9 +93,11 @@ public class DatabaseNotesService implements INotesService {
 			preparedStatement.setString(2, reminder.getDate().toString());
 			preparedStatement.setInt(3, noteId);
 			preparedStatement.execute();
+			return reminder;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	@Override
@@ -126,7 +128,6 @@ public class DatabaseNotesService implements INotesService {
 		try {
 			if (!newTitle.equals("")) {
 				String editTitle = "UPDATE notes SET title = ? WHERE id = ?";
-
 				PreparedStatement editTitleStatement = connection.prepareStatement(editTitle);
 				editTitleStatement.setString(1, newTitle);
 				editTitleStatement.setInt(2, noteId);
@@ -173,7 +174,8 @@ public class DatabaseNotesService implements INotesService {
 			noteIdVerifyStatement.setInt(1, reminderId);
 			noteIdVerifyStatement.execute();
 			ResultSet rs = noteIdVerifyStatement.getResultSet();
-			if (rs.next() && rs.getInt("note_id") == noteId) {
+			if (rs.next()
+					&& rs.getInt("note_id") == noteId) {
 				String removeReminderSQL = "DELETE FROM reminders WHERE id = ?";
 				PreparedStatement removeReminderStatement = connection.prepareStatement(removeReminderSQL);
 				removeReminderStatement.setInt(1, reminderId);

@@ -69,12 +69,13 @@ public class RuntimeNotesService implements INotesService {
 	}
 
 	@Override
-	public void addReminder(int noteId, Reminder reminder) {
+	public Reminder addReminder(int noteId, Reminder reminder) {
 		int id = reminderProvider.next();
 		String name = reminder.getName();
 		LocalDate localDate = reminder.getDate();
 		Reminder newReminder = new Reminder(id, name, localDate, noteId);
 		reminderList.add(newReminder);
+		return reminder;
 	}
 
 	@Override

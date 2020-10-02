@@ -17,7 +17,7 @@ public interface INotesService {
 
 	List<Reminder> getAllReminders(int noteId);
 
-	void addReminder(int noteId, Reminder reminder);
+	Reminder addReminder(int noteId, Reminder reminder);
 
 	void editReminder(int reminderId, String newName, String newDate);
 
