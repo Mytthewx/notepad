@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static eu.mytthew.notepad.auth.HashPassword.hashPassword;
@@ -49,7 +50,7 @@ public class DatabaseAuthService implements IAuthService {
 					preparedStatement.setString(1, nickname);
 					preparedStatement.execute();
 					if (preparedStatement.getResultSet().next()) {
-						loggedUser = new User(nickname, password);
+						loggedUser = new User(nickname, hashPassword(password));
 					}
 					return true;
 				}
@@ -67,16 +68,16 @@ public class DatabaseAuthService implements IAuthService {
 			PreparedStatement userPassword = connection.prepareStatement(userPasswordSQL);
 			userPassword.setString(1, getLoggedUser().getNickname());
 			userPassword.execute();
-			if (userPassword.getResultSet().next()) {
+			ResultSet rs = userPassword.getResultSet();
+			if (rs.next()) {
 				if (userPassword.getResultSet().getString("password").equals(hashPassword(oldPassword))) {
 					String sql = "UPDATE users SET password = ? WHERE login = ?";
 					PreparedStatement preparedStatement = connection.prepareStatement(sql);
 					preparedStatement.setString(1, hashPassword(newPassword));
 					preparedStatement.setString(2, getLoggedUser().getNickname());
 					preparedStatement.execute();
+					loggedUser.setPassword(hashPassword(newPassword));
 					return true;
-				} else {
-					return false;
 				}
 			}
 		} catch (SQLException e) {
@@ -97,16 +98,12 @@ public class DatabaseAuthService implements IAuthService {
 			preparedStatement.setString(1, newNickname);
 			preparedStatement.setString(2, oldNickname);
 			preparedStatement.execute();
-			if (containsNickname(newNickname)
-					&& !containsNickname(oldNickname)
-					&& !newNickname.equals(oldNickname)) {
-				getLoggedUser().setNickname(newNickname);
-				return true;
-			}
+			getLoggedUser().setNickname(newNickname);
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return true;
+		return false;
 	}
 
 	@Override
