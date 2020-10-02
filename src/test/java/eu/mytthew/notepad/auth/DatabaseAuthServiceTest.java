@@ -15,6 +15,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -70,7 +71,8 @@ class DatabaseAuthServiceTest {
 		ResultSet rs = mock(ResultSet.class);
 		when(containsUserStatement.getResultSet()).thenReturn(rs);
 		when(rs.next()).thenReturn(false);
-		when(connection.prepareStatement(eq("INSERT INTO users(login, password) VALUES (?, ?);"))).thenThrow(new SQLException());
+		SQLException sqlException = mock(SQLException.class);
+		when(connection.prepareStatement(eq("INSERT INTO users(login, password) VALUES (?, ?);"))).thenThrow(sqlException);
 		IAuthService authService = new DatabaseAuthService(connection);
 
 		// when
@@ -78,6 +80,7 @@ class DatabaseAuthServiceTest {
 
 		// then
 		assertNull(user);
+		verify(sqlException, times(1)).printStackTrace();
 	}
 
 	@Test
@@ -104,7 +107,8 @@ class DatabaseAuthServiceTest {
 	void containsNicknameWithException() throws SQLException {
 		// given
 		Connection connection = mock(Connection.class);
-		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenThrow(new SQLException());
+		SQLException sqlException = mock(SQLException.class);
+		when(connection.prepareStatement(eq("SELECT login FROM users WHERE login = ?"))).thenThrow(sqlException);
 		IAuthService authService = new DatabaseAuthService(connection);
 
 		// when
@@ -112,6 +116,7 @@ class DatabaseAuthServiceTest {
 
 		// then
 		assertFalse(result);
+		verify(sqlException, times(1)).printStackTrace();
 	}
 
 	@Test
@@ -247,13 +252,15 @@ class DatabaseAuthServiceTest {
 		ResultSet rs = mock(ResultSet.class);
 		when(containsUserStatement.getResultSet()).thenReturn(rs);
 		when(rs.next()).thenReturn(true);
-		when(connection.prepareStatement(eq("SELECT password FROM users WHERE login = ?"))).thenThrow(new SQLException());
+		SQLException sqlException = mock(SQLException.class);
+		when(connection.prepareStatement(eq("SELECT password FROM users WHERE login = ?"))).thenThrow(sqlException);
 
 		// when
 		boolean result = authService.login("Mytthew", "123");
 
 		// then
 		assertFalse(result);
+		verify(sqlException, times(1)).printStackTrace();
 	}
 
 	@Test
@@ -322,13 +329,15 @@ class DatabaseAuthServiceTest {
 		ResultSet rs4 = mock(ResultSet.class);
 		when(containsUserNewNickname.getResultSet()).thenReturn(rs4);
 		when(rs4.next()).thenReturn(false);
-		when(connection.prepareStatement("UPDATE users SET login = ? WHERE login = ?;")).thenThrow(new SQLException());
+		SQLException sqlException = mock(SQLException.class);
+		when(connection.prepareStatement("UPDATE users SET login = ? WHERE login = ?;")).thenThrow(sqlException);
 
 		// when
 		boolean result = authService.changeNickname("NewNickname");
 
 		// then
 		assertFalse(result);
+		verify(sqlException, times(1)).printStackTrace();
 	}
 
 	@Test
@@ -431,11 +440,8 @@ class DatabaseAuthServiceTest {
 		Connection connection = mock(Connection.class);
 		IAuthService authService = new DatabaseAuthService(connection);
 		login(connection, authService);
-		PreparedStatement checkPassword = mock(PreparedStatement.class);
-		when(connection.prepareStatement(eq("SELECT password FROM users WHERE login = ?"))).thenThrow(new SQLException());
-		ResultSet rs = mock(ResultSet.class);
-		when(checkPassword.getResultSet()).thenReturn(rs);
-		when(rs.next()).thenReturn(false);
+		SQLException sqlException = mock(SQLException.class);
+		when(connection.prepareStatement(eq("SELECT password FROM users WHERE login = ?"))).thenThrow(sqlException);
 
 		// when
 		boolean result = authService.changePassword("wrongpassword", "12345");
@@ -443,5 +449,6 @@ class DatabaseAuthServiceTest {
 		// then
 		assertEquals("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3", authService.getLoggedUser().getPassword());
 		assertFalse(result);
+		verify(sqlException, times(1)).printStackTrace();
 	}
 }
