@@ -204,7 +204,7 @@ public class Main {
 				String newContent = scanner.nextLine();
 				System.out.println("New date:");
 				String newDate = scanner.nextLine();
-				notesService.editNote(selectedNote, newTitle, newContent, newDate);
+				notesService.editNote(authService.getLoggedUser(), selectedNote, newTitle, newContent, newDate);
 				System.out.println("Note changed successfully.");
 			} else {
 				System.out.println("Note with this id doesn't exist.");

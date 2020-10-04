@@ -54,11 +54,11 @@ public class FileNotesService implements INotesService {
 		generalJSON.put("notes", notesArray);
 		file.createFile(user.getNickname(), generalJSON);
 		return newNote;
+
 	}
 
 	@Override
-	public void editNote(int noteId, String newTitle, String newContent, String newDate) {
-
+	public void editNote(User user, int noteId, String newTitle, String newContent, String newDate) {
 	}
 
 	@Override
@@ -85,6 +85,7 @@ public class FileNotesService implements INotesService {
 			notes.add(note);
 		}
 		return notes;
+
 	}
 
 	@Override

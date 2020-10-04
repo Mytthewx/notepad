@@ -124,7 +124,7 @@ public class DatabaseNotesService implements INotesService {
 	}
 
 	@Override
-	public void editNote(int noteId, String newTitle, String newContent, String newDate) {
+	public void editNote(User user, int noteId, String newTitle, String newContent, String newDate) {
 		try {
 			if (!newTitle.equals("")) {
 				String editTitle = "UPDATE notes SET title = ? WHERE id = ?";

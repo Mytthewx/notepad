@@ -29,7 +29,7 @@ public class RuntimeNotesService implements INotesService {
 	}
 
 	@Override
-	public void editNote(int noteId, String newTitle, String newContent, String newDate) {
+	public void editNote(User user, int noteId, String newTitle, String newContent, String newDate) {
 		Optional<Note> optionalNote = noteList.stream()
 				.filter(note -> note.getId() == noteId)
 				.findAny();

@@ -9,7 +9,7 @@ import java.util.List;
 public interface INotesService {
 	Note addNote(User user, Note note);
 
-	void editNote(int noteId, String newTitle, String newContent, String newDate);
+	void editNote(User user, int noteId, String newTitle, String newContent, String newDate);
 
 	boolean removeNote(int id);
 
