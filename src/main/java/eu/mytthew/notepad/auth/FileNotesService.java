@@ -93,7 +93,7 @@ public class FileNotesService implements INotesService {
 			return Collections.emptyList();
 		}
 		List<Reminder> reminders = new ArrayList<>();
-		JSONObject obj = file.openFile(String.valueOf(noteId));
+		JSONObject obj = reminderOperation.openFile(String.valueOf(noteId));
 		JSONArray arrayReminders = obj.getJSONArray("reminders");
 		for (int i = 0; i < arrayReminders.length(); i++) {
 			JSONObject innerReminderObject = arrayReminders.getJSONObject(i);
@@ -154,13 +154,20 @@ public class FileNotesService implements INotesService {
 		if (file.fileExist(user.getNickname())) {
 			List<Note> notes = getAllNotes(user);
 			return notes.stream()
-					.anyMatch(note -> note.getUserId() == user.getId());
+					.filter(note -> note.getUserId() == user.getId())
+					.anyMatch(note -> note.getId() == noteId);
 		}
 		return false;
 	}
 
 	@Override
 	public boolean reminderWithThisIdExistAndBelongToNote(int reminderId, int noteId) {
+		if (reminderOperation.fileExist(String.valueOf(noteId))) {
+			List<Reminder> reminders = getAllReminders(noteId);
+			return reminders.stream()
+					.filter(reminder -> reminder.getId() == reminderId)
+					.anyMatch(reminder -> reminder.getNoteId() == noteId);
+		}
 		return false;
 	}
 
