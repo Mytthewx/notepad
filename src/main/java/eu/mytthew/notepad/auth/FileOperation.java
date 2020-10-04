@@ -1,5 +1,6 @@
 package eu.mytthew.notepad.auth;
 
+import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -10,9 +11,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+@AllArgsConstructor
 public class FileOperation {
+	String parent;
+
 	public JSONObject openFile(String filename) {
-		File temp = new File("users", filename + ".json");
+		File temp = new File(parent, filename + ".json");
 		try (FileInputStream fileInputStream = new FileInputStream(temp)) {
 			return new JSONObject(new JSONTokener(fileInputStream));
 		} catch (IOException e) {
@@ -22,7 +26,7 @@ public class FileOperation {
 	}
 
 	public boolean createFile(String filename, JSONObject jsonObject) {
-		File temp = new File("users", filename.toLowerCase() + ".json");
+		File temp = new File(parent, filename.toLowerCase() + ".json");
 		if (temp.exists()) {
 			return false;
 		}
@@ -37,14 +41,14 @@ public class FileOperation {
 
 	public void deleteFile(String filename) {
 		try {
-			Files.delete(Paths.get("users", filename + ".json"));
+			Files.delete(Paths.get(parent, filename + ".json"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public boolean fileExist(String filename) {
-		File file = new File("users", filename + ".json");
+		File file = new File(parent, filename + ".json");
 		return file.exists();
 	}
 }

@@ -23,8 +23,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class DatabaseNotesServiceTest {
-
+class DatabaseNotesServiceTest {
 	Note addNote(User user, Connection connection, INotesService notesService) throws SQLException {
 		PreparedStatement preparedStatement = mock(PreparedStatement.class);
 		when(connection.prepareStatement(eq("INSERT INTO notes(title, content, date, user_id) VALUES (?, ?, ?, ?)"))).thenReturn(preparedStatement);

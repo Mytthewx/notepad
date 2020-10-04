@@ -1,7 +1,8 @@
 package eu.mytthew.notepad;
 
-import eu.mytthew.notepad.auth.DatabaseAuthService;
-import eu.mytthew.notepad.auth.DatabaseNotesService;
+import eu.mytthew.notepad.auth.FileAuthService;
+import eu.mytthew.notepad.auth.FileNotesService;
+import eu.mytthew.notepad.auth.FileOperation;
 import eu.mytthew.notepad.auth.IAuthService;
 import eu.mytthew.notepad.auth.INotesService;
 import eu.mytthew.notepad.entity.Note;
@@ -18,9 +19,8 @@ import java.util.stream.Collectors;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
-	private static final Connection connection = connectToDatabase();
-	private static final INotesService notesService = new DatabaseNotesService(connection);
-	private static final IAuthService authService = new DatabaseAuthService(connection);
+	private static final INotesService notesService = new FileNotesService(new FileOperation("notes"));
+	private static final IAuthService authService = new FileAuthService(new FileOperation("users"));
 
 	public static void main(String[] args) {
 		List<MenuItem> loginMenuItems = new ArrayList<>();
