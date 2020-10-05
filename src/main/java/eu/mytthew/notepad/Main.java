@@ -6,6 +6,7 @@ import eu.mytthew.notepad.auth.FileOperation;
 import eu.mytthew.notepad.auth.IAuthService;
 import eu.mytthew.notepad.auth.INotesService;
 import eu.mytthew.notepad.entity.Note;
+import eu.mytthew.notepad.entity.Reminder;
 import eu.mytthew.notepad.entity.User;
 
 import java.sql.Connection;

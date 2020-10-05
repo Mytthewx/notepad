@@ -9,11 +9,24 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @AllArgsConstructor
 public class FileOperation {
 	String parent;
+
+	public Stream<Path> filesStream(String path) {
+		return Optional.of(path)
+				.map(File::new)
+				.map(File::listFiles)
+				.stream()
+				.flatMap(Arrays::stream)
+				.map(File::toPath);
+	}
 
 	public JSONObject openFile(String filename) {
 		File temp = new File(parent, filename + ".json");

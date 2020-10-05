@@ -1,15 +1,16 @@
 package eu.mytthew.notepad.auth;
 
-import eu.mytthew.notepad.Reminder;
 import eu.mytthew.notepad.entity.Note;
+import eu.mytthew.notepad.entity.Reminder;
 import eu.mytthew.notepad.entity.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class FileNotesService implements INotesService {
 	private final IdProvider noteProvider = new IdProvider();
@@ -24,13 +25,7 @@ public class FileNotesService implements INotesService {
 	@Override
 	public Note addNote(User user, Note note) {
 		Note newNote = new Note(noteProvider.next(), note.getTitle(), note.getContent(), note.getNoteDate(), user.getId());
-		JSONObject newNoteObject = new JSONObject();
-		newNoteObject.put("id", newNote.getId());
-		newNoteObject.put("title", newNote.getTitle());
-		newNoteObject.put("content", newNote.getContent());
-		newNoteObject.put("date", newNote.getNoteDate());
-		newNoteObject.put("user_id", newNote.getUserId());
-		file.createFile(String.valueOf(newNote.getId()), newNoteObject);
+		file.createFile(String.valueOf(newNote.getId()), newNote.serialize());
 		return newNote;
 	}
 
@@ -45,43 +40,36 @@ public class FileNotesService implements INotesService {
 
 	@Override
 	public List<Note> getAllNotes(User user) {
-		if (!userContainsAnyNotes(user)) {
-			return Collections.emptyList();
-		}
 		List<Note> notes = new ArrayList<>();
-		JSONObject obj = file.openFile(user.getNickname());
-		JSONArray arrayNotes = obj.getJSONArray("notes");
-		for (int i = 0; i < arrayNotes.length(); i++) {
-			JSONObject innerNoteObject = arrayNotes.getJSONObject(i);
-			int id = innerNoteObject.getInt("id");
-			String noteTitle = innerNoteObject.getString("title");
-			String noteContent = innerNoteObject.getString("content");
-			LocalDate noteDate = LocalDate.parse(innerNoteObject.getString("date"));
-			int userId = innerNoteObject.getInt("user_id");
-			Note note = new Note(id, noteTitle, noteContent, noteDate, userId);
+		Stream<Path> pathStream = file.filesStream("notes");
+		pathStream.forEach(filename -> {
+			JSONObject jsonObject = file.openFile(filename.getFileName().toString());
+			int id = jsonObject.getInt("id");
+			String title = jsonObject.getString("title");
+			String content = jsonObject.getString("content");
+			String date = jsonObject.getString("date");
+			int user_id = jsonObject.getInt("user_id");
+			Note note = new Note(id, title, content, LocalDate.parse(date), user_id);
 			notes.add(note);
-		}
+		});
 		return notes;
-
 	}
 
 	@Override
 	public List<Reminder> getAllReminders(int noteId) {
-		if (!noteContainsAnyReminders(noteId)) {
-			return Collections.emptyList();
-		}
 		List<Reminder> reminders = new ArrayList<>();
-		JSONObject obj = reminderOperation.openFile(String.valueOf(noteId));
-		JSONArray arrayReminders = obj.getJSONArray("reminders");
-		for (int i = 0; i < arrayReminders.length(); i++) {
-			JSONObject innerReminderObject = arrayReminders.getJSONObject(i);
-			int id = innerReminderObject.getInt("id");
-			String reminderName = innerReminderObject.getString("name");
-			LocalDate reminderDate = LocalDate.parse(innerReminderObject.getString("date"));
-			int note_id = innerReminderObject.getInt("note_id");
-			Reminder reminder = new Reminder(id, reminderName, reminderDate, note_id);
-			reminders.add(reminder);
-		}
+		Stream<Path> pathStream = file.filesStream("reminders");
+		pathStream.forEach(filename -> {
+			JSONObject jsonObject = file.openFile(filename.getFileName().toString());
+			int id = jsonObject.getInt("id");
+			String name = jsonObject.getString("name");
+			String date = jsonObject.getString("date");
+			int note_id = jsonObject.getInt("note_id");
+			Reminder reminder = new Reminder(id, name, LocalDate.parse(date), note_id);
+			if (reminder.getNoteId() == noteId) {
+				reminders.add(reminder);
+			}
+		});
 		return reminders;
 	}
 
@@ -151,7 +139,7 @@ public class FileNotesService implements INotesService {
 
 	@Override
 	public boolean userContainsAnyNotes(User user) {
-		return file.fileExist(user.getNickname());
+		return true;
 	}
 
 	@Override

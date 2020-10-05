@@ -1,7 +1,7 @@
 package eu.mytthew.notepad.auth;
 
-import eu.mytthew.notepad.Reminder;
 import eu.mytthew.notepad.entity.Note;
+import eu.mytthew.notepad.entity.Reminder;
 import eu.mytthew.notepad.entity.User;
 import org.junit.jupiter.api.Test;
 
