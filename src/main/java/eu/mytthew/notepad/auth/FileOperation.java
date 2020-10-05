@@ -29,7 +29,10 @@ public class FileOperation {
 	}
 
 	public JSONObject openFile(String filename) {
-		File temp = new File(parent, filename + ".json");
+		if (!filename.contains(".json")) {
+			filename = filename + ".json";
+		}
+		File temp = new File(parent, filename);
 		try (FileInputStream fileInputStream = new FileInputStream(temp)) {
 			return new JSONObject(new JSONTokener(fileInputStream));
 		} catch (IOException e) {
