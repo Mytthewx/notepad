@@ -23,26 +23,6 @@ public class FileNotesService implements INotesService {
 
 	@Override
 	public Note addNote(User user, Note note) {
-		JSONObject generalJSON = new JSONObject();
-		JSONArray notesArray = new JSONArray();
-		if (userContainsAnyNotes(user)) {
-			List<Note> currentNotes = getAllNotes(user);
-			for (Note note1 : currentNotes) {
-				JSONObject noteObject = new JSONObject();
-				int id = note1.getId();
-				String title = note1.getTitle();
-				String content = note1.getContent();
-				LocalDate localDate = note1.getNoteDate();
-				int userId = note1.getUserId();
-				noteObject.put("id", id);
-				noteObject.put("title", title);
-				noteObject.put("content", content);
-				noteObject.put("date", localDate);
-				noteObject.put("user_id", userId);
-				notesArray.put(noteObject);
-			}
-			file.deleteFile(user.getNickname());
-		}
 		Note newNote = new Note(noteProvider.next(), note.getTitle(), note.getContent(), note.getNoteDate(), user.getId());
 		JSONObject newNoteObject = new JSONObject();
 		newNoteObject.put("id", newNote.getId());
@@ -50,15 +30,12 @@ public class FileNotesService implements INotesService {
 		newNoteObject.put("content", newNote.getContent());
 		newNoteObject.put("date", newNote.getNoteDate());
 		newNoteObject.put("user_id", newNote.getUserId());
-		notesArray.put(newNoteObject);
-		generalJSON.put("notes", notesArray);
-		file.createFile(user.getNickname(), generalJSON);
+		file.createFile(String.valueOf(newNote.getId()), newNoteObject);
 		return newNote;
-
 	}
 
 	@Override
-	public void editNote(User user, int noteId, String newTitle, String newContent, String newDate) {
+	public void editNote(int noteId, String newTitle, String newContent, String newDate) {
 	}
 
 	@Override
