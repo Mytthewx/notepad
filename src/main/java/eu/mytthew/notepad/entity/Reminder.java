@@ -20,7 +20,7 @@ public class Reminder implements JSONSerializable {
 	}
 
 	@Override
-	public void deserializable(JSONObject self) {
+	public void deserialize(JSONObject self) {
 		id = self.getInt("id");
 		name = self.getString("name");
 		date = LocalDate.parse(self.getString("date"));

@@ -17,7 +17,7 @@ public class User implements JSONSerializable {
 	}
 
 	@Override
-	public void deserializable(JSONObject self) {
+	public void deserialize(JSONObject self) {
 		id = self.getInt("id");
 		nickname = self.getString("nick");
 		password = self.getString("pass");

@@ -24,7 +24,7 @@ public class Note implements JSONSerializable {
 	}
 
 	@Override
-	public void deserializable(JSONObject self) {
+	public void deserialize(JSONObject self) {
 		id = self.getInt("id");
 		title = self.getString("title");
 		content = self.getString("content");

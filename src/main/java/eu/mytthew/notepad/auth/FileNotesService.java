@@ -3,11 +3,9 @@ package eu.mytthew.notepad.auth;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.Reminder;
 import eu.mytthew.notepad.entity.User;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -35,6 +33,10 @@ public class FileNotesService implements INotesService {
 
 	@Override
 	public boolean removeNote(int id) {
+		if (file.fileExist(String.valueOf(id))) {
+			file.deleteFile(String.valueOf(id));
+			return true;
+		}
 		return false;
 	}
 
@@ -44,12 +46,8 @@ public class FileNotesService implements INotesService {
 		Stream<Path> pathStream = file.filesStream("notes");
 		pathStream.forEach(filename -> {
 			JSONObject jsonObject = file.openFile(filename.getFileName().toString());
-			int id = jsonObject.getInt("id");
-			String title = jsonObject.getString("title");
-			String content = jsonObject.getString("content");
-			String date = jsonObject.getString("date");
-			int user_id = jsonObject.getInt("user_id");
-			Note note = new Note(id, title, content, LocalDate.parse(date), user_id);
+			Note note = new Note(0, "", "", null, 0);
+			note.deserialize(jsonObject);
 			notes.add(note);
 		});
 		return notes;
@@ -61,11 +59,8 @@ public class FileNotesService implements INotesService {
 		Stream<Path> pathStream = file.filesStream("reminders");
 		pathStream.forEach(filename -> {
 			JSONObject jsonObject = file.openFile(filename.getFileName().toString());
-			int id = jsonObject.getInt("id");
-			String name = jsonObject.getString("name");
-			String date = jsonObject.getString("date");
-			int note_id = jsonObject.getInt("note_id");
-			Reminder reminder = new Reminder(id, name, LocalDate.parse(date), note_id);
+			Reminder reminder = new Reminder(0, "", null, 0);
+			reminder.deserialize(jsonObject);
 			if (reminder.getNoteId() == noteId) {
 				reminders.add(reminder);
 			}
@@ -75,75 +70,57 @@ public class FileNotesService implements INotesService {
 
 	@Override
 	public Reminder addReminder(int noteId, Reminder reminder) {
-		JSONObject generalJSON = new JSONObject();
-		JSONArray reminderArray = new JSONArray();
-		if (noteContainsAnyReminders(noteId)) {
-			List<Reminder> currentReminders = getAllReminders(noteId);
-			for (Reminder reminder1 : currentReminders) {
-				JSONObject reminderObject = new JSONObject();
-				int id = reminder1.getId();
-				String name = reminder1.getName();
-				LocalDate localDate = reminder1.getDate();
-				int note_id = reminder1.getNoteId();
-				reminderObject.put("id", id);
-				reminderObject.put("name", name);
-				reminderObject.put("date", localDate);
-				reminderObject.put("note_id", note_id);
-				reminderArray.put(reminderObject);
-			}
-			reminderOperation.deleteFile(String.valueOf(noteId));
-		}
 		Reminder newReminder = new Reminder(reminderProvider.next(), reminder.getName(), reminder.getDate(), noteId);
-		JSONObject newReminderObject = new JSONObject();
-		newReminderObject.put("id", newReminder.getId());
-		newReminderObject.put("name", newReminder.getName());
-		newReminderObject.put("date", newReminder.getDate());
-		newReminderObject.put("note_id", newReminder.getNoteId());
-		reminderArray.put(newReminderObject);
-		generalJSON.put("reminders", reminderArray);
-		reminderOperation.createFile(String.valueOf(noteId), generalJSON);
+		file.createFile(String.valueOf(newReminder.getId()), newReminder.serialize());
 		return newReminder;
 	}
 
 	@Override
 	public void editReminder(int reminderId, String newName, String newDate) {
-
 	}
 
 	@Override
 	public boolean removeReminder(int noteId, int reminderId) {
+		if (file.fileExist(String.valueOf(reminderId))) {
+			file.deleteFile(String.valueOf(reminderId));
+			return true;
+		}
 		return false;
 	}
 
 	@Override
 	public boolean noteWithThisIdExistAndBelongToUser(int noteId, User user) {
-		if (file.fileExist(user.getNickname())) {
-			List<Note> notes = getAllNotes(user);
-			return notes.stream()
-					.filter(note -> note.getUserId() == user.getId())
-					.anyMatch(note -> note.getId() == noteId);
+		if (!file.fileExist(String.valueOf(noteId))) {
+			return false;
 		}
-		return false;
+		return getAllNotes(user)
+				.stream()
+				.filter(note -> note.getUserId() == user.getId())
+				.anyMatch(note -> note.getId() == noteId);
 	}
 
 	@Override
 	public boolean reminderWithThisIdExistAndBelongToNote(int reminderId, int noteId) {
-		if (reminderOperation.fileExist(String.valueOf(noteId))) {
-			List<Reminder> reminders = getAllReminders(noteId);
-			return reminders.stream()
-					.filter(reminder -> reminder.getId() == reminderId)
-					.anyMatch(reminder -> reminder.getNoteId() == noteId);
+		if (!reminderOperation.fileExist(String.valueOf(noteId))) {
+			return false;
 		}
-		return false;
+		return getAllReminders(noteId)
+				.stream()
+				.filter(reminder -> reminder.getId() == reminderId)
+				.anyMatch(reminder -> reminder.getNoteId() == noteId);
 	}
 
 	@Override
 	public boolean userContainsAnyNotes(User user) {
-		return true;
+		return getAllNotes(user)
+				.stream()
+				.anyMatch(note -> note.getUserId() == user.getId());
 	}
 
 	@Override
 	public boolean noteContainsAnyReminders(int noteId) {
-		return reminderOperation.fileExist(String.valueOf(noteId));
+		return getAllReminders(noteId)
+				.stream()
+				.anyMatch(reminder -> reminder.getNoteId() == noteId);
 	}
 }
