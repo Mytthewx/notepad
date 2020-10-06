@@ -1,5 +1,6 @@
 package eu.mytthew.notepad;
 
+import eu.mytthew.notepad.auth.Config;
 import eu.mytthew.notepad.auth.FileAuthService;
 import eu.mytthew.notepad.auth.FileNotesService;
 import eu.mytthew.notepad.auth.FileOperation;
@@ -20,8 +21,14 @@ import java.util.stream.Collectors;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
-	private static final INotesService notesService = new FileNotesService(new FileOperation("notes"));
-	private static final IAuthService authService = new FileAuthService(new FileOperation("users"));
+	private static final Config config = new Config();
+	private static final FileOperation fileOperation = new FileOperation("config");
+	private static final INotesService notesService = new FileNotesService(new FileOperation("notes"), config);
+	private static final IAuthService authService = new FileAuthService(new FileOperation("users"), config);
+
+	static {
+		config.deserialize(fileOperation.openFile("config"));
+	}
 
 	public static void main(String[] args) {
 		List<MenuItem> loginMenuItems = new ArrayList<>();
@@ -120,9 +127,11 @@ public class Main {
 		String nickname = scanner.nextLine();
 		System.out.println("Type password: ");
 		String password = scanner.nextLine();
-		if (authService.addUser(nickname, password) == null) {
+		User user = authService.addUser(nickname, password);
+		if (user == null) {
 			System.out.println("This nickname is already taken.");
 		} else {
+			config.addUserId(user.getId());
 			System.out.println("User added successfully.");
 		}
 	}
@@ -138,11 +147,13 @@ public class Main {
 		if (date.equals("")) {
 			date = String.valueOf(LocalDate.now());
 			Note note = new Note(title, content, LocalDate.parse(date));
-			notesService.addNote(loggedUser, note);
+			Note newNote = notesService.addNote(loggedUser, note);
+			config.addNoteId(newNote.getId());
 			System.out.println("Note added successfully!");
 		} else if (date.matches("^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$")) {
 			Note note = new Note(title, content, LocalDate.parse(date));
-			notesService.addNote(loggedUser, note);
+			Note newNote = notesService.addNote(loggedUser, note);
+			config.addNoteId(newNote.getId());
 			System.out.println("Note added successfully!");
 		} else {
 			System.out.println("Wrong date format.");
@@ -228,7 +239,8 @@ public class Main {
 			System.out.println("Reminder date [yyyy-MM-dd]:");
 			String reminderDate = scanner.nextLine();
 			Reminder reminder = new Reminder(reminderName, LocalDate.parse(reminderDate));
-			notesService.addReminder(selectedNote, reminder);
+			Reminder newReminder = notesService.addReminder(selectedNote, reminder);
+			config.addReminderId(newReminder.getId());
 			System.out.println("Reminder added successfully.");
 			return true;
 		}

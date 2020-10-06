@@ -7,13 +7,15 @@ import org.json.JSONObject;
 import static eu.mytthew.notepad.auth.HashPassword.hashPassword;
 
 public class FileAuthService implements IAuthService {
-	private final IdProvider userProvider = new IdProvider();
+	private Config config;
+	private final IdProvider userProvider = new IdProvider(config.getUserId());
 	private final FileOperation file;
 	@Getter
 	private User loggedUser;
 
-	public FileAuthService(FileOperation file) {
+	public FileAuthService(FileOperation file, Config config) {
 		this.file = file;
+		this.config = config;
 	}
 
 	@Override
@@ -23,13 +25,14 @@ public class FileAuthService implements IAuthService {
 
 	@Override
 	public boolean login(String nickname, String password) {
+		User user = new User(0, "", "");
 		JSONObject obj = file.openFile(nickname);
-		String p = obj.getString("pass");
-		if (!p.equals(hashPassword(password))) {
-			return false;
+		user.deserialize(obj);
+		if (user.getPassword().equals(hashPassword(password))) {
+			loggedUser = user;
+			return true;
 		}
-		loggedUser = new User(nickname, hashPassword(password));
-		return true;
+		return false;
 	}
 
 	@Override
@@ -64,11 +67,9 @@ public class FileAuthService implements IAuthService {
 
 	@Override
 	public User addUser(String nickname, String password) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("nick", nickname);
-		jsonObject.put("pass", hashPassword(password));
-		file.createFile(nickname, jsonObject);
-		return new User(userProvider.next(), nickname, hashPassword(password));
+		User user = new User(userProvider.next(), nickname, hashPassword(password));
+		file.createFile(nickname, user.serialize());
+		return user;
 	}
 
 	@Override

@@ -11,18 +11,21 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class FileNotesService implements INotesService {
+	private final Config config;
 	private final IdProvider noteProvider = new IdProvider();
 	private final IdProvider reminderProvider = new IdProvider();
 	FileOperation reminderOperation = new FileOperation("reminders");
 	private final FileOperation file;
 
-	public FileNotesService(FileOperation file) {
+	public FileNotesService(FileOperation file, Config config) {
 		this.file = file;
+		this.config = config;
 	}
 
 	@Override
 	public Note addNote(User user, Note note) {
-		Note newNote = new Note(noteProvider.next(), note.getTitle(), note.getContent(), note.getNoteDate(), user.getId());
+		int id = noteProvider.next();
+		Note newNote = new Note(id, note.getTitle(), note.getContent(), note.getNoteDate(), user.getId());
 		file.createFile(String.valueOf(newNote.getId()), newNote.serialize());
 		return newNote;
 	}
@@ -56,9 +59,9 @@ public class FileNotesService implements INotesService {
 	@Override
 	public List<Reminder> getAllReminders(int noteId) {
 		List<Reminder> reminders = new ArrayList<>();
-		Stream<Path> pathStream = file.filesStream("reminders");
+		Stream<Path> pathStream = reminderOperation.filesStream("reminders");
 		pathStream.forEach(filename -> {
-			JSONObject jsonObject = file.openFile(filename.getFileName().toString());
+			JSONObject jsonObject = reminderOperation.openFile(filename.getFileName().toString());
 			Reminder reminder = new Reminder(0, "", null, 0);
 			reminder.deserialize(jsonObject);
 			if (reminder.getNoteId() == noteId) {
@@ -71,7 +74,7 @@ public class FileNotesService implements INotesService {
 	@Override
 	public Reminder addReminder(int noteId, Reminder reminder) {
 		Reminder newReminder = new Reminder(reminderProvider.next(), reminder.getName(), reminder.getDate(), noteId);
-		file.createFile(String.valueOf(newReminder.getId()), newReminder.serialize());
+		reminderOperation.createFile(String.valueOf(newReminder.getId()), newReminder.serialize());
 		return newReminder;
 	}
 
@@ -81,8 +84,8 @@ public class FileNotesService implements INotesService {
 
 	@Override
 	public boolean removeReminder(int noteId, int reminderId) {
-		if (file.fileExist(String.valueOf(reminderId))) {
-			file.deleteFile(String.valueOf(reminderId));
+		if (reminderOperation.fileExist(String.valueOf(reminderId))) {
+			reminderOperation.deleteFile(String.valueOf(reminderId));
 			return true;
 		}
 		return false;
