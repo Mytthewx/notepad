@@ -23,12 +23,15 @@ public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
 	private static final Config config = new Config();
 	private static final FileOperation fileOperation = new FileOperation("config");
-	private static final INotesService notesService = new FileNotesService(new FileOperation("notes"), config);
-	private static final IAuthService authService = new FileAuthService(new FileOperation("users"), config);
+	private static final INotesService notesService;
+	private static final IAuthService authService;
 
 	static {
 		config.deserialize(fileOperation.openFile("config"));
+		authService = new FileAuthService(new FileOperation("users"), config);
+		notesService = new FileNotesService(new FileOperation("notes"), config);
 	}
+
 
 	public static void main(String[] args) {
 		List<MenuItem> loginMenuItems = new ArrayList<>();

@@ -12,14 +12,16 @@ import java.util.stream.Stream;
 
 public class FileNotesService implements INotesService {
 	private final Config config;
-	private final IdProvider noteProvider = new IdProvider();
-	private final IdProvider reminderProvider = new IdProvider();
+	private final IdProvider noteProvider;
+	private final IdProvider reminderProvider;
 	FileOperation reminderOperation = new FileOperation("reminders");
 	private final FileOperation file;
 
 	public FileNotesService(FileOperation file, Config config) {
 		this.file = file;
 		this.config = config;
+		noteProvider = new IdProvider(config.getNoteId());
+		reminderProvider = new IdProvider(config.getReminderId());
 	}
 
 	@Override

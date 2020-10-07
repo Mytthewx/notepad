@@ -8,7 +8,7 @@ import static eu.mytthew.notepad.auth.HashPassword.hashPassword;
 
 public class FileAuthService implements IAuthService {
 	private Config config;
-	private final IdProvider userProvider = new IdProvider(config.getUserId());
+	private final IdProvider userProvider;
 	private final FileOperation file;
 	@Getter
 	private User loggedUser;
@@ -16,6 +16,7 @@ public class FileAuthService implements IAuthService {
 	public FileAuthService(FileOperation file, Config config) {
 		this.file = file;
 		this.config = config;
+		userProvider = new IdProvider(config.getUserId());
 	}
 
 	@Override
