@@ -20,6 +20,7 @@ public class FileOperation {
 	String parent;
 
 	public Stream<Path> filesStream(String path) {
+		parent = "reminders";
 		return Optional.of(path)
 				.map(File::new)
 				.map(File::listFiles)

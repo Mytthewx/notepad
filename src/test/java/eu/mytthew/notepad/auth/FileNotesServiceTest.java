@@ -27,7 +27,8 @@ class FileNotesServiceTest {
 		// given
 		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		INotesService notesService = new FileNotesService(fileOperation, config);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
 		IAuthService authService = new RuntimeAuthService();
 		User user = authService.addUser("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-10-15"));
@@ -45,7 +46,8 @@ class FileNotesServiceTest {
 		// given
 		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		INotesService notesService = new FileNotesService(fileOperation, config);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
 		IAuthService authService = new RuntimeAuthService();
 		User user = authService.addUser("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-10-04"));
@@ -64,7 +66,8 @@ class FileNotesServiceTest {
 		// given
 		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		INotesService notesService = new FileNotesService(fileOperation, config);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
 		IAuthService authService = new RuntimeAuthService();
 		User user = authService.addUser("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-10-04"));
@@ -83,7 +86,8 @@ class FileNotesServiceTest {
 		// given
 		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		INotesService notesService = new FileNotesService(fileOperation, config);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
 		IAuthService authService = new RuntimeAuthService();
 		User user = authService.addUser("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-10-04"));
@@ -102,7 +106,8 @@ class FileNotesServiceTest {
 		// given
 		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		INotesService notesService = new FileNotesService(fileOperation, config);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
 		IAuthService authService = new RuntimeAuthService();
 		User user = authService.addUser("Mytthew", "123");
 		when(fileOperation.filesStream(any())).thenReturn(Stream.of());
@@ -119,7 +124,8 @@ class FileNotesServiceTest {
 		// given
 		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		INotesService notesService = new FileNotesService(fileOperation, config);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
 		IAuthService authService = new RuntimeAuthService();
 		User user = authService.addUser("Mytthew", "123");
 		Note note = new Note("Title", "Content", LocalDate.parse("2020-10-15"));
@@ -145,7 +151,8 @@ class FileNotesServiceTest {
 		// given
 		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		INotesService notesService = new FileNotesService(fileOperation, config);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
 		when(fileOperation.fileExist(any())).thenReturn(false);
 		Reminder reminder = new Reminder("Name", LocalDate.parse("2020-10-15"));
 
@@ -161,7 +168,8 @@ class FileNotesServiceTest {
 		// given
 		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		INotesService notesService = new FileNotesService(fileOperation, config);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
 		when(fileOperation.fileExist(any())).thenReturn(false);
 		Reminder reminder = new Reminder("Name", LocalDate.parse("2020-10-15"));
 		notesService.addReminder(0, reminder);
@@ -179,9 +187,10 @@ class FileNotesServiceTest {
 		// given
 		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		INotesService notesService = new FileNotesService(fileOperation, config);
-		IAuthService authService = new RuntimeAuthService();
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
 		when(fileOperation.fileExist(eq("0"))).thenReturn(true);
+		when(reminderOperation.fileExist(eq("0"))).thenReturn(true);
 		Reminder reminder = new Reminder("Name", LocalDate.parse("2020-10-15"));
 		notesService.addReminder(0, reminder);
 
@@ -197,7 +206,8 @@ class FileNotesServiceTest {
 		// given
 		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		INotesService notesService = new FileNotesService(fileOperation, config);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
 		when(fileOperation.fileExist(eq("0"))).thenReturn(false);
 
 		// when
@@ -205,5 +215,89 @@ class FileNotesServiceTest {
 
 		// then
 		assertFalse(result);
+	}
+
+	@Test
+	void getAllRemindersTestEmptyStream() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(fileOperation.openFile(any())).thenReturn(jsonObject);
+		when(reminderOperation.filesStream(any())).thenReturn(Stream.empty());
+		when(reminderOperation.openFile(any())).thenReturn(jsonObject);
+
+		// when
+		List<Reminder> result = notesService.getAllReminders(0);
+
+		// then
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	void getAllRemindersTestWithReminders() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(fileOperation.openFile(any())).thenReturn(jsonObject);
+		when(reminderOperation.filesStream(any())).thenReturn(Stream.of(Paths.get(".")));
+		when(reminderOperation.openFile(any())).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("name"))).thenReturn("Name");
+		when(jsonObject.getString(eq("date"))).thenReturn("2020-10-15");
+		when(jsonObject.getInt(eq("note_id"))).thenReturn(0);
+
+		// when
+		List<Reminder> result = notesService.getAllReminders(0);
+
+		// then
+		assertEquals(1, result.size());
+	}
+
+	@Test
+	void getAllRemindersTestWrongNoteId() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(fileOperation.openFile(any())).thenReturn(jsonObject);
+		when(reminderOperation.filesStream(any())).thenReturn(Stream.of(Paths.get(".")));
+		when(reminderOperation.openFile(any())).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("name"))).thenReturn("Name");
+		when(jsonObject.getString(eq("date"))).thenReturn("2020-10-15");
+		when(jsonObject.getInt(eq("note_id"))).thenReturn(0);
+
+		// when
+		List<Reminder> result = notesService.getAllReminders(1);
+
+		// then
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	void editNoteTest() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		IAuthService authService = new RuntimeAuthService();
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-10-15"));
+		User user = authService.addUser("Mytthew", "123");
+		notesService.addNote(user, note);
+		JSONObject jsonObject = mock(JSONObject.class);
+
+		// when
+		notesService.editNote(0, "new title", "new content", "2020-10-16");
+
+		// then
 	}
 }

@@ -29,7 +29,7 @@ public class Main {
 	static {
 		config.deserialize(fileOperation.openFile("config"));
 		authService = new FileAuthService(new FileOperation("users"), config);
-		notesService = new FileNotesService(new FileOperation("notes"), config);
+		notesService = new FileNotesService(new FileOperation("notes"), new FileOperation("reminders"), config);
 	}
 
 
@@ -134,7 +134,7 @@ public class Main {
 		if (user == null) {
 			System.out.println("This nickname is already taken.");
 		} else {
-			config.addUserId(user.getId() + 1);
+			config.addUserId(user.getId());
 			System.out.println("User added successfully.");
 		}
 	}
@@ -151,7 +151,7 @@ public class Main {
 			date = String.valueOf(LocalDate.now());
 			Note note = new Note(title, content, LocalDate.parse(date));
 			Note newNote = notesService.addNote(loggedUser, note);
-			config.addNoteId(newNote.getId() + 1);
+			config.addNoteId(newNote.getId());
 			System.out.println("Note added successfully!");
 		} else if (date.matches("^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$")) {
 			Note note = new Note(title, content, LocalDate.parse(date));
@@ -243,7 +243,7 @@ public class Main {
 			String reminderDate = scanner.nextLine();
 			Reminder reminder = new Reminder(reminderName, LocalDate.parse(reminderDate));
 			Reminder newReminder = notesService.addReminder(selectedNote, reminder);
-			config.addReminderId(newReminder.getId() + 1);
+			config.addReminderId(newReminder.getId());
 			System.out.println("Reminder added successfully.");
 			return true;
 		}

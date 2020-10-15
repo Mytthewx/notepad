@@ -16,12 +16,13 @@ public class FileNotesService implements INotesService {
 	private final Config config;
 	private final IdProvider noteProvider;
 	private final IdProvider reminderProvider;
-	FileOperation reminderOperation = new FileOperation("reminders");
+	private final FileOperation reminderOperation;
 	private final FileOperation file;
 
-	public FileNotesService(FileOperation file, Config config) {
+	public FileNotesService(FileOperation file, FileOperation reminderOperation, Config config) {
 		this.file = file;
 		this.config = config;
+		this.reminderOperation = reminderOperation;
 		noteProvider = new IdProvider(config.getNoteId());
 		reminderProvider = new IdProvider(config.getReminderId());
 	}
