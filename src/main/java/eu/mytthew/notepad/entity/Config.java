@@ -1,5 +1,7 @@
-package eu.mytthew.notepad.auth;
+package eu.mytthew.notepad.entity;
 
+import eu.mytthew.notepad.auth.FileOperation;
+import eu.mytthew.notepad.auth.JSONSerializable;
 import org.json.JSONObject;
 
 

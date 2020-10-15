@@ -1,5 +1,6 @@
 package eu.mytthew.notepad.auth;
 
+import eu.mytthew.notepad.entity.Config;
 import eu.mytthew.notepad.entity.User;
 import lombok.Getter;
 import org.json.JSONObject;

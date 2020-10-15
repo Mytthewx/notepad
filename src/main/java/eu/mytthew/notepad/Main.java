@@ -1,11 +1,11 @@
 package eu.mytthew.notepad;
 
-import eu.mytthew.notepad.auth.Config;
 import eu.mytthew.notepad.auth.FileAuthService;
 import eu.mytthew.notepad.auth.FileNotesService;
 import eu.mytthew.notepad.auth.FileOperation;
 import eu.mytthew.notepad.auth.IAuthService;
 import eu.mytthew.notepad.auth.INotesService;
+import eu.mytthew.notepad.entity.Config;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.Reminder;
 import eu.mytthew.notepad.entity.User;
