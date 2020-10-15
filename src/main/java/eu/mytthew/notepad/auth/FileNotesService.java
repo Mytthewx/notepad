@@ -6,6 +6,7 @@ import eu.mytthew.notepad.entity.User;
 import org.json.JSONObject;
 
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -34,6 +35,22 @@ public class FileNotesService implements INotesService {
 
 	@Override
 	public void editNote(int noteId, String newTitle, String newContent, String newDate) {
+		Note note = new Note(noteId, "", "", null, 0);
+		note.deserialize(file.openFile(String.valueOf(noteId)));
+		if (newTitle.equals("")) {
+			newTitle = note.getTitle();
+		}
+		if (newContent.equals("")) {
+			newContent = note.getContent();
+		}
+		if (newDate.equals("")) {
+			newDate = note.getNoteDate().toString();
+		}
+		file.deleteFile(String.valueOf(noteId));
+		note.setTitle(newTitle);
+		note.setContent(newContent);
+		note.setNoteDate(LocalDate.parse(newDate));
+		file.createFile(String.valueOf(noteId), note.serialize());
 	}
 
 	@Override
@@ -82,6 +99,18 @@ public class FileNotesService implements INotesService {
 
 	@Override
 	public void editReminder(int reminderId, String newName, String newDate) {
+		Reminder reminder = new Reminder(reminderId, "", null, 0);
+		reminder.deserialize(file.openFile(String.valueOf(reminderId)));
+		if (newName.equals("")) {
+			newName = reminder.getName();
+		}
+		if (newDate.equals("")) {
+			newDate = reminder.getDate().toString();
+		}
+		file.deleteFile(String.valueOf(reminderId));
+		reminder.setName(newName);
+		reminder.setDate(LocalDate.parse(newDate));
+		file.createFile(String.valueOf(reminderId), reminder.serialize());
 	}
 
 	@Override
