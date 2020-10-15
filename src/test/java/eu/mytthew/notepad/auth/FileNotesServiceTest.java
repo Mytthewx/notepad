@@ -2,6 +2,7 @@ package eu.mytthew.notepad.auth;
 
 import eu.mytthew.notepad.entity.Config;
 import eu.mytthew.notepad.entity.Note;
+import eu.mytthew.notepad.entity.Reminder;
 import eu.mytthew.notepad.entity.User;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -137,5 +138,72 @@ class FileNotesServiceTest {
 
 		// then
 		assertEquals(1, result.size());
+	}
+
+	@Test
+	void addFirstReminderTest() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, config);
+		when(fileOperation.fileExist(any())).thenReturn(false);
+		Reminder reminder = new Reminder("Name", LocalDate.parse("2020-10-15"));
+
+		// when
+		Reminder result = notesService.addReminder(0, reminder);
+
+		// then
+		assertEquals(reminder, result);
+	}
+
+	@Test
+	void addAnotherReminderTest() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, config);
+		when(fileOperation.fileExist(any())).thenReturn(false);
+		Reminder reminder = new Reminder("Name", LocalDate.parse("2020-10-15"));
+		notesService.addReminder(0, reminder);
+		Reminder reminder2 = new Reminder(1, "Name", LocalDate.parse("2020-10-15"), 0);
+
+		// when
+		Reminder result = notesService.addReminder(0, reminder2);
+
+		// then
+		assertEquals(reminder2, result);
+	}
+
+	@Test
+	void removeReminderTrueTest() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, config);
+		IAuthService authService = new RuntimeAuthService();
+		when(fileOperation.fileExist(eq("0"))).thenReturn(true);
+		Reminder reminder = new Reminder("Name", LocalDate.parse("2020-10-15"));
+		notesService.addReminder(0, reminder);
+
+		// when
+		boolean result = notesService.removeReminder(0, 0);
+
+		// then
+		assertTrue(result);
+	}
+
+	@Test
+	void removeReminderFalseTest() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, config);
+		when(fileOperation.fileExist(eq("0"))).thenReturn(false);
+
+		// when
+		boolean result = notesService.removeReminder(0, 0);
+
+		// then
+		assertFalse(result);
 	}
 }
