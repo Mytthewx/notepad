@@ -102,17 +102,17 @@ public class FileNotesService implements INotesService {
 	@Override
 	public void editReminder(int reminderId, String newName, String newDate) {
 		Reminder reminder = new Reminder(reminderId, "", null, 0);
-		reminder.deserialize(file.openFile(String.valueOf(reminderId)));
+		reminder.deserialize(reminderOperation.openFile(String.valueOf(reminderId)));
 		if (newName.equals("")) {
 			newName = reminder.getName();
 		}
 		if (newDate.equals("")) {
 			newDate = reminder.getDate().toString();
 		}
-		file.deleteFile(String.valueOf(reminderId));
+		reminderOperation.deleteFile(String.valueOf(reminderId));
 		reminder.setName(newName);
 		reminder.setDate(LocalDate.parse(newDate));
-		file.createFile(String.valueOf(reminderId), reminder.serialize());
+		reminderOperation.createFile(String.valueOf(reminderId), reminder.serialize());
 	}
 
 	@Override
