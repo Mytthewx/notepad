@@ -1,15 +1,20 @@
-package eu.mytthew.notepad.entity;
+package eu.mytthew.notepad.auth;
 
-import eu.mytthew.notepad.auth.FileOperation;
-import eu.mytthew.notepad.auth.JSONSerializable;
+import lombok.Getter;
 import org.json.JSONObject;
 
-
 public class Config implements JSONSerializable {
-	FileOperation fileOperation = new FileOperation("config");
+	FileOperation fileOperation;
+	@Getter
 	int userId;
+	@Getter
 	int noteId;
+	@Getter
 	int reminderId;
+
+	public Config(FileOperation fileOperation) {
+		this.fileOperation = fileOperation;
+	}
 
 	public void addUserId(int id) {
 		userId = id;
@@ -24,18 +29,6 @@ public class Config implements JSONSerializable {
 	public void addReminderId(int id) {
 		reminderId = id;
 		saveConfig();
-	}
-
-	public int getUserId() {
-		return userId;
-	}
-
-	public int getNoteId() {
-		return noteId;
-	}
-
-	public int getReminderId() {
-		return reminderId;
 	}
 
 	public void saveConfig() {

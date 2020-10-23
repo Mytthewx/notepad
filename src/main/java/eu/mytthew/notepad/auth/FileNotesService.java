@@ -1,6 +1,5 @@
 package eu.mytthew.notepad.auth;
 
-import eu.mytthew.notepad.entity.Config;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.Reminder;
 import eu.mytthew.notepad.entity.User;
@@ -85,9 +84,7 @@ public class FileNotesService implements INotesService {
 			JSONObject jsonObject = reminderOperation.openFile(filename.getFileName().toString());
 			Reminder reminder = new Reminder(0, "", null, 0);
 			reminder.deserialize(jsonObject);
-			if (reminder.getNoteId() == noteId) {
-				reminders.add(reminder);
-			}
+			reminders.add(reminder);
 		});
 		return reminders;
 	}
@@ -142,8 +139,13 @@ public class FileNotesService implements INotesService {
 		}
 		return getAllReminders(noteId)
 				.stream()
-				.filter(reminder -> reminder.getId() == reminderId)
-				.anyMatch(reminder -> reminder.getNoteId() == noteId);
+				.filter(
+						reminder ->
+								reminder
+										.getNoteId()
+										==
+										noteId)
+				.anyMatch(reminder -> reminder.getId() == reminderId);
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package eu.mytthew.notepad.auth;
 
-import eu.mytthew.notepad.entity.Config;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.Reminder;
 import eu.mytthew.notepad.entity.User;
@@ -263,29 +262,6 @@ class FileNotesServiceTest {
 	}
 
 	@Test
-	void getAllRemindersTestWrongNoteId() {
-		// given
-		Config config = mock(Config.class);
-		FileOperation fileOperation = mock(FileOperation.class);
-		FileOperation reminderOperation = mock(FileOperation.class);
-		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
-		JSONObject jsonObject = mock(JSONObject.class);
-		when(fileOperation.openFile(any())).thenReturn(jsonObject);
-		when(reminderOperation.filesStream(any())).thenReturn(Stream.of(Paths.get(".")));
-		when(reminderOperation.openFile(any())).thenReturn(jsonObject);
-		when(jsonObject.getInt(eq("id"))).thenReturn(0);
-		when(jsonObject.getString(eq("name"))).thenReturn("Name");
-		when(jsonObject.getString(eq("date"))).thenReturn("2020-10-15");
-		when(jsonObject.getInt(eq("note_id"))).thenReturn(0);
-
-		// when
-		List<Reminder> result = notesService.getAllReminders(1);
-
-		// then
-		assertEquals(0, result.size());
-	}
-
-	@Test
 	void editNoteTest() {
 		// given
 		Config config = mock(Config.class);
@@ -490,6 +466,253 @@ class FileNotesServiceTest {
 
 		// when
 		boolean result = notesService.noteWithThisIdExistAndBelongToUser(0, user);
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	void reminderWithThisIdExistAndBelongToNoteTrueTest() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(reminderOperation.fileExist(any())).thenReturn(true);
+		when(reminderOperation.filesStream(any())).thenReturn(Stream.of(Paths.get(".")));
+		when(reminderOperation.openFile(any())).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("name"))).thenReturn("Name");
+		when(jsonObject.getString(eq("date"))).thenReturn("2020-10-21");
+		when(jsonObject.getInt(eq("note_id"))).thenReturn(0);
+
+		// when
+		boolean result = notesService.reminderWithThisIdExistAndBelongToNote(0, 0);
+
+		// then
+		assertTrue(result);
+	}
+
+	@Test
+	void reminderWithThisIdExistAndBelongToNoteFalseFileNotExist() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		when(reminderOperation.fileExist(any())).thenReturn(false);
+
+		// when
+		boolean result = notesService.reminderWithThisIdExistAndBelongToNote(0, 0);
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	void reminderWithThisIdExistAndBelongToNoteFalseTestWrongReminderId() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(reminderOperation.fileExist(any())).thenReturn(true);
+		when(reminderOperation.filesStream(any())).thenReturn(Stream.of(Paths.get(".")));
+		when(reminderOperation.openFile(any())).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("name"))).thenReturn("Name");
+		when(jsonObject.getString(eq("date"))).thenReturn("2020-10-21");
+		when(jsonObject.getInt(eq("note_id"))).thenReturn(0);
+
+		// when
+		boolean result = notesService.reminderWithThisIdExistAndBelongToNote(1, 0);
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	void reminderWithThisIdExistAndBelongToNoteFalseTestWrongNoteId() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(reminderOperation.fileExist(any())).thenReturn(true);
+		when(reminderOperation.filesStream(any())).thenReturn(Stream.of(Paths.get(".")));
+		when(reminderOperation.openFile(any())).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("name"))).thenReturn("Name");
+		when(jsonObject.getString(eq("date"))).thenReturn("2020-10-21");
+		when(jsonObject.getInt(eq("note_id"))).thenReturn(0);
+
+		// when
+		boolean result = notesService.reminderWithThisIdExistAndBelongToNote(0, 1);
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	void reminderWithThisIdExistAndBelongToNoteFalseTestEmptyStream() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(reminderOperation.fileExist(any())).thenReturn(true);
+		when(reminderOperation.filesStream(any())).thenReturn(Stream.empty());
+
+		// when
+		boolean result = notesService.reminderWithThisIdExistAndBelongToNote(0, 0);
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	void userContainsAnyNotesTrueTest() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		IAuthService authService = new RuntimeAuthService();
+		User user = authService.addUser("Mytthew", "123");
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(fileOperation.fileExist(any())).thenReturn(true);
+		when(fileOperation.filesStream(any())).thenReturn(Stream.of(Paths.get(".")));
+		when(fileOperation.openFile(any())).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("title"))).thenReturn("Title");
+		when(jsonObject.getString(eq("content"))).thenReturn("Content");
+		when(jsonObject.getString(eq("date"))).thenReturn("2020-10-21");
+		when(jsonObject.getInt(eq("user_id"))).thenReturn(0);
+
+		// when
+		boolean result = notesService.userContainsAnyNotes(user);
+
+		// then
+		assertTrue(result);
+	}
+
+	@Test
+	void userContainsAnyNotesTrueTestWrongUserId() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		IAuthService authService = new RuntimeAuthService();
+		User user = authService.addUser("Mytthew", "123");
+		User user2 = authService.addUser("Andret", "12345");
+		JSONObject jsonObject = mock(JSONObject.class);
+		Note note = new Note("Title", "Content", LocalDate.parse("2020-10-21"));
+		when(fileOperation.fileExist(any())).thenReturn(true);
+		when(fileOperation.filesStream(any())).thenReturn(Stream.of(Paths.get(".")));
+		when(fileOperation.openFile(any())).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("title"))).thenReturn("Title");
+		when(jsonObject.getString(eq("content"))).thenReturn("Content");
+		when(jsonObject.getString(eq("date"))).thenReturn("2020-10-21");
+		when(jsonObject.getInt(eq("user_id"))).thenReturn(0);
+
+		// when
+		boolean result = notesService.userContainsAnyNotes(user2);
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	void userContainsAnyNotesFalseTestEmptyStream() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		IAuthService authService = new RuntimeAuthService();
+		User user = authService.addUser("Mytthew", "123");
+		when(fileOperation.fileExist(any())).thenReturn(true);
+		when(fileOperation.filesStream(any())).thenReturn(Stream.empty());
+
+		// when
+		boolean result = notesService.userContainsAnyNotes(user);
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	void noteContainsAnyRemindersTrueTest() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(fileOperation.fileExist(any())).thenReturn(true);
+		when(fileOperation.filesStream(any())).thenReturn(Stream.of(Paths.get(".")));
+		when(fileOperation.openFile(any())).thenReturn(jsonObject);
+		when(reminderOperation.filesStream(any())).thenReturn(Stream.of(Paths.get(".")));
+		when(reminderOperation.openFile(any())).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("name"))).thenReturn("Name");
+		when(jsonObject.getString(eq("date"))).thenReturn("2020-10-21");
+		when(jsonObject.getInt(eq("note_id"))).thenReturn(0);
+
+		// when
+		boolean result = notesService.noteContainsAnyReminders(0);
+
+		// then
+		assertTrue(result);
+	}
+
+	@Test
+	void noteContainsAnyRemindersFalseTestWrongNoteId() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(fileOperation.fileExist(any())).thenReturn(true);
+		when(fileOperation.filesStream(any())).thenReturn(Stream.of(Paths.get(".")));
+		when(fileOperation.openFile(any())).thenReturn(jsonObject);
+		when(reminderOperation.filesStream(any())).thenReturn(Stream.of(Paths.get(".")));
+		when(reminderOperation.openFile(any())).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("name"))).thenReturn("Name");
+		when(jsonObject.getString(eq("date"))).thenReturn("2020-10-21");
+		when(jsonObject.getInt(eq("note_id"))).thenReturn(0);
+
+		// when
+		boolean result = notesService.noteContainsAnyReminders(1);
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	void noteContainsAnyRemindersFalseTestEmptyStream() {
+		// given
+		Config config = mock(Config.class);
+		FileOperation fileOperation = mock(FileOperation.class);
+		FileOperation reminderOperation = mock(FileOperation.class);
+		INotesService notesService = new FileNotesService(fileOperation, reminderOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		Reminder reminder = new Reminder("Name", LocalDate.parse("2020-10-21"));
+		when(fileOperation.fileExist(any())).thenReturn(true);
+		when(fileOperation.filesStream(any())).thenReturn(Stream.of(Paths.get(".")));
+		when(fileOperation.openFile(any())).thenReturn(jsonObject);
+		when(reminderOperation.filesStream(any())).thenReturn(Stream.empty());
+
+		// when
+		boolean result = notesService.noteContainsAnyReminders(0);
 
 		// then
 		assertFalse(result);

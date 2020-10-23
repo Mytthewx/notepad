@@ -1,11 +1,11 @@
 package eu.mytthew.notepad;
 
+import eu.mytthew.notepad.auth.Config;
 import eu.mytthew.notepad.auth.FileAuthService;
 import eu.mytthew.notepad.auth.FileNotesService;
 import eu.mytthew.notepad.auth.FileOperation;
 import eu.mytthew.notepad.auth.IAuthService;
 import eu.mytthew.notepad.auth.INotesService;
-import eu.mytthew.notepad.entity.Config;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.Reminder;
 import eu.mytthew.notepad.entity.User;
@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
-	private static final Config config = new Config();
 	private static final FileOperation fileOperation = new FileOperation("config");
+	private static final Config config = new Config(fileOperation);
 	private static final INotesService notesService;
 	private static final IAuthService authService;
 
@@ -109,6 +109,7 @@ public class Main {
 				"\nContent: '" + note.getContent() + '\'' +
 				reminders
 						.stream()
+						.filter(reminder -> reminder.getNoteId() == note.getId())
 						.filter(reminder -> reminder.getDate().equals(LocalDate.now()))
 						.map(reminder -> "\nReminder ID: " + reminder.getId() +
 								"\nReminder name: " + reminder.getName())
