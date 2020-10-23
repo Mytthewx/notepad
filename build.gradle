@@ -57,7 +57,7 @@ jacocoTestReport {
 	reports.xml.enabled true
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(dir: it, exclude: ['eu/mytthew/notepad/Main*', 'eu/mytthew/notepad/auth/FileOperation*', 'eu/mytthew/notepad/MenuItem*'])
+			fileTree(dir: it, exclude: ['eu/mytthew/notepad/Main*', 'eu/mytthew/notepad/utils/FileOperation*', 'eu/mytthew/notepad/MenuItem*'])
 		}))
 	}
 }
@@ -71,7 +71,7 @@ jacocoTestCoverageVerification {
 				value = 'COVEREDRATIO'
 				minimum = 1.0
 			}
-			excludes = ['eu.mytthew.notepad.Main*', 'eu.mytthew.notepad.auth.FileOperation*', 'eu.mytthew.notepad.MenuItem*']
+			excludes = ['eu.mytthew.notepad.Main*', 'eu.mytthew.notepad.utils.FileOperation*', 'eu.mytthew.notepad.MenuItem*']
 		}
 	}
 }
