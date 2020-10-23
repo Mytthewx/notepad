@@ -1,8 +1,9 @@
-package eu.mytthew.notepad.auth;
+package eu.mytthew.notepad.notes;
 
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.Reminder;
 import eu.mytthew.notepad.entity.User;
+import eu.mytthew.notepad.utils.IdProvider;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

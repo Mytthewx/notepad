@@ -1,6 +1,7 @@
 package eu.mytthew.notepad.auth;
 
 import eu.mytthew.notepad.entity.User;
+import eu.mytthew.notepad.utils.IdProvider;
 import lombok.Getter;
 
 import java.util.ArrayList;

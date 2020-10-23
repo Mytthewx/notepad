@@ -1,6 +1,6 @@
 package eu.mytthew.notepad.entity;
 
-import eu.mytthew.notepad.auth.JSONSerializable;
+import eu.mytthew.notepad.utils.JSONSerializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.json.JSONObject;

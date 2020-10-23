@@ -1,4 +1,4 @@
-package eu.mytthew.notepad.auth;
+package eu.mytthew.notepad.utils;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;

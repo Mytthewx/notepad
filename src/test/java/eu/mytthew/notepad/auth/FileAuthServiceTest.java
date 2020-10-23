@@ -1,5 +1,7 @@
 package eu.mytthew.notepad.auth;
 
+import eu.mytthew.notepad.utils.Config;
+import eu.mytthew.notepad.utils.FileOperation;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.jupiter.api.Test;

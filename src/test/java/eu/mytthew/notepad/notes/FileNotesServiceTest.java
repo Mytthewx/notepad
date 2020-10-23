@@ -1,8 +1,12 @@
-package eu.mytthew.notepad.auth;
+package eu.mytthew.notepad.notes;
 
+import eu.mytthew.notepad.auth.IAuthService;
+import eu.mytthew.notepad.auth.RuntimeAuthService;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.Reminder;
 import eu.mytthew.notepad.entity.User;
+import eu.mytthew.notepad.utils.Config;
+import eu.mytthew.notepad.utils.FileOperation;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

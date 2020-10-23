@@ -1,14 +1,14 @@
 package eu.mytthew.notepad;
 
-import eu.mytthew.notepad.auth.Config;
 import eu.mytthew.notepad.auth.FileAuthService;
-import eu.mytthew.notepad.auth.FileNotesService;
-import eu.mytthew.notepad.auth.FileOperation;
 import eu.mytthew.notepad.auth.IAuthService;
-import eu.mytthew.notepad.auth.INotesService;
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.Reminder;
 import eu.mytthew.notepad.entity.User;
+import eu.mytthew.notepad.notes.FileNotesService;
+import eu.mytthew.notepad.notes.INotesService;
+import eu.mytthew.notepad.utils.Config;
+import eu.mytthew.notepad.utils.FileOperation;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

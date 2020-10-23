@@ -1,4 +1,4 @@
-package eu.mytthew.notepad.auth;
+package eu.mytthew.notepad.utils;
 
 import lombok.AllArgsConstructor;
 import org.json.JSONObject;

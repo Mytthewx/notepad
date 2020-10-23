@@ -1,4 +1,4 @@
-package eu.mytthew.notepad.auth;
+package eu.mytthew.notepad.notes;
 
 import eu.mytthew.notepad.entity.Note;
 import eu.mytthew.notepad.entity.Reminder;
