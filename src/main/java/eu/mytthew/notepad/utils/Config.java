@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.json.JSONObject;
 
 public class Config implements JSONSerializable {
-	FileOperation fileOperation;
+	private final FileOperation fileOperation;
 	@Getter
 	int userId;
 	@Getter

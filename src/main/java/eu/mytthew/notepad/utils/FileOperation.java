@@ -17,10 +17,9 @@ import java.util.stream.Stream;
 
 @AllArgsConstructor
 public class FileOperation {
-	String parent;
+	private String parent;
 
 	public Stream<Path> filesStream(String path) {
-		parent = "reminders";
 		return Optional.of(path)
 				.map(File::new)
 				.map(File::listFiles)

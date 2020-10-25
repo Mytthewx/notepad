@@ -86,10 +86,10 @@ public class RuntimeNotesService implements INotesService {
 				.findAny();
 		optionalReminder.ifPresent(x -> {
 			if (!newName.equals("")) {
-				optionalReminder.get().setName(newName);
+				x.setName(newName);
 			}
 			if (!newDate.equals("")) {
-				optionalReminder.get().setDate(LocalDate.parse(newDate));
+				x.setDate(LocalDate.parse(newDate));
 			}
 		});
 	}
@@ -114,8 +114,7 @@ public class RuntimeNotesService implements INotesService {
 		}
 		return noteList
 				.stream()
-				.anyMatch(note -> note.getId() == noteId
-						&& note.getUserId() == user.getId());
+				.anyMatch(note -> note.getId() == noteId && note.getUserId() == user.getId());
 	}
 
 	@Override

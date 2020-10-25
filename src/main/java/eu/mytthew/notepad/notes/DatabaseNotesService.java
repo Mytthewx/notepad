@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseNotesService implements INotesService {
-	Connection connection;
+	private final Connection connection;
 
 	public DatabaseNotesService(Connection connection) {
 		this.connection = connection;

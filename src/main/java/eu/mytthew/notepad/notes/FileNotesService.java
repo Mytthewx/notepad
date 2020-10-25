@@ -10,8 +10,8 @@ import org.json.JSONObject;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileNotesService implements INotesService {
@@ -68,28 +68,24 @@ public class FileNotesService implements INotesService {
 
 	@Override
 	public List<Note> getAllNotes(User user) {
-		List<Note> notes = new ArrayList<>();
 		Stream<Path> pathStream = file.filesStream("notes");
-		pathStream.forEach(filename -> {
+		return pathStream.map(filename -> {
 			JSONObject jsonObject = file.openFile(filename.getFileName().toString());
 			Note note = new Note(0, "", "", null, 0);
 			note.deserialize(jsonObject);
-			notes.add(note);
-		});
-		return notes;
+			return note;
+		}).collect(Collectors.toUnmodifiableList());
 	}
 
 	@Override
 	public List<Reminder> getAllReminders(int noteId) {
-		List<Reminder> reminders = new ArrayList<>();
 		Stream<Path> pathStream = reminderOperation.filesStream("reminders");
-		pathStream.forEach(filename -> {
+		return pathStream.map(filename -> {
 			JSONObject jsonObject = reminderOperation.openFile(filename.getFileName().toString());
 			Reminder reminder = new Reminder(0, "", null, 0);
 			reminder.deserialize(jsonObject);
-			reminders.add(reminder);
-		});
-		return reminders;
+			return reminder;
+		}).collect(Collectors.toUnmodifiableList());
 	}
 
 	@Override
@@ -142,12 +138,7 @@ public class FileNotesService implements INotesService {
 		}
 		return getAllReminders(noteId)
 				.stream()
-				.filter(
-						reminder ->
-								reminder
-										.getNoteId()
-										==
-										noteId)
+				.filter(reminder -> reminder.getNoteId() == noteId)
 				.anyMatch(reminder -> reminder.getId() == reminderId);
 	}
 

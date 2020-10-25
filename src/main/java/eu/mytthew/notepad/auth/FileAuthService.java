@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import static eu.mytthew.notepad.auth.HashPassword.hashPassword;
 
 public class FileAuthService implements IAuthService {
-	private Config config;
+	private final Config config;
 	private final IdProvider userProvider;
 	private final FileOperation file;
 	@Getter
@@ -32,11 +32,11 @@ public class FileAuthService implements IAuthService {
 		User user = new User(0, "", "");
 		JSONObject obj = file.openFile(nickname);
 		user.deserialize(obj);
-		if (user.getPassword().equals(hashPassword(password))) {
-			loggedUser = user;
-			return true;
+		if (!user.getPassword().equals(hashPassword(password))) {
+			return false;
 		}
-		return false;
+		loggedUser = user;
+		return true;
 	}
 
 	@Override

@@ -35,28 +35,29 @@ public class DatabaseAuthService implements IAuthService {
 
 	@Override
 	public boolean login(String nickname, String password) {
-		if (containsNickname(nickname)) {
-			try {
-				String userPasswordSQL = "SELECT password FROM users WHERE login = ?";
-				PreparedStatement userPassword = connection.prepareStatement(userPasswordSQL);
-				userPassword.setString(1, nickname);
-				userPassword.execute();
-				if (userPassword.getResultSet().next()) {
-					if (!userPassword.getResultSet().getString("password").equals(hashPassword(password))) {
-						return false;
-					}
-					String sql = "SELECT * FROM users WHERE login = ?";
-					PreparedStatement preparedStatement = connection.prepareStatement(sql);
-					preparedStatement.setString(1, nickname);
-					preparedStatement.execute();
-					if (preparedStatement.getResultSet().next()) {
-						loggedUser = new User(nickname, hashPassword(password));
-					}
-					return true;
+		if (!containsNickname(nickname)) {
+			return false;
+		}
+		try {
+			String userPasswordSQL = "SELECT password FROM users WHERE login = ?";
+			PreparedStatement userPassword = connection.prepareStatement(userPasswordSQL);
+			userPassword.setString(1, nickname);
+			userPassword.execute();
+			if (userPassword.getResultSet().next()) {
+				if (!userPassword.getResultSet().getString("password").equals(hashPassword(password))) {
+					return false;
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+				String sql = "SELECT * FROM users WHERE login = ?";
+				PreparedStatement preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setString(1, nickname);
+				preparedStatement.execute();
+				if (preparedStatement.getResultSet().next()) {
+					loggedUser = new User(nickname, hashPassword(password));
+				}
+				return true;
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return false;
 	}
