@@ -210,37 +210,34 @@ public class Main {
 		if (!notesService.userContainsAnyNotes(authService.getLoggedUser())) {
 			System.out.println("No notes.");
 			return true;
-		} else {
-			System.out.println("Select note to edit:");
-			int selectedNote = scanner.nextInt();
-			scanner.nextLine();
-			if (notesService.noteWithThisIdExistAndBelongToUser(selectedNote, authService.getLoggedUser())) {
-				System.out.println("New title:");
-				String newTitle = scanner.nextLine();
-				System.out.println("New content:");
-				String newContent = scanner.nextLine();
-				System.out.println("New date:");
-				String newDate = scanner.nextLine();
-				notesService.editNote(selectedNote, newTitle, newContent, newDate);
-				System.out.println("Note changed successfully.");
-			} else {
-				System.out.println("Note with this id doesn't exist.");
-			}
+		}
+		System.out.println("Select note to edit:");
+		int selectedNote = scanner.nextInt();
+		scanner.nextLine();
+		if (notesService.noteWithThisIdExistAndBelongToUser(selectedNote, authService.getLoggedUser())) {
+			System.out.println("New title:");
+			String newTitle = scanner.nextLine();
+			System.out.println("New content:");
+			String newContent = scanner.nextLine();
+			System.out.println("New date:");
+			String newDate = scanner.nextLine();
+			notesService.editNote(selectedNote, newTitle, newContent, newDate);
+			System.out.println("Note changed successfully.");
 			return true;
 		}
+		System.out.println("Note with this id doesn't exist.");
+		return true;
 	}
 
 	public static boolean addReminder(IAuthService authService) {
-		if (!notesService.userContainsAnyNotes(authService.getLoggedUser())) {
-			System.out.println("No notes.");
-			return true;
-		}
-		System.out.println("Select note:");
-		int selectedNote = scanner.nextInt();
-		scanner.nextLine();
-		if (!notesService.noteWithThisIdExistAndBelongToUser(selectedNote, authService.getLoggedUser())) {
-			System.out.println("Wrong note id.");
-		} else {
+		if (notesService.userContainsAnyNotes(authService.getLoggedUser())) {
+			System.out.println("Select note:");
+			int selectedNote = scanner.nextInt();
+			scanner.nextLine();
+			if (!notesService.noteWithThisIdExistAndBelongToUser(selectedNote, authService.getLoggedUser())) {
+				System.out.println("Wrong note id.");
+				return true;
+			}
 			System.out.println("Reminder name:");
 			String reminderName = scanner.nextLine();
 			System.out.println("Reminder date [yyyy-MM-dd]:");
@@ -249,7 +246,9 @@ public class Main {
 			Reminder newReminder = notesService.addReminder(selectedNote, reminder);
 			config.addReminderId(newReminder.getId());
 			System.out.println("Reminder added successfully.");
+			return true;
 		}
+		System.out.println("No notes.");
 		return true;
 	}
 
@@ -262,25 +261,24 @@ public class Main {
 		int selectedNote = scanner.nextInt();
 		scanner.nextLine();
 		if (notesService.noteWithThisIdExistAndBelongToUser(selectedNote, authService.getLoggedUser())) {
-			if (!notesService.noteContainsAnyReminders(selectedNote)) {
-				System.out.println("This note has no reminders.");
-				return true;
-			} else {
+			if (notesService.noteContainsAnyReminders(selectedNote)) {
 				System.out.println("Select reminder:");
 				int selectedReminder = scanner.nextInt();
 				scanner.nextLine();
 				if (!notesService.reminderWithThisIdExistAndBelongToNote(selectedReminder, selectedNote)) {
 					System.out.println("Wrong reminder id.");
-				} else {
-					System.out.println("New reminder name:");
-					String newReminderName = scanner.nextLine();
-					System.out.println("New reminder date [yyyy-MM-dd]:");
-					String newReminderDate = scanner.nextLine();
-					notesService.editReminder(selectedReminder, newReminderName, newReminderDate);
-					System.out.println("Reminder changed successfully.");
 					return true;
 				}
+				System.out.println("New reminder name:");
+				String newReminderName = scanner.nextLine();
+				System.out.println("New reminder date [yyyy-MM-dd]:");
+				String newReminderDate = scanner.nextLine();
+				notesService.editReminder(selectedReminder, newReminderName, newReminderDate);
+				System.out.println("Reminder changed successfully.");
+				return true;
 			}
+			System.out.println("This note has no reminders.");
+			return true;
 		}
 		System.out.println("Wrong note id.");
 		return true;

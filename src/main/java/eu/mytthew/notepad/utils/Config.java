@@ -6,11 +6,11 @@ import org.json.JSONObject;
 public class Config implements JSONSerializable {
 	private final FileOperation fileOperation;
 	@Getter
-	int userId;
+	private int userId;
 	@Getter
-	int noteId;
+	private int noteId;
 	@Getter
-	int reminderId;
+	private int reminderId;
 
 	public Config(FileOperation fileOperation) {
 		this.fileOperation = fileOperation;
