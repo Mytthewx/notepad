@@ -29,9 +29,10 @@ dependencies {
 	implementation group: 'org.json', name: 'json', version: '20200518'
 	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
 	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
+	implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.1.2'
 
 	testImplementation group: 'org.json', name: 'json', version: '20200518'
-	testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.1.0'
+	testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.5.13'
 	testCompileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
 	testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.6.2'
 	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
@@ -56,7 +57,7 @@ jacocoTestReport {
 	reports.xml.enabled true
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(dir: it, exclude: ['eu/mytthew/notepad/Main*', 'eu/mytthew/notepad/auth/FileOperation*'])
+			fileTree(dir: it, exclude: ['eu/mytthew/notepad/Main*', 'eu/mytthew/notepad/utils/FileOperation*', 'eu/mytthew/notepad/MenuItem*'])
 		}))
 	}
 }
@@ -70,7 +71,7 @@ jacocoTestCoverageVerification {
 				value = 'COVEREDRATIO'
 				minimum = 1.0
 			}
-			excludes = ['eu.mytthew.notepad.Main*', 'eu.mytthew.notepad.auth.FileOperation*']
+			excludes = ['eu.mytthew.notepad.Main*', 'eu.mytthew.notepad.utils.FileOperation*', 'eu.mytthew.notepad.MenuItem*']
 		}
 	}
 }

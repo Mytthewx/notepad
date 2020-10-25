@@ -1,53 +1,34 @@
 package eu.mytthew.notepad.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import eu.mytthew.notepad.utils.JSONSerializable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-
-public class User {
-	private final List<Note> notes = new ArrayList<>();
-	@Getter
-	@Setter
+@Data
+@AllArgsConstructor
+public class User implements JSONSerializable {
+	private int id;
 	private String nickname;
-	@Getter
-	@Setter
 	private String password;
 
 	public User(String nickname, String password) {
-		this.nickname = nickname;
-		this.password = password;
+		this(0, nickname, password);
 	}
 
-	public void addNote(Note note) {
-		notes.add(note);
+	@Override
+	public void deserialize(JSONObject self) {
+		id = self.getInt("id");
+		nickname = self.getString("nick");
+		password = self.getString("pass");
 	}
 
-	public List<Note> getNotes() {
-		return Collections.unmodifiableList(notes);
-	}
-
-	public boolean removeNote(Note note) {
-		if (notes.isEmpty()) {
-			return false;
-		}
-		notes.remove(note);
-		return true;
-	}
-
-	public boolean removeNote(UUID uuid) {
-		Optional<Note> optionalNote = notes.stream()
-				.filter(note -> note.getUuid().equals(uuid))
-				.findAny();
-		if (optionalNote.isPresent()) {
-			notes.remove(optionalNote.get());
-			return true;
-		}
-		return false;
+	@Override
+	public JSONObject serialize() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("id", id);
+		jsonObject.put("nick", nickname);
+		jsonObject.put("pass", password);
+		return jsonObject;
 	}
 }

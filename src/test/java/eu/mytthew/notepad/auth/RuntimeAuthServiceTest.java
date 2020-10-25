@@ -3,11 +3,15 @@ package eu.mytthew.notepad.auth;
 import eu.mytthew.notepad.entity.User;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RuntimeAuthServiceTest {
+class RuntimeAuthServiceTest {
 	@Test
-	public void loginWithCorrectNicknameAndPassword() {
+	void loginWithCorrectNicknameAndPassword() {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mytthew", "123");
@@ -20,7 +24,7 @@ public class RuntimeAuthServiceTest {
 	}
 
 	@Test
-	public void loginWithWrongNickname() {
+	void loginWithWrongNickname() {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mytthew", "123");
@@ -33,7 +37,7 @@ public class RuntimeAuthServiceTest {
 	}
 
 	@Test
-	public void loginWithWrongPassword() {
+	void loginWithWrongPassword() {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mytthew", "123");
@@ -46,7 +50,7 @@ public class RuntimeAuthServiceTest {
 	}
 
 	@Test
-	public void isUserLoggedWithNullTest() {
+	void isUserLoggedWithNullTest() {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 
@@ -58,7 +62,7 @@ public class RuntimeAuthServiceTest {
 	}
 
 	@Test
-	public void getUserNickname() {
+	void getUserNickname() {
 		// given
 		User user = new User("Mytthew", "123");
 
@@ -70,7 +74,7 @@ public class RuntimeAuthServiceTest {
 	}
 
 	@Test
-	public void containsNicknameTest() {
+	void containsNicknameTest() {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mateusz", "123");
@@ -83,32 +87,32 @@ public class RuntimeAuthServiceTest {
 	}
 
 	@Test
-	public void addUserWithUniqueNickname() {
+	void addUserWithUniqueNickname() {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 
 		// when
-		boolean result = authService.addUser("Mytthew", "123");
+		User user = authService.addUser("Mytthew", "123");
 
 		// then
-		assertTrue(result);
+		assertNotNull(user);
 	}
 
 	@Test
-	public void addUserWithNonUniqueNickname() {
+	void addUserWithNonUniqueNickname() {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mytthew", "123");
 
 		// when
-		boolean result = authService.addUser("Mytthew", "123");
+		User user = authService.addUser("Mytthew", "123");
 
 		//then
-		assertFalse(result);
+		assertNull(user);
 	}
 
 	@Test
-	public void changePasswordWithWrongCurrentPassword() {
+	void changePasswordWithWrongCurrentPassword() {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mytthew", "123");
@@ -122,7 +126,7 @@ public class RuntimeAuthServiceTest {
 	}
 
 	@Test
-	public void changePasswordWithCorrectCurrentPassword() {
+	void changePasswordWithCorrectCurrentPassword() {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mytthew", "123");
@@ -136,7 +140,7 @@ public class RuntimeAuthServiceTest {
 	}
 
 	@Test
-	public void changeNicknameThatNotExist() {
+	void changeNicknameThatNotExist() {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mytthew", "123");
@@ -151,7 +155,7 @@ public class RuntimeAuthServiceTest {
 	}
 
 	@Test
-	public void changeNicknameThatExist() {
+	void changeNicknameThatExist() {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mytthew", "123");
@@ -167,7 +171,7 @@ public class RuntimeAuthServiceTest {
 	}
 
 	@Test
-	public void logoutUser() {
+	void logoutUser() {
 		// given
 		IAuthService authService = new RuntimeAuthService();
 		authService.addUser("Mytthew", "123");

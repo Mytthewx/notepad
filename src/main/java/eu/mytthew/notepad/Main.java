@@ -1,11 +1,18 @@
 package eu.mytthew.notepad;
 
 import eu.mytthew.notepad.auth.FileAuthService;
-import eu.mytthew.notepad.auth.FileOperation;
 import eu.mytthew.notepad.auth.IAuthService;
 import eu.mytthew.notepad.entity.Note;
+import eu.mytthew.notepad.entity.Reminder;
 import eu.mytthew.notepad.entity.User;
+import eu.mytthew.notepad.notes.FileNotesService;
+import eu.mytthew.notepad.notes.INotesService;
+import eu.mytthew.notepad.utils.Config;
+import eu.mytthew.notepad.utils.FileOperation;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +21,19 @@ import java.util.stream.Collectors;
 
 public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
+	private static final FileOperation fileOperation = new FileOperation("config");
+	private static final Config config = new Config(fileOperation);
+	private static final INotesService notesService;
+	private static final IAuthService authService;
+
+	static {
+		config.deserialize(fileOperation.openFile("config"));
+		authService = new FileAuthService(new FileOperation("users"), config);
+		notesService = new FileNotesService(new FileOperation("notes"), new FileOperation("reminders"), config);
+	}
+
 
 	public static void main(String[] args) {
-		IAuthService authService = new FileAuthService(new FileOperation());
 		List<MenuItem> loginMenuItems = new ArrayList<>();
 		loginMenuItems.add(new MenuItem(0, "Exit", () -> false));
 		loginMenuItems.add(new MenuItem(1, "Log in", () -> logIn(authService)));
@@ -85,51 +102,18 @@ public class Main {
 	}
 
 	public static String formatNote(Note note) {
-		return "\nDate: " + note.getNoteDate() +
+		List<Reminder> reminders = notesService.getAllReminders(note.getId());
+		return "\nID: " + note.getId() +
+				"\nDate: " + note.getNoteDate() +
 				"\nTitle: " + note.getTitle() +
 				"\nContent: '" + note.getContent() + '\'' +
-				note.getReminders()
+				reminders
 						.stream()
+						.filter(reminder -> reminder.getNoteId() == note.getId())
 						.filter(reminder -> reminder.getDate().equals(LocalDate.now()))
-						.map(reminder -> "\nReminder name: " + reminder.getName())
+						.map(reminder -> "\nReminder ID: " + reminder.getId() +
+								"\nReminder name: " + reminder.getName())
 						.collect(Collectors.joining()) + "\n";
-	}
-
-	public static void verifyEditNote(Note note, String newTitle, String newContent, String newDate) {
-		if (!newTitle.equals("")) {
-			note.setTitle(newTitle);
-		}
-		if (!newContent.equals("")) {
-			note.setContent(newContent);
-		}
-		if (!newDate.equals("")) {
-			note.setNoteDate(LocalDate.parse(newDate));
-		}
-	}
-
-	public static void verifyEditReminder(Reminder reminder, String newReminderName, String newReminderDate) {
-		if (!newReminderName.equals("")) {
-			reminder.setName(newReminderName);
-		}
-		if (!newReminderDate.equals("")) {
-			reminder.setDate(LocalDate.parse(newReminderDate));
-		}
-	}
-
-	public static boolean userContainsAnyNotes(User user) {
-		return user.getNotes().isEmpty();
-	}
-
-	public static boolean noteContainsAnyReminder(Note note) {
-		return note.getReminders().isEmpty();
-	}
-
-	public static boolean noteIdExist(String id, User user) {
-		return Integer.parseInt(id) >= user.getNotes().size();
-	}
-
-	public static boolean reminderIdExist(String id, Note note) {
-		return Integer.parseInt(id) >= note.getReminders().size();
 	}
 
 	public static void logIn(IAuthService authService) {
@@ -147,10 +131,12 @@ public class Main {
 		String nickname = scanner.nextLine();
 		System.out.println("Type password: ");
 		String password = scanner.nextLine();
-		if (authService.addUser(nickname, password)) {
-			System.out.println("User added successfully!");
-		} else {
+		User user = authService.addUser(nickname, password);
+		if (user == null) {
 			System.out.println("This nickname is already taken.");
+		} else {
+			config.addUserId(user.getId());
+			System.out.println("User added successfully.");
 		}
 	}
 
@@ -164,10 +150,14 @@ public class Main {
 		User loggedUser = authService.getLoggedUser();
 		if (date.equals("")) {
 			date = String.valueOf(LocalDate.now());
-			loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
+			Note note = new Note(title, content, LocalDate.parse(date));
+			Note newNote = notesService.addNote(loggedUser, note);
+			config.addNoteId(newNote.getId());
 			System.out.println("Note added successfully!");
 		} else if (date.matches("^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$")) {
-			loggedUser.addNote(new Note(title, content, LocalDate.parse(date)));
+			Note note = new Note(title, content, LocalDate.parse(date));
+			Note newNote = notesService.addNote(loggedUser, note);
+			config.addNoteId(newNote.getId());
 			System.out.println("Note added successfully!");
 		} else {
 			System.out.println("Wrong date format.");
@@ -175,26 +165,24 @@ public class Main {
 	}
 
 	public static void displayAllNotes(IAuthService authService) {
-		User user = authService.getLoggedUser();
-		if (userContainsAnyNotes(user)) {
-			System.out.println("No notes.");
+		if (!notesService.userContainsAnyNotes(authService.getLoggedUser())) {
+			System.out.println("No notes");
 		} else {
-			user.getNotes()
+			notesService.getAllNotes(authService.getLoggedUser())
 					.stream()
+					.filter(note -> note.getUserId() == authService.getLoggedUser().getId())
 					.map(Main::formatNote)
 					.forEach(System.out::println);
 		}
 	}
 
 	public static void displayTodayNotes(IAuthService authService) {
-		User user = authService.getLoggedUser();
-		if (user.getNotes()
-				.stream()
-				.noneMatch(note -> note.getNoteDate().equals(LocalDate.now()))) {
-			System.out.println("No notes for today.");
+		if (!notesService.userContainsAnyNotes(authService.getLoggedUser())) {
+			System.out.println("No notes.");
 		} else {
-			user.getNotes()
+			notesService.getAllNotes(authService.getLoggedUser())
 					.stream()
+					.filter(note -> note.getUserId() == authService.getLoggedUser().getId())
 					.filter(note -> note.getNoteDate().equals(LocalDate.now()))
 					.map(Main::formatNote)
 					.forEach(System.out::println);
@@ -202,120 +190,126 @@ public class Main {
 	}
 
 	public static void removeNotes(IAuthService authService) {
-		if (authService.getLoggedUser().getNotes().isEmpty()) {
+		if (!notesService.userContainsAnyNotes(authService.getLoggedUser())) {
 			System.out.println("No notes.");
 		} else {
 			System.out.println("Select note: ");
-			String id = scanner.nextLine();
-			User user = authService.getLoggedUser();
-			if (user.getNotes().size() > Integer.parseInt(id)) {
-				if (user.removeNote(user.getNotes().get(Integer.parseInt(id)).getUuid())) {
+			int id = scanner.nextInt();
+			scanner.nextLine();
+			if (notesService.noteWithThisIdExistAndBelongToUser(id, authService.getLoggedUser())) {
+				if (notesService.removeNote(id)) {
 					System.out.println("Note removed.");
 				}
 			} else {
-				System.out.println("Note with this id doesn't exist.");
+				System.out.println("Wrong note id.");
 			}
 		}
 	}
 
 	public static boolean editNote(IAuthService authService) {
-		if (authService.getLoggedUser().getNotes().isEmpty()) {
+		if (!notesService.userContainsAnyNotes(authService.getLoggedUser())) {
 			System.out.println("No notes.");
-		} else {
-			System.out.println("Select note to edit:");
-			String selectedNote = scanner.nextLine();
-			User user = authService.getLoggedUser();
-			if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
-				System.out.println("New title:");
-				String newTitle = scanner.nextLine();
-				System.out.println("New content:");
-				String newContent = scanner.nextLine();
-				System.out.println("New date:");
-				String newDate = scanner.nextLine();
-				verifyEditNote(user.getNotes().get(Integer.parseInt(selectedNote)), newTitle, newContent, newDate);
-				System.out.println("Note changed successfully.");
-			} else {
-				System.out.println("Note with this id doesn't exist.");
-			}
+			return true;
 		}
+		System.out.println("Select note to edit:");
+		int selectedNote = scanner.nextInt();
+		scanner.nextLine();
+		if (notesService.noteWithThisIdExistAndBelongToUser(selectedNote, authService.getLoggedUser())) {
+			System.out.println("New title:");
+			String newTitle = scanner.nextLine();
+			System.out.println("New content:");
+			String newContent = scanner.nextLine();
+			System.out.println("New date:");
+			String newDate = scanner.nextLine();
+			notesService.editNote(selectedNote, newTitle, newContent, newDate);
+			System.out.println("Note changed successfully.");
+			return true;
+		}
+		System.out.println("Note with this id doesn't exist.");
 		return true;
 	}
 
 	public static boolean addReminder(IAuthService authService) {
-		System.out.println("Select note:");
-		String selectedNote = scanner.nextLine();
-		User user = authService.getLoggedUser();
-		if (Integer.parseInt(selectedNote) < user.getNotes().size()) {
+		if (notesService.userContainsAnyNotes(authService.getLoggedUser())) {
+			System.out.println("Select note:");
+			int selectedNote = scanner.nextInt();
+			scanner.nextLine();
+			if (!notesService.noteWithThisIdExistAndBelongToUser(selectedNote, authService.getLoggedUser())) {
+				System.out.println("Wrong note id.");
+				return true;
+			}
 			System.out.println("Reminder name:");
 			String reminderName = scanner.nextLine();
 			System.out.println("Reminder date [yyyy-MM-dd]:");
 			String reminderDate = scanner.nextLine();
-			user.getNotes().get(Integer.parseInt(selectedNote)).getReminders().add(new Reminder(reminderName, LocalDate.parse(reminderDate)));
+			Reminder reminder = new Reminder(reminderName, LocalDate.parse(reminderDate));
+			Reminder newReminder = notesService.addReminder(selectedNote, reminder);
+			config.addReminderId(newReminder.getId());
 			System.out.println("Reminder added successfully.");
-		} else {
-			System.out.println("Note with this id doesn't exist.");
+			return true;
 		}
+		System.out.println("No notes.");
 		return true;
 	}
 
 	public static boolean editReminder(IAuthService authService) {
-		User user = authService.getLoggedUser();
-		if (userContainsAnyNotes(user)) {
+		if (!notesService.userContainsAnyNotes(authService.getLoggedUser())) {
 			System.out.println("No notes.");
 			return true;
 		}
 		System.out.println("Select note:");
-		String selectedNote = scanner.nextLine();
-		if (noteIdExist(selectedNote, user)) {
-			System.out.println("Note with this id doesn't exist.");
+		int selectedNote = scanner.nextInt();
+		scanner.nextLine();
+		if (notesService.noteWithThisIdExistAndBelongToUser(selectedNote, authService.getLoggedUser())) {
+			if (notesService.noteContainsAnyReminders(selectedNote)) {
+				System.out.println("Select reminder:");
+				int selectedReminder = scanner.nextInt();
+				scanner.nextLine();
+				if (!notesService.reminderWithThisIdExistAndBelongToNote(selectedReminder, selectedNote)) {
+					System.out.println("Wrong reminder id.");
+					return true;
+				}
+				System.out.println("New reminder name:");
+				String newReminderName = scanner.nextLine();
+				System.out.println("New reminder date [yyyy-MM-dd]:");
+				String newReminderDate = scanner.nextLine();
+				notesService.editReminder(selectedReminder, newReminderName, newReminderDate);
+				System.out.println("Reminder changed successfully.");
+				return true;
+			}
+			System.out.println("This note has no reminders.");
 			return true;
 		}
-		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
-		if (noteContainsAnyReminder(note)) {
-			System.out.println("This note has no reminder.");
-			return true;
-		}
-		System.out.println("Select reminder:");
-		String selectedReminder = scanner.nextLine();
-		if (reminderIdExist(selectedReminder, note)) {
-			System.out.println("Reminder with this id doesn't exist.");
-			return true;
-		}
-		Reminder reminder = note.getReminders().get(Integer.parseInt(selectedReminder));
-		System.out.println("New reminder name:");
-		String newReminderName = scanner.nextLine();
-		System.out.println("New reminder date [yyyy-MM-dd]:");
-		String newReminderDate = scanner.nextLine();
-		verifyEditReminder(reminder, newReminderName, newReminderDate);
-		System.out.println("Reminder changed successfully.");
+		System.out.println("Wrong note id.");
 		return true;
 	}
 
 	public static boolean removeReminder(IAuthService authService) {
-		User user = authService.getLoggedUser();
-		if (userContainsAnyNotes(user)) {
+		if (!notesService.userContainsAnyNotes(authService.getLoggedUser())) {
 			System.out.println("No notes.");
 			return true;
 		}
 		System.out.println("Select note:");
-		String selectedNote = scanner.nextLine();
-		if (noteIdExist(selectedNote, user)) {
-			System.out.println("Note with this id doesn't exist.");
-			return true;
+		int selectedNote = scanner.nextInt();
+		scanner.nextLine();
+		if (notesService.noteWithThisIdExistAndBelongToUser(selectedNote, authService.getLoggedUser())) {
+			if (!notesService.noteContainsAnyReminders(selectedNote)) {
+				System.out.println("This note has no reminders.");
+				return true;
+			}
+			System.out.println("Select reminder:");
+			int selectedReminder = scanner.nextInt();
+			scanner.nextLine();
+			if (!notesService.reminderWithThisIdExistAndBelongToNote(selectedReminder, selectedNote)) {
+				System.out.println("Wrong reminder id.");
+				return true;
+			}
+			if (notesService.removeReminder(selectedNote, selectedReminder)) {
+				System.out.println("Reminder removed successfully.");
+				return true;
+			}
 		}
-		Note note = user.getNotes().get(Integer.parseInt(selectedNote));
-		if (noteContainsAnyReminder(note)) {
-			System.out.println("This note has no reminder.");
-			return true;
-		}
-		System.out.println("Select reminder:");
-		String selectedReminder = scanner.nextLine();
-		if (reminderIdExist(selectedReminder, note)) {
-			System.out.println("Reminder with this id doesn't exist.");
-			return true;
-		}
-		note.getReminders().remove(Integer.parseInt(selectedReminder));
-		System.out.println("Reminder removed successfully.");
+		System.out.println("Wrong note id.");
 		return true;
 	}
 
@@ -343,5 +337,14 @@ public class Main {
 		} else {
 			System.out.println("Wrong current password.");
 		}
+	}
+
+	public static Connection connectToDatabase() {
+		try {
+			return DriverManager.getConnection("jdbc:mysql://localhost:3306/notepad", "root", "");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

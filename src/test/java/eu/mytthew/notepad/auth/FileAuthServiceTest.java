@@ -1,11 +1,11 @@
 package eu.mytthew.notepad.auth;
 
+import eu.mytthew.notepad.utils.Config;
+import eu.mytthew.notepad.utils.FileOperation;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,19 +13,18 @@ import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.eq;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class FileAuthServiceTest {
+class FileAuthServiceTest {
 	public JSONObject openTestFile(String filename) {
 		try {
-			return new JSONObject(new JSONTokener(new FileInputStream(Paths.get("src", "test", "resources", filename + ".json").toFile())));
+			return new JSONObject(new JSONTokener(new FileInputStream(Paths.get("src", "test", "resources", "users", filename + ".json").toFile())));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -33,191 +32,195 @@ public class FileAuthServiceTest {
 	}
 
 	@Test
-	public void addUserFalseTest() {
+	void addUserTrueTest() {
 		// given
+		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		IAuthService authService = new FileAuthService(fileOperation);
-		when(fileOperation.createFile(any(), any())).thenReturn(false);
-
-		// when
-		boolean result = authService.addUser("UserTest-With-Notes", "123");
-
-		// then
-		assertFalse(result);
-	}
-
-	@Test
-	public void addUserTrueTest() {
-		// given
-		FileOperation fileOperation = mock(FileOperation.class);
-		IAuthService authService = new FileAuthService(fileOperation);
+		IAuthService authService = new FileAuthService(fileOperation, config);
 		ArgumentCaptor<String> nicknameCaptor = ArgumentCaptor.forClass(String.class);
 		ArgumentCaptor<JSONObject> passwordCaptor = ArgumentCaptor.forClass(JSONObject.class);
 		when(fileOperation.createFile(nicknameCaptor.capture(), passwordCaptor.capture())).thenReturn(true);
 
 		// when
-		boolean result = authService.addUser("UserTest-With-Notes", "123");
+		authService.addUser("UserTest", "123");
 
 		// then
 		ArgumentCaptor<String> nicknameCaptorVerify = ArgumentCaptor.forClass(String.class);
 		ArgumentCaptor<JSONObject> passwordCaptorVerify = ArgumentCaptor.forClass(JSONObject.class);
 		verify(fileOperation, times(1)).createFile(nicknameCaptorVerify.capture(), passwordCaptorVerify.capture());
-		assertTrue(result);
-		assertEquals("UserTest-With-Notes", nicknameCaptorVerify.getValue());
+		assertEquals("UserTest", nicknameCaptorVerify.getValue());
 		assertEquals("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3", passwordCaptorVerify.getValue().getString("pass"));
 	}
 
 	@Test
-	public void containsNicknameTest() {
+	void containsNicknameTest() {
 		// given
+		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		IAuthService authService = new FileAuthService(fileOperation);
-		when(fileOperation.fileExist(eq("UserTest-With-Notes"))).thenReturn(true);
+		IAuthService authService = new FileAuthService(fileOperation, config);
+		when(fileOperation.fileExist(eq("UserTest"))).thenReturn(true);
 
 		// when
-		boolean result = authService.containsNickname("UserTest-With-Notes");
+		boolean result = authService.containsNickname("UserTest");
 
 		// then
 		assertTrue(result);
 	}
 
 	@Test
-	public void loginUserWithTrueTest() {
+	void loginUserWithTrueTest() {
 		// given
+		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject outerObject = openTestFile("UserTest-With-Notes");
-		when(fileOperation.openFile(any())).thenReturn(outerObject);
+		IAuthService authService = new FileAuthService(fileOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(fileOperation.openFile(eq("UserTest"))).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("nick"))).thenReturn("UserTest");
+		when(jsonObject.getString(eq("pass"))).thenReturn("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
 
 		// when
-		boolean result = authService.login("UserTest-With-Notes", "123");
+		boolean result = authService.login("UserTest", "123");
 
 		// then
 		assertTrue(result);
 	}
 
 	@Test
-	public void loginUserWithoutNotesTrueTest() {
+	void loginUserWithFalseTest() {
 		// given
+		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject outerObject = openTestFile("UserTest-Without-Notes");
-		when(fileOperation.openFile(any())).thenReturn(outerObject);
+		IAuthService authService = new FileAuthService(fileOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(fileOperation.openFile(eq("UserTest"))).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("nick"))).thenReturn("UserTest");
+		when(jsonObject.getString(eq("pass"))).thenReturn("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
 
 		// when
-		boolean result = authService.login("UserTest-Without-Notes", "123");
-
-		// then
-		assertTrue(result);
-	}
-
-	@Test
-	public void loginUserWithFalseTest() {
-		// given
-		FileOperation fileOperation = mock(FileOperation.class);
-		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject jsonObject = openTestFile("UserTest-With-Notes");
-		when(fileOperation.openFile(any())).thenReturn(jsonObject);
-
-		// when
-		boolean result = authService.login("UserTest-With-Notes", "12345");
+		boolean result = authService.login("UserTest", "badpassword");
 
 		// then
 		assertFalse(result);
 	}
 
 	@Test
-	public void changeNicknameToNewUniqueNickname() {
+	void changeNicknameToNewUniqueNickname() {
 		// given
+		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject jsonObject = openTestFile("UserTest-With-Notes");
-		when(fileOperation.openFile(any())).thenReturn(jsonObject);
-		authService.login("UserTest-With-Notes", "123");
+		IAuthService authService = new FileAuthService(fileOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(fileOperation.openFile(eq("UserTest"))).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("nick"))).thenReturn("UserTest");
+		when(jsonObject.getString(eq("pass"))).thenReturn("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		authService.login("UserTest", "123");
 
 		// when
-		boolean result = authService.changeNickname("Mateusz");
+		boolean result = authService.changeNickname("NewNickname");
 
 		// then
 		assertTrue(result);
 	}
 
 	@Test
-	public void changeNicknameToNewNotUniqueNickname() {
+	void changeNicknameToNewNotUniqueNickname() {
 		// given
+		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject jsonObject = openTestFile("UserTest-With-Notes");
-		when(fileOperation.openFile(any())).thenReturn(jsonObject);
-		authService.login("UserTest-With-Notes", "123");
-		when(fileOperation.fileExist("UserTest-With-Notes")).thenReturn(true);
+		IAuthService authService = new FileAuthService(fileOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(fileOperation.openFile(eq("UserTest"))).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("nick"))).thenReturn("UserTest");
+		when(jsonObject.getString(eq("pass"))).thenReturn("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		authService.login("UserTest", "123");
+		when(authService.containsNickname(eq("SecondUser"))).thenReturn(true);
 
 		// when
-		boolean result = authService.changeNickname("UserTest-With-Notes");
+		boolean result = authService.changeNickname("SecondUser");
 
 		// then
 		assertFalse(result);
 	}
 
 	@Test
-	public void changePasswordCorrectly() {
+	void changePasswordCorrectly() {
 		// given
+		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject jsonObject = openTestFile("UserTest-With-Notes");
-		when(fileOperation.openFile(any())).thenReturn(jsonObject);
-		authService.login("UserTest-With-Notes", "123");
+		IAuthService authService = new FileAuthService(fileOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(fileOperation.openFile(eq("UserTest"))).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("nick"))).thenReturn("UserTest");
+		when(jsonObject.getString(eq("pass"))).thenReturn("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		authService.login("UserTest", "123");
 
 		// when
 		boolean result = authService.changePassword("123", "12345");
 
 		// then
 		assertTrue(result);
+		assertEquals("5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5", authService.getLoggedUser().getPassword());
 	}
 
 	@Test
-	public void changePasswordWrong() {
+	void changePasswordWrong() {
 		// given
+		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject jsonObject = openTestFile("UserTest-With-Notes");
-		when(fileOperation.openFile(any())).thenReturn(jsonObject);
-		authService.login("UserTest-With-Notes", "123");
+		IAuthService authService = new FileAuthService(fileOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(fileOperation.openFile(eq("UserTest"))).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("nick"))).thenReturn("UserTest");
+		when(jsonObject.getString(eq("pass"))).thenReturn("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		authService.login("UserTest", "123");
 
 		// when
-		boolean result = authService.changePassword("1234", "12345");
+		boolean result = authService.changePassword("12345", "12345");
 
 		// then
 		assertFalse(result);
+		assertEquals("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3", authService.getLoggedUser().getPassword());
 	}
 
 	@Test
-	public void correctlyLogoutTest() {
+	void correctlyLogoutTest() {
 		// given
+		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		IAuthService authService = new FileAuthService(fileOperation);
-		JSONObject outerObject = openTestFile("UserTest-With-Notes");
-		when(fileOperation.openFile(any())).thenReturn(outerObject);
-		authService.login("UserTest-With-Notes", "123");
-		when(fileOperation.createFile(any(), any())).thenReturn(true);
+		IAuthService authService = new FileAuthService(fileOperation, config);
+		JSONObject jsonObject = mock(JSONObject.class);
+		when(fileOperation.openFile(eq("UserTest"))).thenReturn(jsonObject);
+		when(jsonObject.getInt(eq("id"))).thenReturn(0);
+		when(jsonObject.getString(eq("nick"))).thenReturn("UserTest");
+		when(jsonObject.getString(eq("pass"))).thenReturn("a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3");
+		authService.login("UserTest", "123");
 
 		// when
 		boolean result = authService.logout();
 
 		// then
 		assertTrue(result);
+		assertNull(authService.getLoggedUser());
 	}
 
 	@Test
-	public void nullUserLogoutTest() {
+	void nullUserLogoutTest() {
 		// given
+		Config config = mock(Config.class);
 		FileOperation fileOperation = mock(FileOperation.class);
-		IAuthService authService = new FileAuthService(fileOperation);
+		IAuthService authService = new FileAuthService(fileOperation, config);
 
 		// when
 		boolean result = authService.logout();
 
 		// then
 		assertFalse(result);
+		assertNull(authService.getLoggedUser());
 	}
 }
